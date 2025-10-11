@@ -1,0 +1,49 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OutpostImmobile.Api", "OutpostImmobile.Api\OutpostImmobile.Api.csproj", "{AC858F56-52C4-4240-B09F-79B46A41C15E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Persistence", "Persistence", "{801454C3-7F8B-4129-958D-584975931632}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OutpostImmobile.Persistence", "OutpostImmobile.Persistence\OutpostImmobile.Persistence.csproj", "{B506D8CE-422A-4E41-B92C-35816C8F4EE9}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{1EDAF0ED-EB2E-4635-9761-BA350DBAF8A9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OutpostImmobile.Core", "OutpostImmobile.Core\OutpostImmobile.Core.csproj", "{8E01522A-4727-4E14-A4C9-66E8F8937FAD}"
+EndProject
+Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "OutpostImmobile.App", "outpostimmobile.app\OutpostImmobile.App.esproj", "{148D7DC7-A167-4A97-850B-D0C7862140BD}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{AC858F56-52C4-4240-B09F-79B46A41C15E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AC858F56-52C4-4240-B09F-79B46A41C15E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AC858F56-52C4-4240-B09F-79B46A41C15E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AC858F56-52C4-4240-B09F-79B46A41C15E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B506D8CE-422A-4E41-B92C-35816C8F4EE9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B506D8CE-422A-4E41-B92C-35816C8F4EE9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B506D8CE-422A-4E41-B92C-35816C8F4EE9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B506D8CE-422A-4E41-B92C-35816C8F4EE9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8E01522A-4727-4E14-A4C9-66E8F8937FAD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8E01522A-4727-4E14-A4C9-66E8F8937FAD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8E01522A-4727-4E14-A4C9-66E8F8937FAD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8E01522A-4727-4E14-A4C9-66E8F8937FAD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{148D7DC7-A167-4A97-850B-D0C7862140BD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{148D7DC7-A167-4A97-850B-D0C7862140BD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{148D7DC7-A167-4A97-850B-D0C7862140BD}.Release|Any CPU.ActiveCfg = Debug|Any CPU
+		{148D7DC7-A167-4A97-850B-D0C7862140BD}.Release|Any CPU.Build.0 = Debug|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{AC858F56-52C4-4240-B09F-79B46A41C15E} = {ED54D94D-92A9-4887-98C9-13CDA518A604}
+		{B506D8CE-422A-4E41-B92C-35816C8F4EE9} = {801454C3-7F8B-4129-958D-584975931632}
+		{8E01522A-4727-4E14-A4C9-66E8F8937FAD} = {1EDAF0ED-EB2E-4635-9761-BA350DBAF8A9}
+	EndGlobalSection
+EndGlobal
