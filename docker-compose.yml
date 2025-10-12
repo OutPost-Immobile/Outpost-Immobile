@@ -1,0 +1,43 @@
+﻿services:
+  outpostimmobile.api:
+    image: OutpostImmobile
+    depends_on: 
+      - "database"
+    build:
+      context: ./OutpostImmobile.Api
+      dockerfile: Dockerfile
+    ports:
+      - 5000:5000
+    environment:
+      - ASPNETCORE_URLS=http://*:5000
+    networks:
+      - Outpost-Network
+
+  outpostimmobile.app:
+    image: OutpostImmobileApp
+    build:
+      context: ./outpostimmobile.app
+      dockerfile: Dockerfile
+    ports:
+      - 5002:5002
+    environment:
+      - REACT_APP_API_URL=http://localhost:5002
+    networks:
+      - Outpost-Network
+  
+  database:
+    image: postgres:latest
+    container_name: postgres
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=postgres
+    volumes:
+      - ./volumes/data/db:/var/lib/postgresql/data
+    ports:
+      - 5433:5432
+    networks: 
+      - Outpost-Network
+networks:
+  Outpost-Network:
+    driver: bridge
