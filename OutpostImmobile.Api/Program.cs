@@ -18,6 +18,16 @@ builder.Services.AddSerilog((context, configuration) =>
 
 builder.Services.AddCoreServices();
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll", x =>
+        {
+            x.AllowAnyOrigin()
+            .AllowAnyMethod()
+            .AllowAnyHeader();
+        });
+});
+
 var app = builder.Build();
 
 //Tutaj mapujemy wszystkie endpointy
@@ -31,5 +41,6 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseCors("AllowAll");
 
 app.Run();
