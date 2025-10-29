@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -5,6 +6,7 @@ namespace OutpostImmobile.Persistence.Domain.StaticEnums;
 
 public class StaticEnumEntity
 {
+    [Key]
     public string EnumName { get; set; }
     public ICollection<StaticEnumTranslationEntity> Translations { get; set; }
 }

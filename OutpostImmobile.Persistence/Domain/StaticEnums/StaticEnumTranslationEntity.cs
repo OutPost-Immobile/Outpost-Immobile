@@ -19,5 +19,8 @@ internal class StaticEnumEntityTranslationsConfiguration : IEntityTypeConfigurat
     public void Configure(EntityTypeBuilder<StaticEnumTranslationEntity> builder)
     {
         builder.HasKey(x => new { x.EnumValue, x.EnumName, x.TranslationLanguage });
+
+        builder.Property(x => x.TranslationLanguage)
+            .HasConversion<string>();
     }
 }

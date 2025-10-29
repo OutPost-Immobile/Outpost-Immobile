@@ -11,7 +11,7 @@ public class MaczkopatEntity : AuditableEntity
     public long AreaId { get; set; }
     public AreaEntity Area { get; set; }
     
-    public int AddressId { get; set; }
+    public long AddressId { get; set; }
     public AddressEntity Address { get; set; }
     
     public ICollection<ParcelEntity> Parcels { get; set; } = null!;

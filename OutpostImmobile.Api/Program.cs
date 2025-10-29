@@ -31,6 +31,9 @@ builder.Services.AddCors(options =>
         });
 });
 
+var connStr =  builder.Configuration.GetConnectionString("DefaultConnection");
+builder.Services.AddNpgsql<OutpostImmobileDbContext>(connStr);
+
 builder.Services.AddIdentity<UserInternal, IdentityRole<Guid>>(options =>
     {
         options.Password.RequireDigit = false;
