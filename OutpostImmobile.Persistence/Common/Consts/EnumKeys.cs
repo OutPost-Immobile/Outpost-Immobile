@@ -10,4 +10,10 @@ public class EnumKeys
     public const string ParcelStatus_Deleted_Pl = "ParcelStatus_Deleted_Translation_Pl";
     public const string ParcelStatus_Sent_Pl = "ParcelStatus_Sent_Translation_Pl";
     public const string ParcelStatus_ToReturn_Pl = "ParcelStatus_ToReturn_Translation_Pl";
+    public const string ParcelStatus_SendToStorage_Pl = "ParcelStatus_SendToStorage_Translation_Pl";
+    
+    public const string PayloadSize_Small_Pl = "PayloadSize_Small_Pl";
+    public const string PayloadSize_Medium_Pl = "PayloadSize_Medium_Pl";
+    public const string PayloadSize_Large_Pl = "PayloadSize_Large_Pl";
+    public const string PayloadSize_XLarge_Pl = "PayloadSize_XLarge_Pl";
 }

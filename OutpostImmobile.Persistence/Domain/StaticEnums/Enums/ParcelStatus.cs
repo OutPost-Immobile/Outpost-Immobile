@@ -9,5 +9,6 @@ public enum ParcelStatus
     Forgotten,
     Deleted,
     Sent,
-    ToReturn
+    ToReturn,
+    SendToStorage
 }

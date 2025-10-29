@@ -1,7 +1,10 @@
 using System.Reflection;
 using DispatchR.Extensions;
+using Microsoft.AspNetCore.Identity;
 using OutpostImmobile.Api.Extensions;
 using OutpostImmobile.Core;
+using OutpostImmobile.Persistence;
+using OutpostImmobile.Persistence.Domain;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -27,6 +30,18 @@ builder.Services.AddCors(options =>
             .AllowAnyHeader();
         });
 });
+
+builder.Services.AddIdentity<UserInternal, IdentityRole<Guid>>(options =>
+    {
+        options.Password.RequireDigit = false;
+        options.Password.RequireLowercase = false;
+        options.Password.RequireNonAlphanumeric = false;
+        options.Password.RequireUppercase = false;
+        options.Password.RequiredLength = 6;
+        options.User.RequireUniqueEmail = true;
+    })
+    .AddEntityFrameworkStores<OutpostImmobileDbContext>()
+    .AddDefaultTokenProviders();
 
 var app = builder.Build();
 

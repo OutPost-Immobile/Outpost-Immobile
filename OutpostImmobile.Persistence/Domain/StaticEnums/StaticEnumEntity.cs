@@ -6,7 +6,7 @@ namespace OutpostImmobile.Persistence.Domain.StaticEnums;
 public class StaticEnumEntity
 {
     public string EnumName { get; set; }
-    public ICollection<StaticEnumTranslations> Translations { get; set; }
+    public ICollection<StaticEnumTranslationEntity> Translations { get; set; }
 }
 
 internal class StaticEnumEntityConfiguration : IEntityTypeConfiguration<StaticEnumEntity>
