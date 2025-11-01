@@ -1,4 +1,5 @@
 using OutpostImmobile.Persistence.Domain.AuditableBase;
+using OutpostImmobile.Persistence.Domain.Logs;
 
 namespace OutpostImmobile.Persistence.Domain;
 
@@ -15,4 +16,5 @@ public class MaczkopatEntity : AuditableEntity
     public AddressEntity Address { get; set; }
     
     public ICollection<ParcelEntity> Parcels { get; set; } = null!;
+    public ICollection<MaczkopatEventLogEntity> MaczkopatEventLogs { get; set; } = null!;
 }

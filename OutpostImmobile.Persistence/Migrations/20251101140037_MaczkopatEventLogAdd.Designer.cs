@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using OutpostImmobile.Persistence;
@@ -11,9 +12,11 @@ using OutpostImmobile.Persistence;
 namespace OutpostImmobile.Persistence.Migrations
 {
     [DbContext(typeof(OutpostImmobileDbContext))]
-    partial class OutpostImmobileDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251101140037_MaczkopatEventLogAdd")]
+    partial class MaczkopatEventLogAdd
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

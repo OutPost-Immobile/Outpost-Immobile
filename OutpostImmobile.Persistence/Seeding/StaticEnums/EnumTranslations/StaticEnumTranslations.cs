@@ -110,4 +110,53 @@ public class StaticEnumTranslations
             },
         };
     }
+    
+    public static List<StaticEnumTranslationEntity> GetMaczkopatEventLogTypeTranslations()
+    {
+        return new List<StaticEnumTranslationEntity>
+        {
+            new()
+            {
+                EnumValue = (int)MaczkopatEventLogType.ValveOpened,
+                Translation = "Otwarto skrytkę",
+                TranslationLanguage = TranslationLanguage.Pl,
+                EnumName = nameof(MaczkopatEventLogType.ValveOpened),
+            },
+            new()
+            {
+                EnumValue = (int)MaczkopatEventLogType.ValveClosed,
+                Translation = "Zamknięto skrytkę",
+                TranslationLanguage = TranslationLanguage.Pl,
+                EnumName = nameof(MaczkopatEventLogType.ValveClosed),
+            },
+            new()
+            {
+                EnumValue = (int)MaczkopatEventLogType.Error,
+                Translation = "Błąd",
+                TranslationLanguage = TranslationLanguage.Pl,
+                EnumName = nameof(MaczkopatEventLogType.Error),
+            },
+            new()
+            {
+                EnumValue = (int)MaczkopatEventLogType.OpenedByForce,
+                Translation = "Otwarto siłowo - włam",
+                TranslationLanguage = TranslationLanguage.Pl,
+                EnumName = nameof(MaczkopatEventLogType.OpenedByForce),
+            },
+        };
+    }
+    
+    public static List<StaticEnumTranslationEntity> GetParcelEventLogTypeTranslations()
+    {
+        return new List<StaticEnumTranslationEntity>
+        {
+            new()
+            {
+                EnumValue = (int)ParcelEventLogType.StatusChange,
+                Translation = "Otwarto siłowo - włam",
+                TranslationLanguage = TranslationLanguage.Pl,
+                EnumName = nameof(ParcelEventLogType.StatusChange),
+            },
+        };
+    }
 }

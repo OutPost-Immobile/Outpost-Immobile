@@ -1,19 +1,46 @@
+using OutpostImmobile.Persistence.Common.Helpers;
+using OutpostImmobile.Persistence.Domain.StaticEnums.Enums;
+using OutpostImmobile.Persistence.Enums;
+
 namespace OutpostImmobile.Persistence.Common.Consts;
 
 public class EnumKeys
 {
-    public const string ParcelStatus_Experighted_Pl = "ParcelStatus_Experighted_Translation_Pl";
-    public const string ParcelStatus_InTransit_Pl = "ParcelStatus_InTransit_Translation_Pl";
-    public const string ParcelStatus_Delivered_Pl = "ParcelStatus_Delivered_Translation_Pl";
-    public const string Parcel_InMagazine_StatusPl = "ParcelStatus_InMagazine_Translation_Pl";
-    public const string ParcelStatus_Forgotten_Pl = "ParcelStatus_Forgotten_Translation_Pl";
-    public const string ParcelStatus_Deleted_Pl = "ParcelStatus_Deleted_Translation_Pl";
-    public const string ParcelStatus_Sent_Pl = "ParcelStatus_Sent_Translation_Pl";
-    public const string ParcelStatus_ToReturn_Pl = "ParcelStatus_ToReturn_Translation_Pl";
-    public const string ParcelStatus_SendToStorage_Pl = "ParcelStatus_SendToStorage_Translation_Pl";
+    #region ParcelStatus
     
-    public const string PayloadSize_Small_Pl = "PayloadSize_Small_Pl";
-    public const string PayloadSize_Medium_Pl = "PayloadSize_Medium_Pl";
-    public const string PayloadSize_Large_Pl = "PayloadSize_Large_Pl";
-    public const string PayloadSize_XLarge_Pl = "PayloadSize_XLarge_Pl";
+    public static string ParcelStatus_Experighted_Pl => EnumKeyGenerator.GenerateKey(ParcelStatus.Experighted, TranslationLanguage.Pl);
+    public static string ParcelStatus_InTransit_Pl => EnumKeyGenerator.GenerateKey(ParcelStatus.InTransit, TranslationLanguage.Pl);
+    public static string ParcelStatus_Delivered_Pl => EnumKeyGenerator.GenerateKey(ParcelStatus.Delivered, TranslationLanguage.Pl);
+    public static string Parcel_InMagazine_StatusPl => EnumKeyGenerator.GenerateKey(ParcelStatus.InMagazine, TranslationLanguage.Pl);
+    public static string ParcelStatus_Forgotten_Pl => EnumKeyGenerator.GenerateKey(ParcelStatus.Forgotten, TranslationLanguage.Pl);
+    public static string ParcelStatus_Deleted_Pl => EnumKeyGenerator.GenerateKey(ParcelStatus.Deleted, TranslationLanguage.Pl);
+    public static string ParcelStatus_Sent_Pl => EnumKeyGenerator.GenerateKey(ParcelStatus.Sent, TranslationLanguage.Pl);
+    public static string ParcelStatus_ToReturn_Pl => EnumKeyGenerator.GenerateKey(ParcelStatus.ToReturn, TranslationLanguage.Pl);
+    public static string ParcelStatus_SendToStorage_Pl => EnumKeyGenerator.GenerateKey(ParcelStatus.SendToStorage, TranslationLanguage.Pl);
+
+    #endregion
+
+    #region PayloadSize
+
+    public static string PayloadSize_Small_Pl => EnumKeyGenerator.GenerateKey(PayloadSize.Small, TranslationLanguage.Pl);
+    public static string PayloadSize_Medium_Pl = EnumKeyGenerator.GenerateKey(PayloadSize.Medium, TranslationLanguage.Pl);
+    public static string PayloadSize_Large_Pl = EnumKeyGenerator.GenerateKey(PayloadSize.Large, TranslationLanguage.Pl);
+    public static string PayloadSize_XLarge_Pl = EnumKeyGenerator.GenerateKey(PayloadSize.XLarge, TranslationLanguage.Pl);
+
+    #endregion
+
+    #region MaczkopatEventLogType
+    
+    public static string MaczkopatEventLogType_ValveOpened_Pl => EnumKeyGenerator.GenerateKey(MaczkopatEventLogType.ValveOpened, TranslationLanguage.Pl);
+    public static string MaczkopatEventLogType_ValveClosed_Pl => EnumKeyGenerator.GenerateKey(MaczkopatEventLogType.ValveClosed, TranslationLanguage.Pl);
+    public static string MaczkopatEventLogType_OpenedByForce_Pl => EnumKeyGenerator.GenerateKey(MaczkopatEventLogType.OpenedByForce, TranslationLanguage.Pl);
+    public static string MaczkopatEventLogType_Error_Pl => EnumKeyGenerator.GenerateKey(MaczkopatEventLogType.Error, TranslationLanguage.Pl);
+    
+    #endregion
+
+    #region ParcelEventLogType
+
+    public static string ParcelEventLogType_StatusChange_Pl => EnumKeyGenerator.GenerateKey(ParcelEventLogType.StatusChange, TranslationLanguage.Pl);
+
+    #endregion
 }

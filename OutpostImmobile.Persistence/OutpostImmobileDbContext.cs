@@ -17,6 +17,7 @@ public class OutpostImmobileDbContext : DbContext
     
     public virtual DbSet<CommunicationEventLogEntity> CommunicationEventLogs => Set<CommunicationEventLogEntity>();
     public virtual DbSet<ParcelEventLogEntity> ParcelEventLogs => Set<ParcelEventLogEntity>();
+    public virtual DbSet<MaczkopatEventLogEntity> MaczkopatEventLogs => Set<MaczkopatEventLogEntity>();
     public virtual DbSet<StaticEnumEntity> StaticEnums => Set<StaticEnumEntity>();
     public virtual DbSet<StaticEnumTranslationEntity> StaticEnumTranslations => Set<StaticEnumTranslationEntity>();
     public virtual DbSet<AddressEntity> Addresses => Set<AddressEntity>();

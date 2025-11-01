@@ -4,8 +4,8 @@ namespace OutpostImmobile.Persistence.Common.Helpers;
 
 public class EnumKeyGenerator
 {
-    public static string Generate<TEnum>(TEnum @enum, TranslationLanguage language) where TEnum : Enum
+    public static string GenerateKey<TEnum>(TEnum staticEnum, TranslationLanguage language) where TEnum : Enum
     {
-        return $"{typeof(TEnum)}_{nameof(@enum)}_Translation_{nameof(language)}";
+        return $"{typeof(TEnum).Name}_{nameof(staticEnum)}_Translation_{nameof(language)}";
     }
 }
