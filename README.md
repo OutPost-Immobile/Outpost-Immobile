@@ -13,5 +13,11 @@ Dopiero kiedy CI/CD przejdzie oraz któryś znasz puści to po CR, to bardzo ła
 
 W momencie kiedy są jakieś konflikty, to proszę nie robić force pushy, tylko ładnie domerdżować maina, rozwiązać konflikty i dopiero merdżować.
 
+## Skryptowanie migracji:
+
+```
+    dotnet ef migrations script --startup-project ./Outpost-Immobile.Api/Outpost-Immboile.Api.csproj --project ./Outpost-Immobile.Persistence/Outpost-Immboile.Persistence.csproj
+```
+
 ## Piszemy w CQRS, dokumentacja do DispatchR:
  https://github.com/hasanxdev/DispatchR
