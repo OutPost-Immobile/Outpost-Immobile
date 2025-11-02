@@ -4,6 +4,6 @@ public enum UserRoleNames
 {
     Client,
     Admin,
-    Carrier,
+    Courier,
     Manager
 }

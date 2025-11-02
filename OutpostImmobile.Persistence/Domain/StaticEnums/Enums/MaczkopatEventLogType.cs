@@ -2,8 +2,8 @@ namespace OutpostImmobile.Persistence.Domain.StaticEnums.Enums;
 
 public enum MaczkopatEventLogType
 {
-    ValveOpened,
-    ValveClosed,
+    LockerOpened,
+    LockerClosed,
     OpenedByForce,
     Error
 }

@@ -2,10 +2,10 @@ namespace OutpostImmobile.Persistence.Domain.StaticEnums.Enums;
 
 public enum ParcelStatus
 {
-    Experighted,
+    Expedited,
     Delivered,
     InTransit,
-    InMagazine,
+    InWarehouse,
     Forgotten,
     Deleted,
     Sent,

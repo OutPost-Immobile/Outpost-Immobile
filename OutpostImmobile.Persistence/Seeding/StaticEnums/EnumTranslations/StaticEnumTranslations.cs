@@ -12,10 +12,10 @@ public class StaticEnumTranslations
         {
             new()
             {
-                EnumValue = (int)ParcelStatus.Experighted,
-                Translation = "Przeterminowana",
+                EnumValue = (int)ParcelStatus.Expedited,
+                Translation = "Nadana",
                 TranslationLanguage = TranslationLanguage.Pl,
-                EnumName = nameof(ParcelStatus.Experighted),
+                EnumName = nameof(ParcelStatus.Expedited),
             },
             new()
             {
@@ -33,10 +33,10 @@ public class StaticEnumTranslations
             },
             new()
             {
-                EnumValue = (int)ParcelStatus.InMagazine,
+                EnumValue = (int)ParcelStatus.InWarehouse,
                 Translation = "W magazynie",
                 TranslationLanguage = TranslationLanguage.Pl,
-                EnumName = nameof(ParcelStatus.InMagazine),
+                EnumName = nameof(ParcelStatus.InWarehouse),
             },
             new()
             {
@@ -117,17 +117,17 @@ public class StaticEnumTranslations
         {
             new()
             {
-                EnumValue = (int)MaczkopatEventLogType.ValveOpened,
+                EnumValue = (int)MaczkopatEventLogType.LockerOpened,
                 Translation = "Otwarto skrytkę",
                 TranslationLanguage = TranslationLanguage.Pl,
-                EnumName = nameof(MaczkopatEventLogType.ValveOpened),
+                EnumName = nameof(MaczkopatEventLogType.LockerOpened),
             },
             new()
             {
-                EnumValue = (int)MaczkopatEventLogType.ValveClosed,
+                EnumValue = (int)MaczkopatEventLogType.LockerClosed,
                 Translation = "Zamknięto skrytkę",
                 TranslationLanguage = TranslationLanguage.Pl,
-                EnumName = nameof(MaczkopatEventLogType.ValveClosed),
+                EnumName = nameof(MaczkopatEventLogType.LockerClosed),
             },
             new()
             {
