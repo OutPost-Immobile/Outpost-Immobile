@@ -1,7 +1,12 @@
 using System.Reflection;
 using DispatchR.Extensions;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using OutpostImmobile.Api.Extensions;
 using OutpostImmobile.Core;
+using OutpostImmobile.Persistence;
+using OutpostImmobile.Persistence.Domain;
+using OutpostImmobile.Persistence.Seeding;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -28,6 +33,21 @@ builder.Services.AddCors(options =>
         });
 });
 
+var connStr =  builder.Configuration.GetConnectionString("DefaultConnection");
+builder.Services.AddNpgsql<OutpostImmobileDbContext>(connStr);
+
+builder.Services.AddIdentity<UserInternal, IdentityRole<Guid>>(options =>
+    {
+        options.Password.RequireDigit = false;
+        options.Password.RequireLowercase = false;
+        options.Password.RequireNonAlphanumeric = false;
+        options.Password.RequireUppercase = false;
+        options.Password.RequiredLength = 6;
+        options.User.RequireUniqueEmail = true;
+    })
+    .AddEntityFrameworkStores<OutpostImmobileDbContext>()
+    .AddDefaultTokenProviders();
+
 var app = builder.Build();
 
 //Tutaj mapujemy wszystkie endpointy
@@ -42,5 +62,13 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseCors("AllowAll");
+
+using (var scope = app.Services.CreateScope())
+{
+    var context = scope.ServiceProvider.GetRequiredService<OutpostImmobileDbContext>();
+    context.Database.Migrate();
+
+    await ApplicationSeeder.SeedAsync(context);
+}
 
 app.Run();
