@@ -1,0 +1,27 @@
+﻿using MailKit;
+using MailKit.Net.Smtp;
+using Communication.Options;
+using Microsoft.Extensions.Options;
+using MimeKit;
+
+namespace Communication.Services;
+
+public class MailService(IOptions<MailOptions> mailOptions)
+{
+    private readonly MailOptions _mailOptions = mailOptions.Value;
+
+    public void SendMessage(string mailAddress, string recipientName, string subject, string body)
+    {
+        var message = new MimeMessage();
+        message.From.Add(new MailboxAddress(_mailOptions.Sender, _mailOptions.SenderMailAddress));
+        message.To.Add(new MailboxAddress(recipientName, mailAddress));
+        message.Subject = subject;
+        message.Body = new TextPart("plain")  { Text = body };
+        using (var client = new SmtpClient()) {
+            client.Connect(_mailOptions.SmtpHost, _mailOptions.port, true);
+            client.Authenticate(_mailOptions.Sender, _mailOptions.SenderPassword);
+            client.Send(message);
+            client.Disconnect(true);
+        }
+    }
+}
