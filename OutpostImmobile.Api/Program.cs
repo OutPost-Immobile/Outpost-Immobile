@@ -6,6 +6,7 @@ using OutpostImmobile.Api.Extensions;
 using OutpostImmobile.Core;
 using OutpostImmobile.Persistence;
 using OutpostImmobile.Persistence.Domain;
+using OutpostImmobile.Persistence.Domain.Users;
 using OutpostImmobile.Persistence.Seeding;
 using Serilog;
 

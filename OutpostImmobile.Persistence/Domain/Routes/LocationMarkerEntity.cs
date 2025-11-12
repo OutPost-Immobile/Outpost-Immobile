@@ -1,4 +1,4 @@
-namespace OutpostImmobile.Persistence.Domain;
+namespace OutpostImmobile.Persistence.Domain.Routes;
 
 public class LocationMarkerEntity
 {

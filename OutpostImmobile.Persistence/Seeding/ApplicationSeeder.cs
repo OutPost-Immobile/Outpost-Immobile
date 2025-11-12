@@ -1,4 +1,5 @@
 using OutpostImmobile.Persistence.Domain.StaticEnums.Enums;
+using OutpostImmobile.Persistence.Seeding.Domain;
 using OutpostImmobile.Persistence.Seeding.StaticEnums;
 using OutpostImmobile.Persistence.Seeding.StaticEnums.EnumTranslations;
 
@@ -12,5 +13,8 @@ public class ApplicationSeeder
         await StaticEnumSeeder.SeedAsync<PayloadSize>(context, StaticEnumTranslations.GetPayloadSizeTranslations(), ct);
         await StaticEnumSeeder.SeedAsync<MaczkopatEventLogType>(context, StaticEnumTranslations.GetMaczkopatEventLogTypeTranslations(), ct);
         await StaticEnumSeeder.SeedAsync<ParcelEventLogType>(context, StaticEnumTranslations.GetParcelEventLogTypeTranslations(), ct);
+
+        await RoleSeeder.SeedRolesAsync(context, ct);
+        await UserExternalSeeder.SeedExternalUserAsync(context, ct);
     }
 }

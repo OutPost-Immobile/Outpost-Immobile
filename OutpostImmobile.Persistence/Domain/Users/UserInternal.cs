@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Identity;
 
-namespace OutpostImmobile.Persistence.Domain;
+namespace OutpostImmobile.Persistence.Domain.Users;
 
 public class UserInternal : IdentityUser<Guid>
 {

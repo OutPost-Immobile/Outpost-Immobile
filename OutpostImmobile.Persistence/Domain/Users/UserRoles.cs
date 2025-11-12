@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using OutpostImmobile.Persistence.Enums;
 
-namespace OutpostImmobile.Persistence.Domain;
+namespace OutpostImmobile.Persistence.Domain.Users;
 public class UserRoles
 {
     public Guid Id { get; }

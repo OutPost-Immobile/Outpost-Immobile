@@ -1,8 +1,6 @@
-using OutpostImmobile.Persistence.Domain.AuditableBase;
+namespace OutpostImmobile.Persistence.Domain.Users;
 
-namespace OutpostImmobile.Persistence.Domain;
-
-public class UserExternal : AuditableEntity
+public class UserExternal
 {
     public Guid Id { get; set; }
 
