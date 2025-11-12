@@ -16,6 +16,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\Communication\Communication.csproj" />
+      <ProjectReference Include="..\OutpostImmobile.Communication\OutpostImmobile.Communication.csproj" />
       <ProjectReference Include="..\OutpostImmobile.Persistence\OutpostImmobile.Persistence.csproj" />
     </ItemGroup>
 

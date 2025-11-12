@@ -1,5 +1,6 @@
 using Communication;
 using Microsoft.Extensions.DependencyInjection;
+using OutpostImmobile.Communication;
 
 namespace OutpostImmobile.Core;
 

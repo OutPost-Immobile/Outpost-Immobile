@@ -1,9 +1,10 @@
-﻿using MailKit.Net.Smtp;
-using Communication.Options;
+﻿using Communication.Options;
+using MailKit.Net.Smtp;
 using Microsoft.Extensions.Options;
 using MimeKit;
-using Communication.Interfaces;
-namespace Communication.Services;
+using OutpostImmobile.Communication.Interfaces;
+
+namespace OutpostImmobile.Communication.Services;
 
 public class MailService(IOptions<MailOptions> mailOptions) : IMailService
 {

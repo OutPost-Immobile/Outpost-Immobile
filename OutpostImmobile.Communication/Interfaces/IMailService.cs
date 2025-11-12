@@ -1,4 +1,4 @@
-﻿namespace Communication.Interfaces;
+﻿namespace OutpostImmobile.Communication.Interfaces;
 
 public interface IMailService
 {
