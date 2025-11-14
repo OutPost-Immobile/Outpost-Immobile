@@ -1,4 +1,5 @@
 using System.Reflection;
+using Communication.Options;
 using DispatchR.Extensions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -22,7 +23,6 @@ builder.Services.AddSerilog((context, configuration) =>
     configuration.ReadFrom.Configuration(builder.Configuration));
 
 builder.Services.AddCoreServices();
-
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll", x =>
@@ -46,7 +46,9 @@ builder.Services.AddIdentity<UserInternal, IdentityRole<Guid>>(options =>
     })
     .AddEntityFrameworkStores<OutpostImmobileDbContext>()
     .AddDefaultTokenProviders();
-
+builder.Services.Configure<MailOptions>(
+    builder.Configuration.GetSection("MailOptions")
+);
 var app = builder.Build();
 
 //Tutaj mapujemy wszystkie endpointy

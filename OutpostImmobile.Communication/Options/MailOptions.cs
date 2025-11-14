@@ -1,13 +1,19 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 using Microsoft.Extensions.Options;
 
 namespace Communication.Options;
 
 public class MailOptions
 {
-    public string Sender {  get; set; } = string.Empty; 
-    public string SenderMailAddress {  get; set; } = string.Empty;
-    public string SenderPassword { get; set; } =  string.Empty;
-    public string SmtpHost {  get; set; } =  string.Empty;
-    public int port {get ; set; }
+    [Required]
+    public string Sender { get; init; } = string.Empty; 
+    [Required]
+    public string SenderMailAddress { get; init; } = string.Empty;
+    [Required]
+    public string SenderPassword { get; init; } = string.Empty;
+    [Required]
+    public string SmtpHost { get; init; } = string.Empty;
+    [Required]
+    public int Port { get ; init; }
 }
