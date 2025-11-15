@@ -14,6 +14,7 @@ public class ParcelSeeder
         }
 
         var externalUsers = await context.UsersExternal.ToListAsync(ct);
+        var maczkopats = await context.Maczkopats.ToListAsync(ct);
         
         var faker = new Faker<ParcelEntity>();
 
@@ -22,6 +23,11 @@ public class ParcelSeeder
             .RuleFor(x => x.CreatedAt, f => DateTime.UtcNow)
             .RuleFor(x => x.UpdatedAt, f => DateTime.UtcNow)
             .RuleFor(x => x.FromUserExternalId, f => f.PickRandom(externalUsers.Select(x => x.Id)))
-            .RuleFor(x => x.ReceiverUserExternalId, f => f.PickRandom(externalUsers.Select(x => x.Id)));
+            .RuleFor(x => x.ReceiverUserExternalId, f => f.PickRandom(externalUsers.Select(x => x.Id)))
+            .RuleFor(x => x.Maczkopat, f => f.PickRandom(maczkopats));
+        
+        var parcels = faker.Generate(10000);
+        await context.AddRangeAsync(parcels, ct);
+        await context.SaveChangesAsync(ct);
     }
 }

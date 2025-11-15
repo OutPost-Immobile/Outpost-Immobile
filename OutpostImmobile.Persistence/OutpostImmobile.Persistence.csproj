@@ -12,6 +12,7 @@
       <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="9.0.9" />
       <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.9" />
       <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4" />
+      <PackageReference Include="Sulmar.Bogus.Extensions.Poland" Version="1.0.0" />
       <PackageReference Include="System.Globalization" Version="4.3.0" />
       <PackageReference Include="System.Globalization.Extensions" Version="4.3.0" />
     </ItemGroup>

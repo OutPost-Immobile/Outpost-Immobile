@@ -16,5 +16,10 @@ public class ApplicationSeeder
 
         await RoleSeeder.SeedRolesAsync(context, ct);
         await UserExternalSeeder.SeedExternalUserAsync(context, ct);
+        await AreaSeeder.SeedAreasAsync(context, ct);
+        await AddressSeeder.SeedAddressesAsync(context, ct);
+        await MaczkopatSeeder.SeedMaczkopatsAsync(context, ct);
+        await ParcelSeeder.SeedParcelsAsync(context, ct);
+        await NumberTemplateSeeder.SeedNumberTemplatesAsync(context, ct);
     }
 }
