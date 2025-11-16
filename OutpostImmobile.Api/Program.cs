@@ -7,6 +7,7 @@ using OutpostImmobile.Core;
 using OutpostImmobile.Persistence;
 using OutpostImmobile.Persistence.Domain;
 using OutpostImmobile.Persistence.Seeding;
+using OutpostImmobile.Communication.Options;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -22,7 +23,6 @@ builder.Services.AddSerilog((context, configuration) =>
     configuration.ReadFrom.Configuration(builder.Configuration));
 
 builder.Services.AddCoreServices();
-
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll", x =>
@@ -35,7 +35,6 @@ builder.Services.AddCors(options =>
 
 var connStr =  builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddNpgsql<OutpostImmobileDbContext>(connStr);
-
 builder.Services.AddIdentity<UserInternal, IdentityRole<Guid>>(options =>
     {
         options.Password.RequireDigit = false;
@@ -47,7 +46,9 @@ builder.Services.AddIdentity<UserInternal, IdentityRole<Guid>>(options =>
     })
     .AddEntityFrameworkStores<OutpostImmobileDbContext>()
     .AddDefaultTokenProviders();
-
+builder.Services.Configure<MailOptions>(
+    builder.Configuration.GetSection("MailOptions")
+);
 var app = builder.Build();
 
 //Tutaj mapujemy wszystkie endpointy
