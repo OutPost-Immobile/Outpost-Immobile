@@ -1,5 +1,4 @@
 using System.Reflection;
-using Communication.Options;
 using DispatchR.Extensions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -8,6 +7,7 @@ using OutpostImmobile.Core;
 using OutpostImmobile.Persistence;
 using OutpostImmobile.Persistence.Domain;
 using OutpostImmobile.Persistence.Seeding;
+using OutpostImmobile.Communication.Options;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);

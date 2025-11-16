@@ -1,6 +1,8 @@
-﻿namespace OutpostImmobile.Communication.Interfaces;
+﻿using OutpostImmobile.Communication.Services;
+
+namespace OutpostImmobile.Communication.Interfaces;
 
 public interface IMailService
 {
-    public void SendMessage(string mailAddress, string recipientName, string subject, string body);
+    public void SendMessage(SendEmailRequest request);
 }

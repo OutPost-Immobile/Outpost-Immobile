@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using Microsoft.Extensions.Options;
 
-namespace Communication.Options;
+namespace OutpostImmobile.Communication.Options;
 
 public class MailOptions
 {

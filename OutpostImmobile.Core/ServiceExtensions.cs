@@ -1,4 +1,3 @@
-using Communication;
 using Microsoft.Extensions.DependencyInjection;
 using OutpostImmobile.Communication;
 
