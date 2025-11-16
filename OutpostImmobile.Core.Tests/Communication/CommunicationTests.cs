@@ -10,6 +10,7 @@ public class Tests
     [SetUp]
     public void Setup()
     {
+        // Use data from appsetting.json file
         var config = new ConfigurationBuilder()
             .AddJsonFile("appsettings.json")
             .Build();
