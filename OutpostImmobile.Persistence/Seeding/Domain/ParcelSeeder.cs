@@ -24,7 +24,8 @@ public class ParcelSeeder
             .RuleFor(x => x.UpdatedAt, f => DateTime.UtcNow)
             .RuleFor(x => x.FromUserExternalId, f => f.PickRandom(externalUsers.Select(x => x.Id)))
             .RuleFor(x => x.ReceiverUserExternalId, f => f.PickRandom(externalUsers.Select(x => x.Id)))
-            .RuleFor(x => x.Maczkopat, f => f.PickRandom(maczkopats));
+            .RuleFor(x => x.Maczkopat, f => f.PickRandom(maczkopats))
+            .RuleFor(x => x.FriendlyId, (faker, entity) => $"{entity.Maczkopat.Code}-{faker.IndexFaker}");
         
         var parcels = faker.Generate(10000);
         await context.AddRangeAsync(parcels, ct);
