@@ -9,6 +9,7 @@ using OutpostImmobile.Persistence.Domain;
 using OutpostImmobile.Persistence.Domain.Users;
 using OutpostImmobile.Persistence.Interceptors;
 using OutpostImmobile.Persistence.Seeding;
+using OutpostImmobile.Communication.Options;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -20,13 +21,11 @@ builder.Services.AddDispatchR(options =>
 {
     options.Assemblies.Add(Assembly.Load(builder.Configuration["DispatchR:CoreAssembly"]));
 });
+
 builder.Services.AddSerilog((context, configuration) =>
     configuration.ReadFrom.Configuration(builder.Configuration));
 
-builder.Services
-    .AddCoreServices()
-    .AddSingleton<AuditableEntityInterceptor>();
-
+builder.Services.AddCoreServices();
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll", x =>
@@ -38,6 +37,7 @@ builder.Services.AddCors(options =>
 });
 
 var connStr =  builder.Configuration.GetConnectionString("DefaultConnection");
+
 builder.Services.AddDbContext<OutpostImmobileDbContext>((sp, options) => options
         .UseNpgsql(connStr)
         .AddInterceptors(sp.GetRequiredService<AuditableEntityInterceptor>()));
@@ -53,7 +53,9 @@ builder.Services.AddIdentity<UserInternal, IdentityRole<Guid>>(options =>
     })
     .AddEntityFrameworkStores<OutpostImmobileDbContext>()
     .AddDefaultTokenProviders();
-
+builder.Services.Configure<MailOptions>(
+    builder.Configuration.GetSection("MailOptions")
+);
 var app = builder.Build();
 
 //Tutaj mapujemy wszystkie endpointy
