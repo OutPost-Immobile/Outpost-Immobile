@@ -1,6 +1,6 @@
 using OutpostImmobile.Persistence.Domain.AuditableBase;
 
-namespace OutpostImmobile.Persistence.Domain;
+namespace OutpostImmobile.Persistence.Domain.Routes;
 
 public class RouteEntity : AuditableEntity
 {

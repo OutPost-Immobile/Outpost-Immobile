@@ -7,7 +7,7 @@ public class MaczkopatEntity : AuditableEntity
 {
     public Guid Id { get; set; }
 
-    public required string FriendlyId { get; set; }
+    public required string Code { get; set; }
     
     public long AreaId { get; set; }
     public AreaEntity Area { get; set; }

@@ -1,3 +1,5 @@
+using OutpostImmobile.Persistence.Domain.Users;
+
 namespace OutpostImmobile.Persistence.Domain.AuditableBase;
 
 public class AuditableEntity

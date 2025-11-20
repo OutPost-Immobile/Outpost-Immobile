@@ -6,6 +6,8 @@ using OutpostImmobile.Api.Extensions;
 using OutpostImmobile.Core;
 using OutpostImmobile.Persistence;
 using OutpostImmobile.Persistence.Domain;
+using OutpostImmobile.Persistence.Domain.Users;
+using OutpostImmobile.Persistence.Interceptors;
 using OutpostImmobile.Persistence.Seeding;
 using OutpostImmobile.Communication.Options;
 using Serilog;
@@ -19,6 +21,7 @@ builder.Services.AddDispatchR(options =>
 {
     options.Assemblies.Add(Assembly.Load(builder.Configuration["DispatchR:CoreAssembly"]));
 });
+
 builder.Services.AddSerilog((context, configuration) =>
     configuration.ReadFrom.Configuration(builder.Configuration));
 
@@ -34,7 +37,11 @@ builder.Services.AddCors(options =>
 });
 
 var connStr =  builder.Configuration.GetConnectionString("DefaultConnection");
-builder.Services.AddNpgsql<OutpostImmobileDbContext>(connStr);
+
+builder.Services.AddDbContext<OutpostImmobileDbContext>((sp, options) => options
+        .UseNpgsql(connStr)
+        .AddInterceptors(sp.GetRequiredService<AuditableEntityInterceptor>()));
+
 builder.Services.AddIdentity<UserInternal, IdentityRole<Guid>>(options =>
     {
         options.Password.RequireDigit = false;
