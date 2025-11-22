@@ -13,6 +13,10 @@ Dopiero kiedy CI/CD przejdzie oraz któryś znasz puści to po CR, to bardzo ła
 
 W momencie kiedy są jakieś konflikty, to proszę nie robić force pushy, tylko ładnie domerdżować maina, rozwiązać konflikty i dopiero merdżować.
 
+## Dokumentacja do MUI
+
+https://mui.com/material-ui/getting-started/
+
 ## Skryptowanie migracji:
 
 ```
