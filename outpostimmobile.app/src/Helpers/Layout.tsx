@@ -1,4 +1,4 @@
-import {AppBar, CssBaseline, IconButton, Toolbar, Typography} from "@mui/material";
+import {AppBar, CssBaseline, Divider, IconButton, Toolbar, Typography} from "@mui/material";
 import { Outlet } from "react-router";
 import {DrawerMenu} from "../Components/DrawerMenu.tsx";
 import MenuIcon from '@mui/icons-material/Menu';
@@ -12,7 +12,6 @@ export const Layout = () => {
     const [drawerOpen, setDrawerOpen] = useState(false);
 
     const toggleDrawer = (open: boolean) => (event) => {
-        // Prevent closing if keys like Tab/Shift are pressed
         if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
             return;
         }
@@ -50,6 +49,15 @@ export const Layout = () => {
                                    <Typography variant="h6" style={{display: 'inline-block', verticalAlign: 'middle', color: 'black'}}>Outpost Immobile</Typography>
                                </Box>
                            </Link>
+                            // Nieresponsywne
+                           <Divider orientation="vertical" style={{width: 1300, visibility: 'hidden'}} flexItem/>
+                           <Typography variant="h6" style={
+                               {display: 'inline-block',
+                                verticalAlign: 'middle',
+                                color: 'black',
+                                textAlign: 'right'}}>
+                               Placeholder na konto klienta
+                           </Typography>
                         </Toolbar>
                     </AppBar>
                 </div>

@@ -4,13 +4,13 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a7ae6588-f897-42cb-8b3d-c05bb5052ce2" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/Helpers/Layout.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Helpers/RoutesProvider.tsx" afterDir="false" />
+    <list default="true" id="a7ae6588-f897-42cb-8b3d-c05bb5052ce2" name="Changes" comment="Add missing elements and create basic layout">
       <change beforePath="$PROJECT_DIR$/../.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/../.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../README.md" beforeDir="false" afterPath="$PROJECT_DIR$/../README.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/App.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/App.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Helpers/Layout.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/Helpers/Layout.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Helpers/RoutesProvider.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/Helpers/RoutesProvider.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Pages/LandingPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/Pages/LandingPage.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -45,6 +45,9 @@
     "accountId": "61d58d56-e357-476a-a9c3-38153b6fdfd4"
   }
 }]]></component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="CurrentFile" />
+  </component>
   <component name="ProjectColorInfo">{
   &quot;customColor&quot;: &quot;&quot;,
   &quot;associatedIndex&quot;: 3
@@ -92,12 +95,25 @@
       <updated>1760299375479</updated>
       <workItem from="1760299382636" duration="4788000" />
       <workItem from="1760375490224" duration="552000" />
-      <workItem from="1763834687394" duration="12999000" />
+      <workItem from="1763834687394" duration="15350000" />
     </task>
+    <task id="LOCAL-00001" summary="Add missing elements and create basic layout">
+      <option name="closed" value="true" />
+      <created>1763851226029</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1763851226029</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Add missing elements and create basic layout" />
+    <option name="LAST_COMMIT_MESSAGE" value="Add missing elements and create basic layout" />
   </component>
   <component name="github-copilot-workspace">
     <instructionFileLocations>
