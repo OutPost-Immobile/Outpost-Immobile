@@ -49,7 +49,7 @@ export const Layout = () => {
                                    <Typography variant="h6" style={{display: 'inline-block', verticalAlign: 'middle', color: 'black'}}>Outpost Immobile</Typography>
                                </Box>
                            </Link>
-                            // Nieresponsywne
+                           {/* Nieresponsywne*/}
                            <Divider orientation="vertical" style={{width: 1300, visibility: 'hidden'}} flexItem/>
                            <Typography variant="h6" style={
                                {display: 'inline-block',
