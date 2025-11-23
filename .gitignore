@@ -308,8 +308,6 @@ node_modules/
 *.dsp
 
 # Visual Studio 6 technical files
-*.ncb
-*.aps
 
 # Visual Studio LightSwitch build output
 **/*.HTMLClient/GeneratedArtifacts
@@ -492,7 +490,7 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-outpostimmobile.app/node_modules
+./outpostimmobile.app/node_modules
 ./outpostimmobile.app/dist
 ./outpostimmobile.app/dist-ssr
 *.local
