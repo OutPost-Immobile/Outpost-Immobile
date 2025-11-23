@@ -1,7 +1,7 @@
 export type TypedResponse<T> = {
     data: T,
-    Errors: string | null,
-    HttpStatusCode: number
+    errors: string | null,
+    httpStatusCode: number
 }
 
 export type PingDto = {

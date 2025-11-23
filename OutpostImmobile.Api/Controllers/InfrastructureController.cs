@@ -1,9 +1,8 @@
 using System.Net;
-using DispatchR;
 using Microsoft.AspNetCore.Mvc;
 using OutpostImmobile.Api.Response;
-using OutpostImmobile.Core.Infrastructure.Queries;
-using OutpostImmobile.Core.Infrastructure.QueryResults;
+using OutpostImmobile.Core.Interfaces;
+using OutpostImmobile.Core.Models;
 
 namespace OutpostImmobile.Api.Controllers;
 
@@ -20,9 +19,9 @@ public static class InfrastructureController
         return routes;
     }
 
-    private static async Task<TypedResponse<PingDto>> GetAsync([FromServices] IMediator mediator, CancellationToken ct)
+    private static async Task<TypedResponse<PingDto>> GetAsync([FromServices] IInfrastructureService service, CancellationToken ct)
     {
-        var data = await mediator.Send(new InfrastructureQuery(), ct);
+        var data = await service.PingAsync();
 
         return new TypedResponse<PingDto>
         {

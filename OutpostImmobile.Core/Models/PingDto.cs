@@ -1,4 +1,4 @@
-namespace OutpostImmobile.Core.Infrastructure.QueryResults;
+namespace OutpostImmobile.Core.Models;
 
 public record PingDto
 {
