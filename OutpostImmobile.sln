@@ -25,6 +25,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Features", "Features", "{A6
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OutpostImmobile.Core.Paralizator", "OutpostImmobile.Core.Paralizator\OutpostImmobile.Core.Paralizator.csproj", "{5C0E3EC0-9EE7-4DDA-BA15-481676C5725C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OutpostImmobile.Core.Integrations.KMZB", "OutpostImmobile.Core.Integrations.KMZB\OutpostImmobile.Core.Integrations.KMZB.csproj", "{090DEFDD-57E0-4C6F-BA09-155674D29B80}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -62,6 +64,10 @@ Global
 		{5C0E3EC0-9EE7-4DDA-BA15-481676C5725C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5C0E3EC0-9EE7-4DDA-BA15-481676C5725C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5C0E3EC0-9EE7-4DDA-BA15-481676C5725C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{090DEFDD-57E0-4C6F-BA09-155674D29B80}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{090DEFDD-57E0-4C6F-BA09-155674D29B80}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{090DEFDD-57E0-4C6F-BA09-155674D29B80}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{090DEFDD-57E0-4C6F-BA09-155674D29B80}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{B506D8CE-422A-4E41-B92C-35816C8F4EE9} = {801454C3-7F8B-4129-958D-584975931632}
@@ -71,5 +77,6 @@ Global
 		{D52DA0A4-5698-4CE1-AA40-21D1B91F1A35} = {1EDAF0ED-EB2E-4635-9761-BA350DBAF8A9}
 		{A6E47C46-F622-4BA7-914B-19FD30EF9FB0} = {1EDAF0ED-EB2E-4635-9761-BA350DBAF8A9}
 		{5C0E3EC0-9EE7-4DDA-BA15-481676C5725C} = {A6E47C46-F622-4BA7-914B-19FD30EF9FB0}
+		{090DEFDD-57E0-4C6F-BA09-155674D29B80} = {3A13C2A8-F132-4564-AFB6-76588A2482D2}
 	EndGlobalSection
 EndGlobal

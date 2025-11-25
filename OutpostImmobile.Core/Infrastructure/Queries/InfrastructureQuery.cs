@@ -1,4 +1,3 @@
-using System.Net.NetworkInformation;
 using DispatchR.Abstractions.Send;
 using OutpostImmobile.Core.Infrastructure.QueryResults;
 
