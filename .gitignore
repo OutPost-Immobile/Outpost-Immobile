@@ -490,9 +490,6 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-./outpostimmobile.app/node_modules
-./outpostimmobile.app/dist
-./outpostimmobile.app/dist-ssr
 *.local
 
 # Editor directories and files
