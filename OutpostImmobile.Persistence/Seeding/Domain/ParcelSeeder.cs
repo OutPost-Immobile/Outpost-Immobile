@@ -16,7 +16,7 @@ public class ParcelSeeder
         var externalUsers = await context.UsersExternal.ToListAsync(ct);
         var maczkopats = await context.Maczkopats.ToListAsync(ct);
         
-        var faker = new Faker<ParcelEntity>();
+        var faker = new Faker<ParcelEntity>("pl");
 
         faker
             .RuleFor(x => x.Product, f => f.Commerce.Product())

@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
+using NetTopologySuite.Geometries;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
@@ -12,6 +13,29 @@ namespace OutpostImmobile.Persistence.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.AlterDatabase()
+                .Annotation("Npgsql:PostgresExtension:pgrouting", ",,")
+                .Annotation("Npgsql:PostgresExtension:postgis", ",,");
+
+            migrationBuilder.CreateTable(
+                name: "Addresses",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Alias = table.Column<string>(type: "text", nullable: false),
+                    City = table.Column<string>(type: "text", nullable: false),
+                    PostalCode = table.Column<string>(type: "text", nullable: false),
+                    Street = table.Column<string>(type: "text", nullable: false),
+                    CountryCode = table.Column<string>(type: "text", nullable: false),
+                    BuildingNumber = table.Column<int>(type: "integer", nullable: false),
+                    Location = table.Column<Point>(type: "geometry", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Addresses", x => x.Id);
+                });
+
             migrationBuilder.CreateTable(
                 name: "Areas",
                 columns: table => new
@@ -23,19 +47,6 @@ namespace OutpostImmobile.Persistence.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Areas", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Locations",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    Longitude = table.Column<int>(type: "integer", nullable: false),
-                    Latitude = table.Column<int>(type: "integer", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Locations", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -59,31 +70,6 @@ namespace OutpostImmobile.Persistence.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_UserRoles", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Addresses",
-                columns: table => new
-                {
-                    Id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Alias = table.Column<string>(type: "text", nullable: false),
-                    City = table.Column<string>(type: "text", nullable: false),
-                    PostalCode = table.Column<string>(type: "text", nullable: false),
-                    Street = table.Column<string>(type: "text", nullable: false),
-                    CountryCode = table.Column<string>(type: "text", nullable: false),
-                    BuildingNumber = table.Column<int>(type: "integer", nullable: false),
-                    LocationMarkerId = table.Column<Guid>(type: "uuid", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Addresses", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Addresses_Locations_LocationMarkerId",
-                        column: x => x.LocationMarkerId,
-                        principalTable: "Locations",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -150,7 +136,7 @@ namespace OutpostImmobile.Persistence.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    FriendlyId = table.Column<string>(type: "text", nullable: false),
+                    Code = table.Column<string>(type: "text", nullable: false),
                     AreaId = table.Column<long>(type: "bigint", nullable: false),
                     AddressId = table.Column<long>(type: "bigint", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
@@ -187,6 +173,8 @@ namespace OutpostImmobile.Persistence.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     StartAddressId = table.Column<long>(type: "bigint", nullable: false),
                     EndAddressId = table.Column<long>(type: "bigint", nullable: false),
+                    Distace = table.Column<long>(type: "bigint", nullable: false),
+                    Locations = table.Column<Point[]>(type: "geometry[]", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     CreatedById = table.Column<Guid>(type: "uuid", nullable: true)
@@ -210,19 +198,11 @@ namespace OutpostImmobile.Persistence.Migrations
                     PhoneNumber = table.Column<string>(type: "text", nullable: false),
                     Email = table.Column<string>(type: "text", nullable: false),
                     InternalUserId = table.Column<Guid>(type: "uuid", nullable: true),
-                    UserInternalId = table.Column<Guid>(type: "uuid", nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    CreatedById = table.Column<Guid>(type: "uuid", nullable: true)
+                    UserInternalId = table.Column<Guid>(type: "uuid", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_UsersExternal", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_UsersExternal_UsersInternal_CreatedById",
-                        column: x => x.CreatedById,
-                        principalTable: "UsersInternal",
-                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_UsersExternal_UsersInternal_UserInternalId",
                         column: x => x.UserInternalId,
@@ -231,27 +211,31 @@ namespace OutpostImmobile.Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "LocationMarkerEntityRouteEntity",
+                name: "MaczkopatEventLogs",
                 columns: table => new
                 {
-                    LocationMarkerEntitiesId = table.Column<Guid>(type: "uuid", nullable: false),
-                    RoutesId = table.Column<long>(type: "bigint", nullable: false)
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    EventLogType = table.Column<int>(type: "integer", nullable: false),
+                    LogMessage = table.Column<string>(type: "text", nullable: true),
+                    MaczkopatId = table.Column<Guid>(type: "uuid", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    CreatedById = table.Column<Guid>(type: "uuid", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_LocationMarkerEntityRouteEntity", x => new { x.LocationMarkerEntitiesId, x.RoutesId });
+                    table.PrimaryKey("PK_MaczkopatEventLogs", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_LocationMarkerEntityRouteEntity_Locations_LocationMarkerEnt~",
-                        column: x => x.LocationMarkerEntitiesId,
-                        principalTable: "Locations",
+                        name: "FK_MaczkopatEventLogs_Maczkopats_MaczkopatId",
+                        column: x => x.MaczkopatId,
+                        principalTable: "Maczkopats",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_LocationMarkerEntityRouteEntity_Routes_RoutesId",
-                        column: x => x.RoutesId,
-                        principalTable: "Routes",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        name: "FK_MaczkopatEventLogs_UsersInternal_CreatedById",
+                        column: x => x.CreatedById,
+                        principalTable: "UsersInternal",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -288,9 +272,10 @@ namespace OutpostImmobile.Persistence.Migrations
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     FriendlyId = table.Column<string>(type: "text", nullable: false),
+                    Product = table.Column<string>(type: "text", nullable: false),
                     FromUserExternalId = table.Column<Guid>(type: "uuid", nullable: true),
                     ReceiverUserExternalId = table.Column<Guid>(type: "uuid", nullable: true),
-                    MaczkopatEntityId = table.Column<Guid>(type: "uuid", nullable: true),
+                    MaczkopatEntityId = table.Column<Guid>(type: "uuid", nullable: false),
                     UserExternalId = table.Column<Guid>(type: "uuid", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
@@ -303,7 +288,8 @@ namespace OutpostImmobile.Persistence.Migrations
                         name: "FK_Parcels_Maczkopats_MaczkopatEntityId",
                         column: x => x.MaczkopatEntityId,
                         principalTable: "Maczkopats",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Parcels_UsersExternal_UserExternalId",
                         column: x => x.UserExternalId,
@@ -400,11 +386,6 @@ namespace OutpostImmobile.Persistence.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Addresses_LocationMarkerId",
-                table: "Addresses",
-                column: "LocationMarkerId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_CommunicationEventLogs_CreatedById",
                 table: "CommunicationEventLogs",
                 column: "CreatedById");
@@ -415,9 +396,14 @@ namespace OutpostImmobile.Persistence.Migrations
                 column: "ParcelId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_LocationMarkerEntityRouteEntity_RoutesId",
-                table: "LocationMarkerEntityRouteEntity",
-                column: "RoutesId");
+                name: "IX_MaczkopatEventLogs_CreatedById",
+                table: "MaczkopatEventLogs",
+                column: "CreatedById");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MaczkopatEventLogs_MaczkopatId",
+                table: "MaczkopatEventLogs",
+                column: "MaczkopatId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Maczkopats_AddressId",
@@ -485,11 +471,6 @@ namespace OutpostImmobile.Persistence.Migrations
                 column: "StaticEnumEntityEnumName");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UsersExternal_CreatedById",
-                table: "UsersExternal",
-                column: "CreatedById");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_UsersExternal_UserInternalId",
                 table: "UsersExternal",
                 column: "UserInternalId");
@@ -517,7 +498,7 @@ namespace OutpostImmobile.Persistence.Migrations
                 name: "CommunicationEventLogs");
 
             migrationBuilder.DropTable(
-                name: "LocationMarkerEntityRouteEntity");
+                name: "MaczkopatEventLogs");
 
             migrationBuilder.DropTable(
                 name: "NumberTemplates");
@@ -554,9 +535,6 @@ namespace OutpostImmobile.Persistence.Migrations
 
             migrationBuilder.DropTable(
                 name: "UsersInternal");
-
-            migrationBuilder.DropTable(
-                name: "Locations");
 
             migrationBuilder.DropTable(
                 name: "UserRoles");
