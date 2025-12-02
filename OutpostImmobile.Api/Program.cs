@@ -82,7 +82,7 @@ public class Program
         using (var scope = app.Services.CreateScope())
         {
             var context = scope.ServiceProvider.GetRequiredService<OutpostImmobileDbContext>();
-            context.Database.Migrate();
+            await context.Database.MigrateAsync();
             
             await ApplicationSeeder.SeedAsync(context);
         }

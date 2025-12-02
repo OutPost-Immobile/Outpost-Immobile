@@ -1,0 +1,31 @@
+tables:
+  roads:
+    type: linestring
+    columns:
+    - name: osm_id
+      type: id
+    - name: highway
+      type: string
+    - name: name
+      type: string
+    - key: maxspeed
+      name: maxspeed
+      type: string
+    - key: oneway
+      name: oneway
+      type: bool
+    mapping:
+      highway:
+      - motorway
+      - motorway_link
+      - trunk
+      - trunk_link
+      - primary
+      - primary_link
+      - secondary
+      - secondary_link
+      - tertiary
+      - tertiary_link
+      - residential
+      - service
+      - unclassified

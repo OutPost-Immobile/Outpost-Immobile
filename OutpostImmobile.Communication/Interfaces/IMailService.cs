@@ -4,5 +4,5 @@ namespace OutpostImmobile.Communication.Interfaces;
 
 public interface IMailService
 {
-    public void SendMessage(SendEmailRequest request);
+    public Task SendMessage(SendEmailRequest request);
 }

@@ -14,8 +14,8 @@ public class Tests
         var config = new ConfigurationBuilder()
             .AddJsonFile("appsettings.json")
             .Build();
-        var _mailOptions = config.GetSection("MailOptions").Get<MailOptions>();
-        var options = Microsoft.Extensions.Options.Options.Create(_mailOptions);
+        var mailOptions = config.GetSection("MailOptions").Get<MailOptions>();
+        var options = Microsoft.Extensions.Options.Options.Create(mailOptions);
         _mailService = new MailService(options);
     }
     [Test]
@@ -28,7 +28,7 @@ public class Tests
             MailSubject = "The king must die",
             MailBody = "Some men are better staying sailors"
         };
-        _mailService.SendMessage(request);
+        _ = _mailService.SendMessage(request);
         Assert.Pass();
     }
 }
