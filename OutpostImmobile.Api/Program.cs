@@ -29,10 +29,6 @@ public class Program
         builder.Services.AddSerilog((context, configuration) =>
             configuration.ReadFrom.Configuration(builder.Configuration));
         
-        builder.Services
-            .AddSingleton<AuditableEntityInterceptor>()
-            .AddCoreServices();
-        
         builder.Services.AddCors(options =>
         {
             options.AddPolicy("AllowAll", x =>
@@ -45,25 +41,9 @@ public class Program
         
         var connStr = builder.Configuration.GetConnectionString("DefaultConnection");
 
-        builder.Services.AddDbContext<OutpostImmobileDbContext>((sp, options) => options
-                .UseNpgsql(connStr, o => o.UseNetTopologySuite())
-                .AddInterceptors(sp.GetRequiredService<AuditableEntityInterceptor>()));
-        
-        builder.Services.AddIdentity<UserInternal, IdentityRole<Guid>>(options =>
-            {
-                options.Password.RequireDigit = false;
-                options.Password.RequireLowercase = false;
-                options.Password.RequireNonAlphanumeric = false;
-                options.Password.RequireUppercase = false;
-                options.Password.RequiredLength = 6;
-                options.User.RequireUniqueEmail = true;
-            })
-            .AddEntityFrameworkStores<OutpostImmobileDbContext>()
-            .AddDefaultTokenProviders();
-        
-        builder.Services.Configure<MailOptions>(
-            builder.Configuration.GetSection("MailOptions")
-        );
+        builder.Services
+            .AddCoreServices(builder.Configuration)
+            .AddPersistence(connStr);
         
         var app = builder.Build();
         

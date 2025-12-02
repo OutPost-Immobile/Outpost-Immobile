@@ -1,13 +1,17 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using OutpostImmobile.Communication.Interfaces;
+using OutpostImmobile.Communication.Options;
 using OutpostImmobile.Communication.Services;
 
 namespace OutpostImmobile.Communication;
 
 public static class ServiceExtensions
 {
-    public static IServiceCollection AddCommunicationServices(this IServiceCollection services)
+    public static IServiceCollection AddCommunicationServices(this IServiceCollection services, IConfigurationManager configuration)
     {
+        services.Configure<MailOptions>(c => configuration.GetSection("MailOptions"));
+        
         services.AddTransient<IMailService, MailService>();
         
         return services;
