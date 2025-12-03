@@ -12,19 +12,19 @@ public class ParcelEntity : AuditableEntity
     public string FriendlyId { get; set; }
     public required string Product { get; set; }
     public ParcelStatus? Status { get; set; }
-    
+
     public Guid? FromUserExternalId { get; set; }
-    
+
     public Guid? ReceiverUserExternalId { get; set; }
-    
+
     public Guid MaczkopatEntityId { get; set; }
     public MaczkopatEntity Maczkopat { get; set; }
-    
+
     public ICollection<ParcelEventLogEntity> ParcelEventLogs { get; set; }
     public ICollection<CommunicationEventLogEntity> CommunicationEventLogs { get; set; }
 }
 
-internal class ParcelEntityConfiguration :  IEntityTypeConfiguration<ParcelEntity>
+internal class ParcelEntityConfiguration : IEntityTypeConfiguration<ParcelEntity>
 {
     public void Configure(EntityTypeBuilder<ParcelEntity> builder)
     {

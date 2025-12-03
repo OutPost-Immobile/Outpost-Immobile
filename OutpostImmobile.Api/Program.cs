@@ -5,8 +5,6 @@ using Microsoft.EntityFrameworkCore;
 using OutpostImmobile.Api.Extensions;
 using OutpostImmobile.Core;
 using OutpostImmobile.Persistence;
-using OutpostImmobile.Persistence.Domain.Users;
-using OutpostImmobile.Persistence.Interceptors;
 using OutpostImmobile.Persistence.Seeding;
 using OutpostImmobile.Communication.Options;
 using Serilog;

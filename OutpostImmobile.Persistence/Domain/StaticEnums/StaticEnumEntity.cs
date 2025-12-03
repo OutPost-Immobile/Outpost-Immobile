@@ -6,8 +6,8 @@ namespace OutpostImmobile.Persistence.Domain.StaticEnums;
 
 public class StaticEnumEntity
 {
-    [Key]
-    public string EnumName { get; set; }
+    [Key] public string EnumName { get; set; }
+
     public ICollection<StaticEnumTranslationEntity> Translations { get; set; }
 }
 

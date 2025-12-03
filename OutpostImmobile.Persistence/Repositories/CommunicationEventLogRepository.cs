@@ -10,7 +10,8 @@ public class CommunicationEventLogRepository : ICommunicationEventLogRepository
     private readonly OutpostImmobileDbContext _context;
     private readonly IEventLogFactory _eventLogFactory;
 
-    public CommunicationEventLogRepository(OutpostImmobileDbContext context, CommunicationsEventLogFactory evevEventLogFactory)
+    public CommunicationEventLogRepository(OutpostImmobileDbContext context,
+        CommunicationsEventLogFactory evevEventLogFactory)
     {
         _context = context;
         _eventLogFactory = evevEventLogFactory;

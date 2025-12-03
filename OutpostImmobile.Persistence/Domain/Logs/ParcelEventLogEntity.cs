@@ -8,7 +8,7 @@ public class ParcelEventLogEntity : EventLogBase
 
     public required string? Message { get; set; }
     public required ParcelEventLogType ParcelEventLogType { get; set; }
-    
+
     public Guid ParcelId { get; set; }
     public ParcelEntity Parcel { get; set; }
 }

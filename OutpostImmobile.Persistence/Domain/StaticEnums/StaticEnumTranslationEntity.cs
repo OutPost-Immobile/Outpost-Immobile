@@ -10,7 +10,7 @@ public class StaticEnumTranslationEntity
     public required string EnumName { get; set; }
     public required string Translation { get; set; }
     public required TranslationLanguage TranslationLanguage { get; init; }
-    
+
     public StaticEnumEntity EnumEntity { get; set; }
 }
 

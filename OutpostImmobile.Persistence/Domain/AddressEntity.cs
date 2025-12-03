@@ -12,6 +12,6 @@ public class AddressEntity
     public string Street { get; set; }
     public string CountryCode { get; set; }
     public int BuildingNumber { get; set; }
-    
+
     public Point Location { get; set; }
 }
