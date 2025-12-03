@@ -1,7 +1,7 @@
 using NetTopologySuite.Geometries;
 using OutpostImmobile.Persistence.Domain.AuditableBase;
 
-namespace OutpostImmobile.Persistence.Domain.Routes;
+namespace OutpostImmobile.Persistence.Domain;
 
 public class RouteEntity : AuditableEntity
 {

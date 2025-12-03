@@ -1,7 +1,6 @@
 using Bogus;
 using NetTopologySuite.Geometries;
 using OutpostImmobile.Persistence.Domain;
-using OutpostImmobile.Persistence.Domain.Routes;
 
 namespace OutpostImmobile.Persistence.Seeding.Domain;
 

@@ -1,4 +1,4 @@
-using OutpostImmobile.Persistence.Domain.Routes;
+using OutpostImmobile.Persistence.Domain;
 
 namespace OutpostImmobile.Persistence.Interfaces;
 

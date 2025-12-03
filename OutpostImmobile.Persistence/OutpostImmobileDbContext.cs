@@ -1,7 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using OutpostImmobile.Persistence.Domain;
 using OutpostImmobile.Persistence.Domain.Logs;
-using OutpostImmobile.Persistence.Domain.Routes;
 using OutpostImmobile.Persistence.Domain.StaticEnums;
 using OutpostImmobile.Persistence.Domain.Users;
 

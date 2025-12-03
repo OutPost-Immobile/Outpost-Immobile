@@ -1,5 +1,4 @@
 using NetTopologySuite.Geometries;
-using OutpostImmobile.Persistence.Domain.Routes;
 
 namespace OutpostImmobile.Persistence.Domain;
 

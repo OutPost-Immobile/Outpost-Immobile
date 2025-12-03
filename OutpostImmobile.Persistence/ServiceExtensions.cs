@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using OutpostImmobile.Persistence.Domain.Users;
+using OutpostImmobile.Persistence.Factories.Interfaces;
+using OutpostImmobile.Persistence.Factories.Internal;
 using OutpostImmobile.Persistence.Interceptors;
 using OutpostImmobile.Persistence.Interfaces;
 using OutpostImmobile.Persistence.Repositories;
@@ -19,6 +21,9 @@ public static class ServiceExtensions
             .AddInterceptors(sp.GetRequiredService<AuditableEntityInterceptor>()));
         
         services
+            .AddScoped<IEventLogFactory, MaczkopatEventLogFactory>()
+            .AddScoped<IEventLogFactory, CommunicationsEventLogFactory>()
+            .AddScoped<IEventLogFactory, ParcelEventLogFactory>()
             .AddScoped<IParcelRepository, ParcelRepository>()
             .AddScoped<IMaczkopatRepository, MaczkopatRepository>()
             .AddScoped<IRouteRepository, RouteRepository>()
