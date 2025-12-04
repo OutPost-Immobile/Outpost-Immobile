@@ -1,3 +1,3 @@
 namespace OutpostImmobile.Core.Paralizator.Abstraction;
 
-public interface IRequest<T>;
+public interface IRequest<TRequest, TResponse>;

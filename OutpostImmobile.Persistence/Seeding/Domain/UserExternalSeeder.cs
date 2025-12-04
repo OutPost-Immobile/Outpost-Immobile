@@ -12,7 +12,7 @@ public class UserExternalSeeder
             return;
         }
         
-        var faker = new Faker<UserExternal>();
+        var faker = new Faker<UserExternal>("pl");
         
         faker
             .RuleFor(x => x.Email, f => f.Internet.Email())

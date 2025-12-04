@@ -10,5 +10,6 @@ public enum ParcelStatus
     Deleted,
     Sent,
     ToReturn,
-    SendToStorage
+    SendToStorage,
+    InMaczkopat
 }

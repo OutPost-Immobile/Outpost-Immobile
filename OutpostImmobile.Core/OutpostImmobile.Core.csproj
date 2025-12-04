@@ -17,6 +17,7 @@
     <ItemGroup>
       <ProjectReference Include="..\OutpostImmobile.Communication\OutpostImmobile.Communication.csproj" />
       <ProjectReference Include="..\OutpostImmobile.Core.Integrations.KMZB\OutpostImmobile.Core.Integrations.KMZB.csproj" />
+      <ProjectReference Include="..\OutpostImmobile.Core.Paralizator\OutpostImmobile.Core.Paralizator.csproj" />
       <ProjectReference Include="..\OutpostImmobile.Persistence\OutpostImmobile.Persistence.csproj" />
     </ItemGroup>
 

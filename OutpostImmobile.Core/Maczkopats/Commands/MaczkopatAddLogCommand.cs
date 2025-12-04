@@ -1,15 +1,17 @@
-using DispatchR.Abstractions.Send;
+
+using OutpostImmobile.Core.Paralizator.Abstraction;
+using OutpostImmobile.Persistence.Domain.StaticEnums.Enums;
 
 namespace OutpostImmobile.Core.Maczkopats.Commands;
 
-public record MaczkopatAddLogCommand : IRequest<MaczkopatAddLogCommand, Task>
+public record MaczkopatAddLogCommand : IRequest<MaczkopatAddLogCommand, bool>
 {
-    
+    public required MaczkopatEventLogType LogType { get; init; }
 }
 
-internal class MaczkopatAddLogCommandHandler : IRequestHandler<MaczkopatAddLogCommand, Task>
+internal class MaczkopatAddLogCommandHandler : IRequestHandler<MaczkopatAddLogCommand, bool>
 {
-    public Task Handle(MaczkopatAddLogCommand request, CancellationToken cancellationToken)
+    public Task<bool> Handle(MaczkopatAddLogCommand request, CancellationToken cancellationToken)
     {
         throw new NotImplementedException();
     }

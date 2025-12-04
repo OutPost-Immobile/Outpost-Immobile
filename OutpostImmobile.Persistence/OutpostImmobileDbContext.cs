@@ -1,7 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using OutpostImmobile.Persistence.Domain;
 using OutpostImmobile.Persistence.Domain.Logs;
-using OutpostImmobile.Persistence.Domain.Routes;
 using OutpostImmobile.Persistence.Domain.StaticEnums;
 using OutpostImmobile.Persistence.Domain.Users;
 
@@ -28,7 +27,6 @@ public class OutpostImmobileDbContext : DbContext
     public virtual DbSet<NumberTemplateEntity> NumberTemplates => Set<NumberTemplateEntity>();
     public virtual DbSet<ParcelEntity> Parcels => Set<ParcelEntity>();
     public virtual DbSet<RouteEntity> Routes => Set<RouteEntity>();
-    public virtual DbSet<LocationMarkerEntity> Locations => Set<LocationMarkerEntity>();
     public virtual DbSet<UserInternal> UsersInternal => Set<UserInternal>();
     public virtual DbSet<UserExternal> UsersExternal => Set<UserExternal>();
     public virtual DbSet<UserRoles> UserRoles => Set<UserRoles>();
@@ -37,5 +35,9 @@ public class OutpostImmobileDbContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(OutpostImmobileDbContext).Assembly);
+
+        modelBuilder.HasPostgresExtension("postgis");
+        modelBuilder.HasPostgresExtension("pgrouting");
+        modelBuilder.HasPostgresExtension("hstore");
     }
 }

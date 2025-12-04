@@ -73,6 +73,13 @@ public class StaticEnumTranslations
                 TranslationLanguage = TranslationLanguage.Pl,
                 EnumName = nameof(ParcelStatus.SendToStorage),
             },
+            new()
+            {
+                EnumValue = (int)ParcelStatus.InMaczkopat,
+                Translation = "W Maczkopacie",
+                TranslationLanguage = TranslationLanguage.Pl,
+                EnumName = nameof(ParcelStatus.InMaczkopat),
+            },
         };
     }
     

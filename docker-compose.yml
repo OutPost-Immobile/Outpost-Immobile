@@ -2,7 +2,7 @@
   outpostimmobile.api:
     image: OutpostImmobile
     depends_on: 
-      - "database"
+      - "importer"
     build:
       context: ./OutpostImmobile.Api
       dockerfile: Dockerfile
@@ -26,7 +26,7 @@
       - Outpost-Network
   
   database:
-    image: postgres:latest
+    image: pgrouting/pgrouting:latest
     container_name: postgres
     environment:
       - POSTGRES_USER=postgres
@@ -38,6 +38,36 @@
       - 5433:5432
     networks: 
       - Outpost-Network
+  
+  importer:
+    image: docker-registry.geofabrik.de/osm2pgrouting/osm2pgrouting:latest
+    depends_on:
+      - "database"
+    environment:
+      DB_HOST: db
+      DB_USER: user
+      DB_PASS: password
+      DB_NAME: routing_db
+      OSM_DATA_URL: "https://download.geofabrik.de/europe/poland-latest.osm.pbf"
+      LOCAL_FILE_PATH: "/tmp/poland.osm.pbf"
+    command: >
+      sh -c "
+        echo '1. Downloading OSM file...' &&
+        # Use curl to download the file to a temporary location
+        curl -L -o $$LOCAL_FILE_PATH $$OSM_DATA_URL &&
+      
+        echo '2. Running osm2pgrouting to import data...' &&
+        # Run osm2pgrouting using the downloaded file
+        osm2pgrouting -f $$LOCAL_FILE_PATH
+                      -c 'host=$$DB_HOST user=$$DB_USER dbname=$$DB_NAME password=$$DB_PASS' 
+                      -W $$DB_PASS
+                      -clean &&
+      
+        echo '3. Cleaning up temporary file...' &&
+        rm $$LOCAL_FILE_PATH
+      "
+    profiles: [ "importer" ]
+  
 networks:
   Outpost-Network:
     driver: bridge

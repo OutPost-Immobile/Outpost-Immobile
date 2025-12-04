@@ -1,6 +1,6 @@
 using Bogus;
+using NetTopologySuite.Geometries;
 using OutpostImmobile.Persistence.Domain;
-using OutpostImmobile.Persistence.Domain.Routes;
 
 namespace OutpostImmobile.Persistence.Seeding.Domain;
 
@@ -13,7 +13,7 @@ public class AddressSeeder
             return;
         }
 
-        var faker = new Faker<AddressEntity>();
+        var faker = new Faker<AddressEntity>("pl");
 
         faker
             .RuleFor(x => x.BuildingNumber, b => b.PickRandom(1000))
@@ -22,11 +22,10 @@ public class AddressSeeder
             .RuleFor(x => x.PostalCode, x => x.Address.ZipCode())
             .RuleFor(x => x.CountryCode, x => x.Address.CountryCode())
             .RuleFor(x => x.Alias, x => x.Address.FullAddress())
-            .RuleFor(x => x.LocationMarker, x => new LocationMarkerEntity
-        {
-            Longitude = x.Address.Longitude(),
-            Latitude = x.Address.Latitude()
-        });
+            .RuleFor(x => x.Location, x => new Point(x.Address.Latitude(), x.Address.Longitude())
+            {
+                SRID = 4326
+            });
         
         var addresses = faker.Generate(1000);
 

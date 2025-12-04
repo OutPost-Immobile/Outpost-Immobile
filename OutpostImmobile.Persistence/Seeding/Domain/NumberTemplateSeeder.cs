@@ -12,7 +12,7 @@ public class NumberTemplateSeeder
             return;
         }
 
-        var faker = new Faker<NumberTemplateEntity>();
+        var faker = new Faker<NumberTemplateEntity>("pl");
 
         faker.RuleFor(x => x.TemplateNumber, GetRandomPlateNumber(8));
 

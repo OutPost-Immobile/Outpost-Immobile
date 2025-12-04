@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using NetTopologySuite.Geometries;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using OutpostImmobile.Persistence;
 
@@ -17,25 +18,13 @@ namespace OutpostImmobile.Persistence.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.10")
+                .HasAnnotation("ProductVersion", "9.0.11")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
+            NpgsqlModelBuilderExtensions.HasPostgresExtension(modelBuilder, "hstore");
+            NpgsqlModelBuilderExtensions.HasPostgresExtension(modelBuilder, "pgrouting");
+            NpgsqlModelBuilderExtensions.HasPostgresExtension(modelBuilder, "postgis");
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
-
-            modelBuilder.Entity("LocationMarkerEntityRouteEntity", b =>
-                {
-                    b.Property<Guid>("LocationMarkerEntitiesId")
-                        .HasColumnType("uuid");
-
-                    b.Property<long>("RoutesId")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("LocationMarkerEntitiesId", "RoutesId");
-
-                    b.HasIndex("RoutesId");
-
-                    b.ToTable("LocationMarkerEntityRouteEntity");
-                });
 
             modelBuilder.Entity("OutpostImmobile.Persistence.Domain.AddressEntity", b =>
                 {
@@ -60,8 +49,9 @@ namespace OutpostImmobile.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<Guid>("LocationMarkerId")
-                        .HasColumnType("uuid");
+                    b.Property<Point>("Location")
+                        .IsRequired()
+                        .HasColumnType("geometry");
 
                     b.Property<string>("PostalCode")
                         .IsRequired()
@@ -72,8 +62,6 @@ namespace OutpostImmobile.Persistence.Migrations
                         .HasColumnType("text");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("LocationMarkerId");
 
                     b.ToTable("Addresses");
                 });
@@ -295,6 +283,9 @@ namespace OutpostImmobile.Persistence.Migrations
                     b.Property<Guid?>("ReceiverUserExternalId")
                         .HasColumnType("uuid");
 
+                    b.Property<int?>("Status")
+                        .HasColumnType("integer");
+
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
@@ -312,23 +303,6 @@ namespace OutpostImmobile.Persistence.Migrations
                     b.ToTable("Parcels");
                 });
 
-            modelBuilder.Entity("OutpostImmobile.Persistence.Domain.Routes.LocationMarkerEntity", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<double>("Latitude")
-                        .HasColumnType("double precision");
-
-                    b.Property<double>("Longitude")
-                        .HasColumnType("double precision");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Locations");
-                });
-
             modelBuilder.Entity("OutpostImmobile.Persistence.Domain.Routes.RouteEntity", b =>
                 {
                     b.Property<long>("Id")
@@ -343,8 +317,15 @@ namespace OutpostImmobile.Persistence.Migrations
                     b.Property<Guid?>("CreatedById")
                         .HasColumnType("uuid");
 
+                    b.Property<long>("Distace")
+                        .HasColumnType("bigint");
+
                     b.Property<long>("EndAddressId")
                         .HasColumnType("bigint");
+
+                    b.PrimitiveCollection<Point[]>("Locations")
+                        .IsRequired()
+                        .HasColumnType("geometry[]");
 
                     b.Property<long>("StartAddressId")
                         .HasColumnType("bigint");
@@ -536,32 +517,6 @@ namespace OutpostImmobile.Persistence.Migrations
                     b.HasIndex("RouteEntityId");
 
                     b.ToTable("Vehicles");
-                });
-
-            modelBuilder.Entity("LocationMarkerEntityRouteEntity", b =>
-                {
-                    b.HasOne("OutpostImmobile.Persistence.Domain.Routes.LocationMarkerEntity", null)
-                        .WithMany()
-                        .HasForeignKey("LocationMarkerEntitiesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("OutpostImmobile.Persistence.Domain.Routes.RouteEntity", null)
-                        .WithMany()
-                        .HasForeignKey("RoutesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("OutpostImmobile.Persistence.Domain.AddressEntity", b =>
-                {
-                    b.HasOne("OutpostImmobile.Persistence.Domain.Routes.LocationMarkerEntity", "LocationMarker")
-                        .WithMany()
-                        .HasForeignKey("LocationMarkerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("LocationMarker");
                 });
 
             modelBuilder.Entity("OutpostImmobile.Persistence.Domain.Logs.CommunicationEventLogEntity", b =>

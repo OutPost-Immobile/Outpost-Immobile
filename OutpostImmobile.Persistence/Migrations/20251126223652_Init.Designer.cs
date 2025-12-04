@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using NetTopologySuite.Geometries;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using OutpostImmobile.Persistence;
 
@@ -12,7 +13,7 @@ using OutpostImmobile.Persistence;
 namespace OutpostImmobile.Persistence.Migrations
 {
     [DbContext(typeof(OutpostImmobileDbContext))]
-    [Migration("20251029233717_Init")]
+    [Migration("20251126223652_Init")]
     partial class Init
     {
         /// <inheritdoc />
@@ -20,25 +21,12 @@ namespace OutpostImmobile.Persistence.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.10")
+                .HasAnnotation("ProductVersion", "9.0.11")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
+            NpgsqlModelBuilderExtensions.HasPostgresExtension(modelBuilder, "pgrouting");
+            NpgsqlModelBuilderExtensions.HasPostgresExtension(modelBuilder, "postgis");
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
-
-            modelBuilder.Entity("LocationMarkerEntityRouteEntity", b =>
-                {
-                    b.Property<Guid>("LocationMarkerEntitiesId")
-                        .HasColumnType("uuid");
-
-                    b.Property<long>("RoutesId")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("LocationMarkerEntitiesId", "RoutesId");
-
-                    b.HasIndex("RoutesId");
-
-                    b.ToTable("LocationMarkerEntityRouteEntity");
-                });
 
             modelBuilder.Entity("OutpostImmobile.Persistence.Domain.AddressEntity", b =>
                 {
@@ -63,8 +51,9 @@ namespace OutpostImmobile.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<Guid>("LocationMarkerId")
-                        .HasColumnType("uuid");
+                    b.Property<Point>("Location")
+                        .IsRequired()
+                        .HasColumnType("geometry");
 
                     b.Property<string>("PostalCode")
                         .IsRequired()
@@ -75,8 +64,6 @@ namespace OutpostImmobile.Persistence.Migrations
                         .HasColumnType("text");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("LocationMarkerId");
 
                     b.ToTable("Addresses");
                 });
@@ -96,23 +83,6 @@ namespace OutpostImmobile.Persistence.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Areas");
-                });
-
-            modelBuilder.Entity("OutpostImmobile.Persistence.Domain.LocationMarkerEntity", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<int>("Latitude")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("Longitude")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Locations");
                 });
 
             modelBuilder.Entity("OutpostImmobile.Persistence.Domain.Logs.CommunicationEventLogEntity", b =>
@@ -150,6 +120,39 @@ namespace OutpostImmobile.Persistence.Migrations
                     b.HasIndex("ParcelId");
 
                     b.ToTable("CommunicationEventLogs");
+                });
+
+            modelBuilder.Entity("OutpostImmobile.Persistence.Domain.Logs.MaczkopatEventLogEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("CreatedById")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("EventLogType")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("LogMessage")
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("MaczkopatId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("MaczkopatId");
+
+                    b.ToTable("MaczkopatEventLogs");
                 });
 
             modelBuilder.Entity("OutpostImmobile.Persistence.Domain.Logs.ParcelEventLogEntity", b =>
@@ -198,15 +201,15 @@ namespace OutpostImmobile.Persistence.Migrations
                     b.Property<long>("AreaId")
                         .HasColumnType("bigint");
 
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<DateTime?>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<Guid?>("CreatedById")
                         .HasColumnType("uuid");
-
-                    b.Property<string>("FriendlyId")
-                        .IsRequired()
-                        .HasColumnType("text");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -272,8 +275,12 @@ namespace OutpostImmobile.Persistence.Migrations
                     b.Property<Guid?>("FromUserExternalId")
                         .HasColumnType("uuid");
 
-                    b.Property<Guid?>("MaczkopatEntityId")
+                    b.Property<Guid>("MaczkopatEntityId")
                         .HasColumnType("uuid");
+
+                    b.Property<string>("Product")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<Guid?>("ReceiverUserExternalId")
                         .HasColumnType("uuid");
@@ -295,7 +302,7 @@ namespace OutpostImmobile.Persistence.Migrations
                     b.ToTable("Parcels");
                 });
 
-            modelBuilder.Entity("OutpostImmobile.Persistence.Domain.RouteEntity", b =>
+            modelBuilder.Entity("OutpostImmobile.Persistence.Domain.Routes.RouteEntity", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -309,8 +316,15 @@ namespace OutpostImmobile.Persistence.Migrations
                     b.Property<Guid?>("CreatedById")
                         .HasColumnType("uuid");
 
+                    b.Property<long>("Distace")
+                        .HasColumnType("bigint");
+
                     b.Property<long>("EndAddressId")
                         .HasColumnType("bigint");
+
+                    b.PrimitiveCollection<Point[]>("Locations")
+                        .IsRequired()
+                        .HasColumnType("geometry[]");
 
                     b.Property<long>("StartAddressId")
                         .HasColumnType("bigint");
@@ -366,16 +380,10 @@ namespace OutpostImmobile.Persistence.Migrations
                     b.ToTable("StaticEnumTranslations");
                 });
 
-            modelBuilder.Entity("OutpostImmobile.Persistence.Domain.UserExternal", b =>
+            modelBuilder.Entity("OutpostImmobile.Persistence.Domain.Users.UserExternal", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime?>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid?>("CreatedById")
                         .HasColumnType("uuid");
 
                     b.Property<string>("Email")
@@ -393,22 +401,17 @@ namespace OutpostImmobile.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone");
-
                     b.Property<Guid?>("UserInternalId")
                         .HasColumnType("uuid");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("CreatedById");
 
                     b.HasIndex("UserInternalId");
 
                     b.ToTable("UsersExternal");
                 });
 
-            modelBuilder.Entity("OutpostImmobile.Persistence.Domain.UserInternal", b =>
+            modelBuilder.Entity("OutpostImmobile.Persistence.Domain.Users.UserInternal", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -466,7 +469,7 @@ namespace OutpostImmobile.Persistence.Migrations
                     b.ToTable("UsersInternal");
                 });
 
-            modelBuilder.Entity("OutpostImmobile.Persistence.Domain.UserRoles", b =>
+            modelBuilder.Entity("OutpostImmobile.Persistence.Domain.Users.UserRoles", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -515,35 +518,9 @@ namespace OutpostImmobile.Persistence.Migrations
                     b.ToTable("Vehicles");
                 });
 
-            modelBuilder.Entity("LocationMarkerEntityRouteEntity", b =>
-                {
-                    b.HasOne("OutpostImmobile.Persistence.Domain.LocationMarkerEntity", null)
-                        .WithMany()
-                        .HasForeignKey("LocationMarkerEntitiesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("OutpostImmobile.Persistence.Domain.RouteEntity", null)
-                        .WithMany()
-                        .HasForeignKey("RoutesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("OutpostImmobile.Persistence.Domain.AddressEntity", b =>
-                {
-                    b.HasOne("OutpostImmobile.Persistence.Domain.LocationMarkerEntity", "LocationMarker")
-                        .WithMany()
-                        .HasForeignKey("LocationMarkerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("LocationMarker");
-                });
-
             modelBuilder.Entity("OutpostImmobile.Persistence.Domain.Logs.CommunicationEventLogEntity", b =>
                 {
-                    b.HasOne("OutpostImmobile.Persistence.Domain.UserInternal", "CreatedBy")
+                    b.HasOne("OutpostImmobile.Persistence.Domain.Users.UserInternal", "CreatedBy")
                         .WithMany()
                         .HasForeignKey("CreatedById");
 
@@ -558,9 +535,26 @@ namespace OutpostImmobile.Persistence.Migrations
                     b.Navigation("Parcel");
                 });
 
+            modelBuilder.Entity("OutpostImmobile.Persistence.Domain.Logs.MaczkopatEventLogEntity", b =>
+                {
+                    b.HasOne("OutpostImmobile.Persistence.Domain.Users.UserInternal", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById");
+
+                    b.HasOne("OutpostImmobile.Persistence.Domain.MaczkopatEntity", "Maczkopat")
+                        .WithMany("MaczkopatEventLogs")
+                        .HasForeignKey("MaczkopatId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("CreatedBy");
+
+                    b.Navigation("Maczkopat");
+                });
+
             modelBuilder.Entity("OutpostImmobile.Persistence.Domain.Logs.ParcelEventLogEntity", b =>
                 {
-                    b.HasOne("OutpostImmobile.Persistence.Domain.UserInternal", "CreatedBy")
+                    b.HasOne("OutpostImmobile.Persistence.Domain.Users.UserInternal", "CreatedBy")
                         .WithMany()
                         .HasForeignKey("CreatedById");
 
@@ -589,7 +583,7 @@ namespace OutpostImmobile.Persistence.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("OutpostImmobile.Persistence.Domain.UserInternal", "CreatedBy")
+                    b.HasOne("OutpostImmobile.Persistence.Domain.Users.UserInternal", "CreatedBy")
                         .WithMany()
                         .HasForeignKey("CreatedById");
 
@@ -602,7 +596,7 @@ namespace OutpostImmobile.Persistence.Migrations
 
             modelBuilder.Entity("OutpostImmobile.Persistence.Domain.NumberTemplateEntity", b =>
                 {
-                    b.HasOne("OutpostImmobile.Persistence.Domain.UserInternal", "CreatedBy")
+                    b.HasOne("OutpostImmobile.Persistence.Domain.Users.UserInternal", "CreatedBy")
                         .WithMany()
                         .HasForeignKey("CreatedById");
 
@@ -615,24 +609,28 @@ namespace OutpostImmobile.Persistence.Migrations
 
             modelBuilder.Entity("OutpostImmobile.Persistence.Domain.ParcelEntity", b =>
                 {
-                    b.HasOne("OutpostImmobile.Persistence.Domain.UserInternal", "CreatedBy")
+                    b.HasOne("OutpostImmobile.Persistence.Domain.Users.UserInternal", "CreatedBy")
                         .WithMany()
                         .HasForeignKey("CreatedById");
 
-                    b.HasOne("OutpostImmobile.Persistence.Domain.MaczkopatEntity", null)
+                    b.HasOne("OutpostImmobile.Persistence.Domain.MaczkopatEntity", "Maczkopat")
                         .WithMany("Parcels")
-                        .HasForeignKey("MaczkopatEntityId");
+                        .HasForeignKey("MaczkopatEntityId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.HasOne("OutpostImmobile.Persistence.Domain.UserExternal", null)
+                    b.HasOne("OutpostImmobile.Persistence.Domain.Users.UserExternal", null)
                         .WithMany("Parcels")
                         .HasForeignKey("UserExternalId");
 
                     b.Navigation("CreatedBy");
+
+                    b.Navigation("Maczkopat");
                 });
 
-            modelBuilder.Entity("OutpostImmobile.Persistence.Domain.RouteEntity", b =>
+            modelBuilder.Entity("OutpostImmobile.Persistence.Domain.Routes.RouteEntity", b =>
                 {
-                    b.HasOne("OutpostImmobile.Persistence.Domain.UserInternal", "CreatedBy")
+                    b.HasOne("OutpostImmobile.Persistence.Domain.Users.UserInternal", "CreatedBy")
                         .WithMany()
                         .HasForeignKey("CreatedById");
 
@@ -654,24 +652,18 @@ namespace OutpostImmobile.Persistence.Migrations
                     b.Navigation("EnumEntity");
                 });
 
-            modelBuilder.Entity("OutpostImmobile.Persistence.Domain.UserExternal", b =>
+            modelBuilder.Entity("OutpostImmobile.Persistence.Domain.Users.UserExternal", b =>
                 {
-                    b.HasOne("OutpostImmobile.Persistence.Domain.UserInternal", "CreatedBy")
-                        .WithMany()
-                        .HasForeignKey("CreatedById");
-
-                    b.HasOne("OutpostImmobile.Persistence.Domain.UserInternal", "UserInternal")
+                    b.HasOne("OutpostImmobile.Persistence.Domain.Users.UserInternal", "UserInternal")
                         .WithMany()
                         .HasForeignKey("UserInternalId");
-
-                    b.Navigation("CreatedBy");
 
                     b.Navigation("UserInternal");
                 });
 
-            modelBuilder.Entity("OutpostImmobile.Persistence.Domain.UserInternal", b =>
+            modelBuilder.Entity("OutpostImmobile.Persistence.Domain.Users.UserInternal", b =>
                 {
-                    b.HasOne("OutpostImmobile.Persistence.Domain.UserRoles", "Role")
+                    b.HasOne("OutpostImmobile.Persistence.Domain.Users.UserRoles", "Role")
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -682,11 +674,11 @@ namespace OutpostImmobile.Persistence.Migrations
 
             modelBuilder.Entity("OutpostImmobile.Persistence.Domain.VehicleEntity", b =>
                 {
-                    b.HasOne("OutpostImmobile.Persistence.Domain.UserInternal", "CreatedBy")
+                    b.HasOne("OutpostImmobile.Persistence.Domain.Users.UserInternal", "CreatedBy")
                         .WithMany()
                         .HasForeignKey("CreatedById");
 
-                    b.HasOne("OutpostImmobile.Persistence.Domain.RouteEntity", null)
+                    b.HasOne("OutpostImmobile.Persistence.Domain.Routes.RouteEntity", null)
                         .WithMany("AssignedVehicles")
                         .HasForeignKey("RouteEntityId");
 
@@ -700,6 +692,8 @@ namespace OutpostImmobile.Persistence.Migrations
 
             modelBuilder.Entity("OutpostImmobile.Persistence.Domain.MaczkopatEntity", b =>
                 {
+                    b.Navigation("MaczkopatEventLogs");
+
                     b.Navigation("Parcels");
                 });
 
@@ -710,7 +704,7 @@ namespace OutpostImmobile.Persistence.Migrations
                     b.Navigation("ParcelEventLogs");
                 });
 
-            modelBuilder.Entity("OutpostImmobile.Persistence.Domain.RouteEntity", b =>
+            modelBuilder.Entity("OutpostImmobile.Persistence.Domain.Routes.RouteEntity", b =>
                 {
                     b.Navigation("AssignedVehicles");
                 });
@@ -720,7 +714,7 @@ namespace OutpostImmobile.Persistence.Migrations
                     b.Navigation("Translations");
                 });
 
-            modelBuilder.Entity("OutpostImmobile.Persistence.Domain.UserExternal", b =>
+            modelBuilder.Entity("OutpostImmobile.Persistence.Domain.Users.UserExternal", b =>
                 {
                     b.Navigation("Parcels");
                 });

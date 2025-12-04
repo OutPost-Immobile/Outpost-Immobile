@@ -1,4 +1,4 @@
-using OutpostImmobile.Persistence.Domain.Routes;
+using NetTopologySuite.Geometries;
 
 namespace OutpostImmobile.Persistence.Domain;
 
@@ -12,7 +12,6 @@ public class AddressEntity
     public string Street { get; set; }
     public string CountryCode { get; set; }
     public int BuildingNumber { get; set; }
-
-    public Guid LocationMarkerId { get; set; }
-    public LocationMarkerEntity LocationMarker { get; set; }
+    
+    public Point Location { get; set; }
 }

@@ -17,11 +17,13 @@ public record SendEmailRequest
 public class MailService : IMailService
 {
     private readonly MailOptions _mailOptions;
+    
     public MailService(IOptions<MailOptions> mailOptions)
     {
         _mailOptions = mailOptions.Value;
     }
-    public void SendMessage(SendEmailRequest request)
+    
+    public async Task SendMessage(SendEmailRequest request)
     {
         // Create and configure email
         var message = new MimeMessage();
@@ -29,12 +31,14 @@ public class MailService : IMailService
         message.To.Add(new MailboxAddress(request.RecipientName, request.RecipientMailAddress));
         message.Subject = request.MailSubject;
         message.Body = new TextPart("plain")  { Text = request.MailBody };
+       
         // Log onto client and send the email
-        using (var client = new SmtpClient()) {
-            client.Connect(_mailOptions.SmtpHost, _mailOptions.Port, false);
-            client.Authenticate(_mailOptions.SenderMailAddress, _mailOptions.SenderPassword);
-            client.Send(message);
-            client.Disconnect(true);
-        }
+        using var client = new SmtpClient();
+        await client.ConnectAsync(_mailOptions.SmtpHost, _mailOptions.Port, false);
+        await client.AuthenticateAsync(_mailOptions.SenderMailAddress, _mailOptions.SenderPassword);
+        
+        await client.SendAsync(message);
+        
+        await client.DisconnectAsync(true);
     }
 }

@@ -12,7 +12,7 @@ public class AreaSeeder
             return;
         }
 
-        var faker = new Faker<AreaEntity>();
+        var faker = new Faker<AreaEntity>("pl");
 
         faker.RuleFor(x => x.AreaName, x => x.Company.CompanyName());
         

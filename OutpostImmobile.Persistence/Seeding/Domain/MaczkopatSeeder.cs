@@ -13,7 +13,7 @@ public class MaczkopatSeeder
             return;
         }
 
-        var faker = new Faker<MaczkopatEntity>();
+        var faker = new Faker<MaczkopatEntity>("pl");
 
         var addresses = await context.Addresses.ToListAsync(ct);
         var areas = await context.Areas.ToListAsync(ct);

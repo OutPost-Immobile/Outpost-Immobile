@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using OutpostImmobile.Persistence.Domain.AuditableBase;
 using OutpostImmobile.Persistence.Domain.Logs;
+using OutpostImmobile.Persistence.Domain.StaticEnums.Enums;
 
 namespace OutpostImmobile.Persistence.Domain;
 
@@ -10,6 +11,7 @@ public class ParcelEntity : AuditableEntity
     public Guid Id { get; set; }
     public string FriendlyId { get; set; }
     public required string Product { get; set; }
+    public ParcelStatus? Status { get; set; }
     
     public Guid? FromUserExternalId { get; set; }
     
