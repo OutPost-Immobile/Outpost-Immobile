@@ -17,7 +17,8 @@ public class EnumKeys
     public static string ParcelStatus_Sent_Pl => EnumKeyGenerator.GenerateKey(ParcelStatus.Sent, TranslationLanguage.Pl);
     public static string ParcelStatus_ToReturn_Pl => EnumKeyGenerator.GenerateKey(ParcelStatus.ToReturn, TranslationLanguage.Pl);
     public static string ParcelStatus_SendToStorage_Pl => EnumKeyGenerator.GenerateKey(ParcelStatus.SendToStorage, TranslationLanguage.Pl);
-
+    
+    public static string ParcelStatus_InMaczkopat_Pl => EnumKeyGenerator.GenerateKey(ParcelStatus.InMaczkopat, TranslationLanguage.Pl);
     #endregion
 
     #region PayloadSize
