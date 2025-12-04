@@ -1,14 +1,13 @@
 using System.Reflection;
 using DispatchR.Extensions;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using OutpostImmobile.Api.Extensions;
 using OutpostImmobile.Core;
+using OutpostImmobile.Core.Paralizator;
 using OutpostImmobile.Persistence;
 using OutpostImmobile.Persistence.Domain.Users;
 using OutpostImmobile.Persistence.Interceptors;
 using OutpostImmobile.Persistence.Seeding;
-using OutpostImmobile.Communication.Options;
 using Serilog;
 
 namespace OutpostImmobile.Api;
@@ -62,9 +61,12 @@ public class Program
         using (var scope = app.Services.CreateScope())
         {
             var context = scope.ServiceProvider.GetRequiredService<OutpostImmobileDbContext>();
+            var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
             await context.Database.MigrateAsync();
             
             await ApplicationSeeder.SeedAsync(context);
+            
+            await Tester.TestUseCases(mediator, context);
         }
 
         await app.RunAsync();
