@@ -1,16 +1,16 @@
-using DispatchR.Abstractions.Send;
+using OutpostImmobile.Core.Paralizator.Abstraction;
 using OutpostImmobile.Core.Parcels.QueryResults;
 
 namespace OutpostImmobile.Core.Parcels.Queries;
 
-public record GetParcelsFromMaczkopatQuery : IRequest<ParcelDto, Task>
+public record GetParcelsFromMaczkopatQuery : IRequest<GetParcelsFromMaczkopatQuery, List<ParcelDto>>
 {
     public Guid MaczkopatId { get; init; }
 }
 
-internal class GetParcelsFromMaczkopatQueryHandler : IRequestHandler<GetParcelsFromMaczkopatQuery, Task<ParcelDto>>
+internal class GetParcelsFromMaczkopatQueryHandler : IRequestHandler<GetParcelsFromMaczkopatQuery, List<ParcelDto>>
 {
-    public Task<ParcelDto> Handle(GetParcelsFromMaczkopatQuery request, CancellationToken cancellationToken)
+    public Task<List<ParcelDto>> Handle(GetParcelsFromMaczkopatQuery request, CancellationToken cancellationToken)
     {
         throw new NotImplementedException();
     }

@@ -1,16 +1,16 @@
-using DispatchR.Abstractions.Send;
+using OutpostImmobile.Core.Paralizator.Abstraction;
 using OutpostImmobile.Core.Routes.QueryResult;
 
 namespace OutpostImmobile.Core.Routes.Queries;
 
-public class GetRoutesFromCourierQuery : IRequest<RouteDto, Task>
+public class GetRoutesFromCourierQuery : IRequest<GetRoutesFromCourierQuery, List<RouteDto>>
 {
     public required Guid CourierId { get; init; }
 }
 
-internal class GetRoutesFromCourierQueryHandler : IRequestHandler<GetRoutesFromCourierQuery, Task<RouteDto>>
+internal class GetRoutesFromCourierQueryHandler : IRequestHandler<GetRoutesFromCourierQuery, List<RouteDto>>
 {
-    public Task<RouteDto> Handle(GetRoutesFromCourierQuery request, CancellationToken cancellationToken)
+    public Task<List<RouteDto>> Handle(GetRoutesFromCourierQuery request, CancellationToken cancellationToken)
     {
         throw new NotImplementedException();
     }
