@@ -12,6 +12,9 @@ public static class EndpointRouteBuilderExtensions
     public static IEndpointRouteBuilder MapRoutes(this IEndpointRouteBuilder routes)
     {
         routes.MapInfrastructure();
+        routes.MapMaczkopats();
+        routes.MapParcels();
+        routes.MapRouteController();
         
         return routes;
     }
