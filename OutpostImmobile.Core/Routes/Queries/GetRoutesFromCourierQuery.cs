@@ -1,4 +1,4 @@
-using OutpostImmobile.Core.Paralizator.Abstraction;
+using OutpostImmobile.Core.Mediator.Abstraction;
 using OutpostImmobile.Core.Routes.QueryResult;
 
 namespace OutpostImmobile.Core.Routes.Queries;

@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using OutpostImmobile.Api.Request;
 using OutpostImmobile.Api.Response;
-using OutpostImmobile.Core.Paralizator;
+using OutpostImmobile.Core.Mediator;
 using OutpostImmobile.Core.Parcels.QueryResults;
 
 namespace OutpostImmobile.Api.Controllers;

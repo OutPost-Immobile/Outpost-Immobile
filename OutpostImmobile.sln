@@ -23,7 +23,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OutpostImmobile.Core.Tests"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Features", "Features", "{A6E47C46-F622-4BA7-914B-19FD30EF9FB0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OutpostImmobile.Core.Paralizator", "OutpostImmobile.Core.Paralizator\OutpostImmobile.Core.Paralizator.csproj", "{5C0E3EC0-9EE7-4DDA-BA15-481676C5725C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OutpostImmobile.Core.Mediator", "OutpostImmobile.Core.Mediator\OutpostImmobile.Core.Mediator.csproj", "{5C0E3EC0-9EE7-4DDA-BA15-481676C5725C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OutpostImmobile.Core.Integrations.KMZB", "OutpostImmobile.Core.Integrations.KMZB\OutpostImmobile.Core.Integrations.KMZB.csproj", "{090DEFDD-57E0-4C6F-BA09-155674D29B80}"
 EndProject
