@@ -1,4 +1,4 @@
-using OutpostImmobile.Core.Paralizator.Abstraction;
+using OutpostImmobile.Core.Mediator.Abstraction;
 using OutpostImmobile.Core.Parcels.QueryResults;
 
 namespace OutpostImmobile.Core.Parcels.Queries;
@@ -10,8 +10,8 @@ public record GetParcelsFromMaczkopatQuery : IRequest<GetParcelsFromMaczkopatQue
 
 internal class GetParcelsFromMaczkopatQueryHandler : IRequestHandler<GetParcelsFromMaczkopatQuery, List<ParcelDto>>
 {
-    public Task<List<ParcelDto>> Handle(GetParcelsFromMaczkopatQuery request, CancellationToken cancellationToken)
+    public async Task<List<ParcelDto>> Handle(GetParcelsFromMaczkopatQuery request, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        return [];
     }
 }

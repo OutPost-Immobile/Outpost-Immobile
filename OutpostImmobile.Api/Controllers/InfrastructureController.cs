@@ -1,9 +1,9 @@
 using System.Net;
-using DispatchR;
 using Microsoft.AspNetCore.Mvc;
 using OutpostImmobile.Api.Response;
 using OutpostImmobile.Core.Infrastructure.Queries;
 using OutpostImmobile.Core.Infrastructure.QueryResults;
+using OutpostImmobile.Core.Mediator;
 
 namespace OutpostImmobile.Api.Controllers;
 

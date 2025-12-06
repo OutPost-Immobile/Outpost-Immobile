@@ -21,6 +21,9 @@ public static class ServiceExtensions
             .AddInterceptors(sp.GetRequiredService<AuditableEntityInterceptor>()));
         
         services
+            .AddScoped<MaczkopatEventLogFactory>()
+            .AddScoped<CommunicationsEventLogFactory>()
+            .AddScoped<ParcelEventLogFactory>()
             .AddScoped<IEventLogFactory, MaczkopatEventLogFactory>()
             .AddScoped<IEventLogFactory, CommunicationsEventLogFactory>()
             .AddScoped<IEventLogFactory, ParcelEventLogFactory>()

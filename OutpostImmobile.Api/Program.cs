@@ -1,12 +1,17 @@
 using System.Reflection;
 using DispatchR.Extensions;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using OutpostImmobile.Api.Extensions;
 using OutpostImmobile.Core;
-using OutpostImmobile.Core.Paralizator;
+using OutpostImmobile.Core.Mediator;
 using OutpostImmobile.Persistence;
 using OutpostImmobile.Persistence.Domain.Users;
+using OutpostImmobile.Persistence.Factories.Interfaces;
+using OutpostImmobile.Persistence.Factories.Internal;
 using OutpostImmobile.Persistence.Interceptors;
+using OutpostImmobile.Persistence.Interfaces;
+using OutpostImmobile.Persistence.Repositories;
 using OutpostImmobile.Persistence.Seeding;
 using Serilog;
 
@@ -19,11 +24,6 @@ public class Program
         var builder = WebApplication.CreateBuilder(args);
         
         builder.Services.AddOpenApi();
-        
-        builder.Services.AddDispatchR(options =>
-        {
-            options.Assemblies.Add(Assembly.Load(builder.Configuration["DispatchR:CoreAssembly"]));
-        });
         
         builder.Services.AddSerilog((context, configuration) =>
             configuration.ReadFrom.Configuration(builder.Configuration));
@@ -41,6 +41,7 @@ public class Program
         var connStr = builder.Configuration.GetConnectionString("DefaultConnection");
 
         builder.Services
+            .AddMediator(typeof(Core.ServiceExtensions).Assembly)
             .AddCoreServices(builder.Configuration)
             .AddPersistence(connStr);
         
@@ -61,12 +62,9 @@ public class Program
         using (var scope = app.Services.CreateScope())
         {
             var context = scope.ServiceProvider.GetRequiredService<OutpostImmobileDbContext>();
-            var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
             await context.Database.MigrateAsync();
             
             await ApplicationSeeder.SeedAsync(context);
-            
-            await Tester.TestUseCases(mediator, context);
         }
 
         await app.RunAsync();
