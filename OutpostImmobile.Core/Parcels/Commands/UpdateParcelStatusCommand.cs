@@ -1,5 +1,5 @@
 using OutpostImmobile.Communication.Interfaces;
-using OutpostImmobile.Core.Paralizator.Abstraction;
+using OutpostImmobile.Core.Mediator.Abstraction;
 using OutpostImmobile.Persistence.Domain.StaticEnums.Enums;
 
 namespace OutpostImmobile.Core.Parcels.Commands;

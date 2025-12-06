@@ -26,7 +26,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\OutpostImmobile.Core.Paralizator\OutpostImmobile.Core.Paralizator.csproj" />
+    <ProjectReference Include="..\OutpostImmobile.Core.Mediator\OutpostImmobile.Core.Mediator.csproj" />
     <ProjectReference Include="..\OutpostImmobile.Core\OutpostImmobile.Core.csproj" />
     <ProjectReference Include="..\OutpostImmobile.Persistence\OutpostImmobile.Persistence.csproj" />
   </ItemGroup>

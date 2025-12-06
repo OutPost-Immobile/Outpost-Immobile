@@ -1,4 +1,4 @@
-namespace OutpostImmobile.Core.Paralizator.Abstraction;
+namespace OutpostImmobile.Core.Mediator.Abstraction;
 
 public interface IRequestHandler<TQuery, TResponse>
 {
