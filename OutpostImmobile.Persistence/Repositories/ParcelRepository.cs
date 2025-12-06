@@ -1,4 +1,6 @@
+using Microsoft.EntityFrameworkCore;
 using OutpostImmobile.Persistence.Domain;
+using OutpostImmobile.Persistence.Domain.Logs;
 using OutpostImmobile.Persistence.Domain.StaticEnums.Enums;
 using OutpostImmobile.Persistence.Factories.Interfaces;
 using OutpostImmobile.Persistence.Factories.Internal;
@@ -25,5 +27,18 @@ public class ParcelRepository : IParcelRepository
     public Task<ParcelEntity> GetParcelsFromMaczkopatAsync(Guid maczkopatId)
     {
         throw new NotImplementedException();
+    }
+
+    public async Task<IEnumerable<ParcelEventLogEntity>> GetParcelEventLogsAsync(string friendlyId)
+    {
+        var parcelId = await _context.Parcels
+            .Where(p => p.FriendlyId == friendlyId)
+            .Select(p => p.Id)
+            .FirstAsync();
+        
+        return await _context.ParcelEventLogs
+            .AsNoTracking()
+            .Where(x => x.ParcelId == parcelId)
+            .ToListAsync();
     }
 }
