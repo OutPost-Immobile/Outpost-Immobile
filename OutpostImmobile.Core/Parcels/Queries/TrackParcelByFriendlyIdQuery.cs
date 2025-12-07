@@ -29,4 +29,5 @@ internal class TrackParcelByFriendlyIdQueryHandler : IRequestHandler<TrackParcel
             ParcelEventLogType = x.ParcelEventLogType.ToString(),
         });
     }
+
 }
