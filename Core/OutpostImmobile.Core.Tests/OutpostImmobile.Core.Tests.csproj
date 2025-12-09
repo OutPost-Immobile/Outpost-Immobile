@@ -20,16 +20,18 @@
     <ItemGroup>
         <Using Include="NUnit.Framework"/>
     </ItemGroup>
-
-    <ItemGroup>
-      <ProjectReference Include="..\OutpostImmobile.Api\OutpostImmobile.Api.csproj" />
-      <ProjectReference Include="..\OutpostImmobile.Communication\OutpostImmobile.Communication.csproj" />
-      <ProjectReference Include="..\OutpostImmobile.Core\OutpostImmobile.Core.csproj" />
-      <ProjectReference Include="..\OutpostImmobile.Persistence\OutpostImmobile.Persistence.csproj" />
-    </ItemGroup>
     <ItemGroup>
       <Content Include="..\OutpostImmobile.Api\appsettings.json">
         <Link>appsettings.json</Link>
       </Content>
+    </ItemGroup>
+    <ItemGroup>
+      <ProjectReference Include="..\..\Applications\OutpostImmobile.Api\OutpostImmobile.Api.csproj" />
+      <ProjectReference Include="..\..\Persistence\OutpostImmobile.Persistence\OutpostImmobile.Persistence.csproj" />
+      <ProjectReference Include="..\OutpostImmobile.Communication\OutpostImmobile.Communication.csproj" />
+      <ProjectReference Include="..\OutpostImmobile.Core.Common\OutpostImmobile.Core.Common.csproj" />
+      <ProjectReference Include="..\OutpostImmobile.Core.Integrations.KMZB\OutpostImmobile.Core.Integrations.KMZB.csproj" />
+      <ProjectReference Include="..\OutpostImmobile.Core.Mediator\OutpostImmobile.Core.Mediator.csproj" />
+      <ProjectReference Include="..\OutpostImmobile.Core\OutpostImmobile.Core.csproj" />
     </ItemGroup>
 </Project>

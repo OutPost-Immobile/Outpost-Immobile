@@ -15,10 +15,11 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\..\Persistence\OutpostImmobile.Persistence\OutpostImmobile.Persistence.csproj" />
       <ProjectReference Include="..\OutpostImmobile.Communication\OutpostImmobile.Communication.csproj" />
+      <ProjectReference Include="..\OutpostImmobile.Core.Common\OutpostImmobile.Core.Common.csproj" />
       <ProjectReference Include="..\OutpostImmobile.Core.Integrations.KMZB\OutpostImmobile.Core.Integrations.KMZB.csproj" />
       <ProjectReference Include="..\OutpostImmobile.Core.Mediator\OutpostImmobile.Core.Mediator.csproj" />
-      <ProjectReference Include="..\OutpostImmobile.Persistence\OutpostImmobile.Persistence.csproj" />
     </ItemGroup>
 
 </Project>
