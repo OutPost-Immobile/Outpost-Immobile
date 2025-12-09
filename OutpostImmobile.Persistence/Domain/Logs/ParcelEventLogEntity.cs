@@ -4,10 +4,7 @@ namespace OutpostImmobile.Persistence.Domain.Logs;
 
 public class ParcelEventLogEntity : EventLogBase
 {
-    public Guid Id { get; set; }
-
-    public required string? Message { get; set; }
-    public required ParcelEventLogType ParcelEventLogType { get; set; }
+    public required ParcelEventLogType ParcelEventLogType { get; init; }
     
     public Guid ParcelId { get; set; }
     public ParcelEntity Parcel { get; set; }
