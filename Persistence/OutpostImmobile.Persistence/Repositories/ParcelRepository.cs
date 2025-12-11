@@ -19,9 +19,10 @@ public class ParcelRepository : IParcelRepository
         _eventLogFactory = eventLogFactory;
     }
 
-    public Task UpdateParcelStatusAsync(Guid parcelId, ParcelStatus status)
+    public async Task<bool> UpdateParcelStatusAsync(Guid parcelId, ParcelStatus status)
     {
-        throw new NotImplementedException();
+        var rowsAffected = await _context.Database.ExecuteSqlAsync($"UPDATE Parcels SET Status = {status} WHERE Id = {parcelId}");
+        return rowsAffected == 1;
     }
 
     public Task<ParcelEntity> GetParcelsFromMaczkopatAsync(Guid maczkopatId)
