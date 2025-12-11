@@ -1,17 +1,8 @@
-using System.Reflection;
-using DispatchR.Extensions;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using OutpostImmobile.Api.Extensions;
 using OutpostImmobile.Core;
 using OutpostImmobile.Core.Mediator;
 using OutpostImmobile.Persistence;
-using OutpostImmobile.Persistence.Domain.Users;
-using OutpostImmobile.Persistence.Factories.Interfaces;
-using OutpostImmobile.Persistence.Factories.Internal;
-using OutpostImmobile.Persistence.Interceptors;
-using OutpostImmobile.Persistence.Interfaces;
-using OutpostImmobile.Persistence.Repositories;
 using OutpostImmobile.Persistence.Seeding;
 using Serilog;
 

@@ -21,8 +21,4 @@
       <ProjectReference Include="..\OutpostImmobile.Persistence\OutpostImmobile.Persistence.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Status\" />
-    </ItemGroup>
-
 </Project>
