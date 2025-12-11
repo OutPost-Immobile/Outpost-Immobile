@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using OutpostImmobile.Persistence;
 using OutpostImmobile.Persistence.Enums;
 
@@ -17,8 +18,11 @@ public class StaticEnumHelper : IStaticEnumHelper
         _dbContext = dbContext;
     }
 
-    public Task<Dictionary<int, string>> GetStaticEnumTranslations<TEnum>(TEnum enumType, TranslationLanguage language) where TEnum : Enum
+    public async Task<Dictionary<int, string>> GetStaticEnumTranslations<TEnum>(TEnum enumType, TranslationLanguage language) where TEnum : Enum
     {
-        throw new NotImplementedException();
+        return await _dbContext.StaticEnumTranslations
+            .Where(x => x.EnumName == nameof(enumType) && x.TranslationLanguage == language)
+            .Select(x => new { x.EnumValue, x.Translation })
+            .ToDictionaryAsync(x => x.EnumValue, x => x.Translation);
     }
 }
