@@ -27,6 +27,7 @@ internal class TrackParcelByFriendlyIdQueryHandler : IRequestHandler<TrackParcel
             Message = x.Message,
             CreatedAt = x.CreatedAt,
             ParcelEventLogType = x.ParcelEventLogType.ToString(),
+            ParcelId = x.ParcelId,
         });
     }
 
