@@ -4,5 +4,6 @@ namespace OutpostImmobile.Api.Request;
 
 public class AddLogRequest
 {
-    public MaczkopatEventLogType LogType { get; set; }
+    public Guid MaczkopatId { get; init; }
+    public MaczkopatEventLogType LogType { get; init; }
 }

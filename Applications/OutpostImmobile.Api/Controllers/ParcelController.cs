@@ -19,14 +19,12 @@ public static class ParcelController
         return routes;
     }
 
-    private static async Task<TypedResponse<List<ParcelDto>>> GetParcelsFromMaczkopatAsync(
-        [FromServices] IMediator mediator, GetParcelsFromMaczkopatRequest request)
+    private static async Task<TypedResponse<List<ParcelDto>>> GetParcelsFromMaczkopatAsync([FromServices] IMediator mediator, GetParcelsFromMaczkopatRequest request)
     {
         throw new NotImplementedException();
     }
 
-    private static async Task<Results<NoContent, BadRequest>> UpdateParcelStatusAsync([FromServices] IMediator mediator,
-        UpdateParcelStatusRequest request)
+    private static async Task<Results<NoContent, BadRequest>> UpdateParcelStatusAsync([FromServices] IMediator mediator, UpdateParcelStatusRequest request)
     {
         throw new NotImplementedException();
     }

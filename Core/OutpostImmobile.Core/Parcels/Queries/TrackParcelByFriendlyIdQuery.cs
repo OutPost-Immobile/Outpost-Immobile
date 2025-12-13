@@ -4,12 +4,12 @@ using OutpostImmobile.Persistence.Interfaces;
 
 namespace OutpostImmobile.Core.Parcels.Queries;
 
-public record TrackParcelByFriendlyIdQuery : IRequest<TrackParcelByFriendlyIdQuery, IEnumerable<ParcelLogDto>>
+public record TrackParcelByFriendlyIdQuery : IRequest<TrackParcelByFriendlyIdQuery, Task<IEnumerable<ParcelLogDto>>>
 {
     public required string FriendlyId { get; init; }
 }
 
-internal class TrackParcelByFriendlyIdQueryHandler : IRequestHandler<TrackParcelByFriendlyIdQuery, IEnumerable<ParcelLogDto>>
+internal class TrackParcelByFriendlyIdQueryHandler : IRequestHandler<TrackParcelByFriendlyIdQuery, Task<IEnumerable<ParcelLogDto>>>
 {
     private readonly IParcelRepository _parcelRepository;
 
