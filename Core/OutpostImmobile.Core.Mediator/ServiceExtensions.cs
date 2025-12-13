@@ -27,7 +27,7 @@ public static class ServiceExtensions
 
             foreach (var handlerType in handlerTypes)
             {
-                services.AddTransient(handlerType);
+                services.AddScoped(handlerType);
                 
                 var interfaceType = handlerType.GetInterfaces()
                     .First(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IRequestHandler<,>));

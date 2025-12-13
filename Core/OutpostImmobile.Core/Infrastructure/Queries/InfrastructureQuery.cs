@@ -6,9 +6,9 @@ namespace OutpostImmobile.Core.Infrastructure.Queries;
 /// <summary>
 /// Przykladowo tutaj jest wersja z Value taskiem bo jest szybsza, ale normalnie robimy IRequest<T, Task<T>>
 /// </summary>
-public record InfrastructureQuery : IRequest<InfrastructureQuery, PingDto>;
+public record InfrastructureQuery : IRequest<InfrastructureQuery, Task<PingDto>>;
 
-internal class InfrastructureQueryHandler : IRequestHandler<InfrastructureQuery, PingDto>
+internal class InfrastructureQueryHandler : IRequestHandler<InfrastructureQuery, Task<PingDto>>
 {
     /// <summary>
     /// Normalnie tutaj wszystko lecimy na async Task ale no nie mamy jeszcze bazy zeby to ogarnac

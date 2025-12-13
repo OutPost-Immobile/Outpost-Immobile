@@ -5,24 +5,25 @@ namespace OutpostImmobile.Core.Mediator.Internal;
 
 public class Mediator : IMediator
 {
-    private readonly IServiceProvider _serviceProvider;
-    private HandlerRegistry _handlerRegistry;
+    private readonly IServiceScopeFactory _scopeFactory;
+    private readonly HandlerRegistry _handlerRegistry;
 
-    public Mediator(IServiceProvider serviceProvider, HandlerRegistry handlerRegistry)
+    public Mediator(IServiceScopeFactory scopeFactory, HandlerRegistry handlerRegistry)
     {
-        _serviceProvider = serviceProvider;
+        _scopeFactory = scopeFactory;
         _handlerRegistry = handlerRegistry;
     }
 
-    public async Task<TResponse> Send<TRequest, TResponse>(IRequest<TRequest, TResponse> request, CancellationToken ct = default)
+    public TResponse Send<TRequest, TResponse>(IRequest<TRequest, TResponse> request, CancellationToken ct = default)
     {
         var requestType = request.GetType();
         var handlerType = _handlerRegistry.GetHandlerType(requestType);
         
-        var handlerInstance = _serviceProvider.GetRequiredService(handlerType);
+        using var scope = _scopeFactory.CreateScope();
+        var handlerInstance = scope.ServiceProvider.GetRequiredService(handlerType);
         
         var typedHandler = (IRequestHandler<TRequest, TResponse>)handlerInstance;
         
-        return await typedHandler.Handle((TRequest)request, ct);
+        return typedHandler.Handle((TRequest)request, ct);
     }
 }
