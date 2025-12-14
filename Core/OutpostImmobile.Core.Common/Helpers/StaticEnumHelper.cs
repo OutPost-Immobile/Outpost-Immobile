@@ -6,7 +6,7 @@ namespace OutpostImmobile.Core.Common.Helpers;
 
 public interface IStaticEnumHelper
 {
-    Task<Dictionary<int, string>> GetStaticEnumTranslations<TEnum>(TEnum enumType, TranslationLanguage language) where TEnum : Enum;
+    Task<Dictionary<int, string>> GetStaticEnumTranslations(string enumName, TranslationLanguage language);
 }
 
 public class StaticEnumHelper : IStaticEnumHelper
@@ -18,10 +18,11 @@ public class StaticEnumHelper : IStaticEnumHelper
         _dbContext = dbContext;
     }
 
-    public async Task<Dictionary<int, string>> GetStaticEnumTranslations<TEnum>(TEnum enumType, TranslationLanguage language) where TEnum : Enum
+    public async Task<Dictionary<int, string>> GetStaticEnumTranslations(string enumName, TranslationLanguage language)
     {
-        return await _dbContext.StaticEnumTranslations
-            .Where(x => x.EnumName == nameof(enumType) && x.TranslationLanguage == language)
+        return await _dbContext.StaticEnums
+            .Where(x => x.EnumName == enumName)
+            .SelectMany(x => x.Translations)
             .Select(x => new { x.EnumValue, x.Translation })
             .ToDictionaryAsync(x => x.EnumValue, x => x.Translation);
     }
