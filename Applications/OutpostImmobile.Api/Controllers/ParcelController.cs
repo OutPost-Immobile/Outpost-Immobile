@@ -19,7 +19,7 @@ public static class ParcelController
         
         group.MapGet("/{parcelFriendlyId}/track", GetParcelLogsAsync);
 
-        group.MapGet("/Update", UpdateParcelStatusAsync);
+        group.MapPost("/Update", UpdateParcelStatusAsync);
         
         group.MapGet("Maczkopat/{maczkopatId:Guid}", GetParcelsFromMaczkopatAsync);
         
