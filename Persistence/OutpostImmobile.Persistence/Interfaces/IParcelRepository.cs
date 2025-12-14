@@ -9,4 +9,5 @@ public interface IParcelRepository
     Task UpdateParcelStatusAsync(string friendlyId, ParcelStatus status);
     Task<List<ParcelEntity>> GetParcelsFromMaczkopatAsync(Guid maczkopatId);
     Task<IEnumerable<ParcelEventLogEntity>> GetParcelEventLogsAsync(string friendlyId);
+    Task<IEnumerable<Tuple<string, Guid?>>> GetReceiverIdsFromParcels(IEnumerable<string> friendlyIds);
 }

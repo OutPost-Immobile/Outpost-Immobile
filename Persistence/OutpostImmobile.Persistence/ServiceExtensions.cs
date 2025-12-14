@@ -30,7 +30,8 @@ public static class ServiceExtensions
             .AddScoped<IParcelRepository, ParcelRepository>()
             .AddScoped<IMaczkopatRepository, MaczkopatRepository>()
             .AddScoped<IRouteRepository, RouteRepository>()
-            .AddScoped<ICommunicationEventLogRepository, CommunicationEventLogRepository>();
+            .AddScoped<ICommunicationEventLogRepository, CommunicationEventLogRepository>()
+            .AddScoped<IUserRepository, UserRepository>();
         
         services.AddIdentity<UserInternal, IdentityRole<Guid>>(options =>
             {

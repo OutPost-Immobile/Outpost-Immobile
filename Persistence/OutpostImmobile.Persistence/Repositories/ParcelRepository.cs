@@ -60,4 +60,14 @@ public class ParcelRepository : IParcelRepository
             .Where(x => x.ParcelId == parcelId)
             .ToListAsync();
     }
+
+    public async Task<IEnumerable<Tuple<string, Guid?>>> GetReceiverIdsFromParcels(IEnumerable<string> friendlyIds)
+    {
+        await using var context = await _dbContextFactory.CreateDbContextAsync();
+
+        return await context.Parcels
+            .Where(x => friendlyIds.Contains(x.FriendlyId))
+            .Select(x => new Tuple<string, Guid?>(x.FriendlyId, x.ReceiverUserExternalId))
+            .ToListAsync();
+    }
 }

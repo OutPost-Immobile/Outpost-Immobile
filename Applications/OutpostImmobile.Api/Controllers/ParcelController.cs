@@ -5,8 +5,10 @@ using OutpostImmobile.Api.Helpers;
 using OutpostImmobile.Api.Request;
 using OutpostImmobile.Api.Response;
 using OutpostImmobile.Core.Mediator;
+using OutpostImmobile.Core.Parcels.Commands;
 using OutpostImmobile.Core.Parcels.Queries;
 using OutpostImmobile.Core.Parcels.QueryResults;
+using OutpostImmobile.Persistence.Domain.StaticEnums.Enums;
 
 namespace OutpostImmobile.Api.Controllers;
 
@@ -40,12 +42,15 @@ public static class ParcelController
         };
     }
 
-    private static async Task<Results<NoContent, BadRequest>> UpdateParcelStatusAsync([FromServices] IMediator mediator,[FromBody] UpdateParcelStatusRequest request)
+    private static async Task<Results<NoContent, BadRequest>> UpdateParcelStatusAsync([FromServices] IMediator mediator,[FromBody] List<UpdateParcelStatusRequest> requests)
     {
-        await mediator.Send(new UpdateParcelStatusCommand
+        await mediator.Send(new BulkUpdateParcelStatusCommand
         {
-            FriendlyId = request.FriendlyId,
-            Status = request.ParcelStatus
+            ParcelModels = requests.Select(x => new BulkUpdateParcelStatusCommand.ParcelModel
+            {
+                FriendlyId = x.FriendlyId,
+                Status = x.ParcelStatus
+            })
         });
         return TypedResults.NoContent();
     }

@@ -10,7 +10,10 @@ public static class ServiceExtensions
 {
     public static IServiceCollection AddCommunicationServices(this IServiceCollection services, IConfigurationManager configuration)
     {
-        services.Configure<MailOptions>(c => configuration.GetSection("MailOptions"));
+        services.AddOptions<MailOptions>()
+            .Bind(configuration.GetSection("MailOptions"))
+            .ValidateDataAnnotations()
+            .ValidateOnStart();
         
         services.AddTransient<IMailService, MailService>();
         
