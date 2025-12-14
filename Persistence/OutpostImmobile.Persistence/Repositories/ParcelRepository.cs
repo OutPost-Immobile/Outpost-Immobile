@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using OutpostImmobile.Persistence.Domain;
 using OutpostImmobile.Persistence.Domain.Logs;
 using OutpostImmobile.Persistence.Domain.StaticEnums.Enums;
+using OutpostImmobile.Persistence.Exceptions;
 using OutpostImmobile.Persistence.Factories.Interfaces;
 using OutpostImmobile.Persistence.Factories.Internal;
 using OutpostImmobile.Persistence.Interfaces;
@@ -34,7 +35,12 @@ public class ParcelRepository : IParcelRepository
         var parcelId = await _context.Parcels
             .Where(p => p.FriendlyId == friendlyId)
             .Select(p => p.Id)
-            .FirstAsync();
+            .FirstOrDefaultAsync();
+
+        if (parcelId == Guid.Empty)
+        {
+            throw new EntityNotFoundException("Parcel not found");
+        }
         
         return await _context.ParcelEventLogs
             .AsNoTracking()

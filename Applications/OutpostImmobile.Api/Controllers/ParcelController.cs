@@ -1,5 +1,7 @@
+using System.Net;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using OutpostImmobile.Api.Helpers;
 using OutpostImmobile.Api.Request;
 using OutpostImmobile.Api.Response;
 using OutpostImmobile.Core.Parcels.Queries;
@@ -29,14 +31,26 @@ public static class ParcelController
         throw new NotImplementedException();
     }
     
-    private static async Task<Results<Ok<IEnumerable<ParcelLogDto>>, BadRequest>> GetParcelLogsAsync([FromServices] IMediator mediator,
+    private static async Task<TypedResponse<IEnumerable<ParcelLogDto>>> GetParcelLogsAsync([FromServices] IMediator mediator,
         [FromRoute] string parcelFriendlyId)
     {
-        var parcelEventLogs = await mediator.Send(new TrackParcelByFriendlyIdQuery
+        try
         {
-            FriendlyId = parcelFriendlyId
-        });
-        
-        return TypedResults.Ok(parcelEventLogs);
+            var parcelEventLogs = await mediator.Send(new TrackParcelByFriendlyIdQuery
+            {
+                FriendlyId = parcelFriendlyId
+            });
+
+            return new TypedResponse<IEnumerable<ParcelLogDto>>
+            {
+                Data = parcelEventLogs,
+                Errors = null,
+                StatusCode = HttpStatusCode.OK
+            };
+        }
+        catch(Exception ex)
+        {
+            return ExceptionHelper.HandleErrors<IEnumerable<ParcelLogDto>>([], ex.Message);
+        }
     }
 }
