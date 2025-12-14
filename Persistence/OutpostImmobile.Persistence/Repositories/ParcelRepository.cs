@@ -37,7 +37,7 @@ public class ParcelRepository : IParcelRepository
 
         return await context.Parcels
             .AsNoTracking()
-            .Where(p => p.Id == maczkopatId)
+            .Where(p => p.MaczkopatEntityId == maczkopatId)
             .ToListAsync();
     }
 
