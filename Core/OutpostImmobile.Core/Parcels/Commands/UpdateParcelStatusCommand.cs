@@ -5,13 +5,13 @@ using OutpostImmobile.Persistence.Interfaces;
 
 namespace OutpostImmobile.Core.Parcels.Queries;
 
-public record UpdateParcelStatusCommand : IRequest<UpdateParcelStatusCommand, bool>
+public record UpdateParcelStatusCommand : IRequest<UpdateParcelStatusCommand, Task>
 {
-    public required Guid Id { get; init; }
+    public required string Id { get; init; }
     public required ParcelStatus Status { get; init; }
 }
 
-internal class UpdateParcelStatusCommandHandler : IRequestHandler<UpdateParcelStatusCommand, bool>
+internal class UpdateParcelStatusCommandHandler : IRequestHandler<UpdateParcelStatusCommand, Task>
 {
     private readonly IParcelRepository _parcelRepository;
     private readonly IMailService _mailService;
@@ -22,9 +22,8 @@ internal class UpdateParcelStatusCommandHandler : IRequestHandler<UpdateParcelSt
         _mailService = mailService;
     }
     
-    public async Task<bool> Handle(UpdateParcelStatusCommand command, CancellationToken cancellationToken)
+    public async Task Handle(UpdateParcelStatusCommand command, CancellationToken cancellationToken)
     {
-        var success = await _parcelRepository.UpdateParcelStatusAsync(command.Id, command.Status);
-        return success;
+        await _parcelRepository.UpdateParcelStatusAsync(command.Id, command.Status);
     }
 }

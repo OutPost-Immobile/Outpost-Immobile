@@ -2,7 +2,8 @@ using OutpostImmobile.Persistence.Domain.StaticEnums.Enums;
 
 namespace OutpostImmobile.Api.Request;
 
-public class UpdateParcelStatusRequest
+public record UpdateParcelStatusRequest
 {
-    public ParcelStatus ParcelStatus { get; set; }
+    public required string FriendlyId { get; init; }
+    public required ParcelStatus ParcelStatus { get; init; }
 }

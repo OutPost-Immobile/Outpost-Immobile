@@ -6,7 +6,7 @@ namespace OutpostImmobile.Persistence.Interfaces;
 
 public interface IParcelRepository
 {
-    Task<bool> UpdateParcelStatusAsync(Guid parcelId, ParcelStatus status);
-    Task<ParcelEntity> GetParcelsFromMaczkopatAsync(Guid maczkopatId);
+    Task UpdateParcelStatusAsync(string parcelId, ParcelStatus status);
+    Task<List<ParcelEntity>> GetParcelsFromMaczkopatAsync(Guid maczkopatId);
     Task<IEnumerable<ParcelEventLogEntity>> GetParcelEventLogsAsync(string friendlyId);
 }
