@@ -1,5 +1,6 @@
 using OutpostImmobile.Core.Mediator.Abstraction;
 using OutpostImmobile.Core.Routes.QueryResult;
+using OutpostImmobile.Persistence.Interfaces;
 
 namespace OutpostImmobile.Core.Routes.Queries;
 
@@ -10,8 +11,23 @@ public class GetRoutesFromCourierQuery : IRequest<GetRoutesFromCourierQuery, Tas
 
 internal class GetRoutesFromCourierQueryHandler : IRequestHandler<GetRoutesFromCourierQuery, Task<List<RouteDto>>>
 {
-    public Task<List<RouteDto>> Handle(GetRoutesFromCourierQuery request, CancellationToken cancellationToken)
+    private readonly IRouteRepository _repository;
+
+    public GetRoutesFromCourierQueryHandler(IRouteRepository repository)
     {
-        throw new NotImplementedException();
+        _repository = repository;
+    }
+
+    public async Task<List<RouteDto>> Handle(GetRoutesFromCourierQuery request, CancellationToken cancellationToken)
+    {
+        var routes = await _repository.GetRouteFromCourierAsync(request.CourierId);
+
+        return routes
+            .Select(x => new RouteDto
+            {
+                RouteId = x.Id,
+                Distance = x.Distace
+            })
+            .ToList();
     }
 }
