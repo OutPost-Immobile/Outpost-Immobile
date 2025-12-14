@@ -20,11 +20,11 @@ public class ParcelRepository : IParcelRepository
         _dbContextFactory = dbContextFactory;
     }
 
-    public async Task UpdateParcelStatusAsync(string parcelId, ParcelStatus status)
+    public async Task UpdateParcelStatusAsync(string friendlyId, ParcelStatus status)
     {
         await using var context = await _dbContextFactory.CreateDbContextAsync();
         
-        var parcelToUpdate = await context.Parcels.FirstOrDefaultAsync(p => p.FriendlyId == parcelId);
+        var parcelToUpdate = await context.Parcels.FirstOrDefaultAsync(p => p.FriendlyId == friendlyId);
         
         parcelToUpdate.Status = status;
         

@@ -15,21 +15,21 @@ public record GetParcelsFromMaczkopatQuery : IRequest<GetParcelsFromMaczkopatQue
 internal class GetParcelsFromMaczkopatQueryHandler : IRequestHandler<GetParcelsFromMaczkopatQuery, Task<List<ParcelDto>>>
 {
     private readonly IParcelRepository _parcelRepository;
-    //private readonly IStaticEnumHelper _staticEnumHelper;
-    public GetParcelsFromMaczkopatQueryHandler(IParcelRepository parcelRepository)
+    private readonly IStaticEnumHelper _staticEnumHelper;
+    public GetParcelsFromMaczkopatQueryHandler(IParcelRepository parcelRepository,  IStaticEnumHelper staticEnumHelper)
     {
         _parcelRepository = parcelRepository;
-        //_staticEnumHelper = staticEnumHelper;
+        _staticEnumHelper = staticEnumHelper;
     }
     
     public async Task<List<ParcelDto>> Handle(GetParcelsFromMaczkopatQuery request, CancellationToken cancellationToken)
     {
         var parcels = await _parcelRepository.GetParcelsFromMaczkopatAsync(request.MaczkopatId);
-        //var staticTranslations = await _staticEnumHelper.GetStaticEnumTranslations(ParcelStatus, TranslationLanguage.Pl);
+        var staticTranslations = await _staticEnumHelper.GetStaticEnumTranslations(nameof(ParcelStatus), TranslationLanguage.Pl);
         return parcels.Select(x => new ParcelDto
         {
             FriendlyId = x.FriendlyId,
-            Status = string.Empty,
+            Status = x.Status != null ? staticTranslations[(int)x.Status] :  null,
         }).ToList();
     }
 }

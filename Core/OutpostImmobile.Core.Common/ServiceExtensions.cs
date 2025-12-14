@@ -6,7 +6,7 @@ namespace OutpostImmobile.Core.Common;
 
 public static class ServiceExtensions
 {
-    public static IServiceCollection AddCommonServices(this IServiceCollection services, IConfigurationManager configuration)
+    public static IServiceCollection AddCommonServices(this IServiceCollection services)
     {
         services.AddScoped<IStaticEnumHelper, StaticEnumHelper>();
         

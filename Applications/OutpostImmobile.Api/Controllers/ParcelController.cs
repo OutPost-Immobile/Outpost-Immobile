@@ -1,13 +1,12 @@
 using System.Net;
-using DispatchR;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using OutpostImmobile.Api.Helpers;
 using OutpostImmobile.Api.Request;
 using OutpostImmobile.Api.Response;
+using OutpostImmobile.Core.Mediator;
 using OutpostImmobile.Core.Parcels.Queries;
 using OutpostImmobile.Core.Parcels.QueryResults;
-using IMediator = OutpostImmobile.Core.Mediator.IMediator;
 
 namespace OutpostImmobile.Api.Controllers;
 
@@ -45,7 +44,7 @@ public static class ParcelController
     {
         await mediator.Send(new UpdateParcelStatusCommand
         {
-            Id = request.FriendlyId,
+            FriendlyId = request.FriendlyId,
             Status = request.ParcelStatus
         });
         return TypedResults.NoContent();

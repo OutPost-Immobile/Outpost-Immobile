@@ -7,7 +7,7 @@ namespace OutpostImmobile.Core.Parcels.Queries;
 
 public record UpdateParcelStatusCommand : IRequest<UpdateParcelStatusCommand, Task>
 {
-    public required string Id { get; init; }
+    public required string FriendlyId { get; init; }
     public required ParcelStatus Status { get; init; }
 }
 
@@ -24,6 +24,6 @@ internal class UpdateParcelStatusCommandHandler : IRequestHandler<UpdateParcelSt
     
     public async Task Handle(UpdateParcelStatusCommand command, CancellationToken cancellationToken)
     {
-        await _parcelRepository.UpdateParcelStatusAsync(command.Id, command.Status);
+        await _parcelRepository.UpdateParcelStatusAsync(command.FriendlyId, command.Status);
     }
 }

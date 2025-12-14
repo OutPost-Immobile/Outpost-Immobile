@@ -1,6 +1,7 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using OutpostImmobile.Communication;
+using OutpostImmobile.Core.Common;
 using OutpostImmobile.Core.Integrations.KMZB;
 
 namespace OutpostImmobile.Core;
@@ -11,7 +12,7 @@ public static class ServiceExtensions
     {
         services.AddCommunicationServices(configuration);
         services.AddKMZB();
-        
+        services.AddCommonServices();
         return services;
     }
 }
