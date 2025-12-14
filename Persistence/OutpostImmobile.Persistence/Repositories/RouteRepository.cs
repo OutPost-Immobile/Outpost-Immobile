@@ -7,16 +7,18 @@ namespace OutpostImmobile.Persistence.Repositories;
 
 public class RouteRepository : IRouteRepository
 {
-    private readonly OutpostImmobileDbContext _context;
+    private readonly IDbContextFactory<OutpostImmobileDbContext> _dbContextFactory;
 
-    public RouteRepository(OutpostImmobileDbContext context)
+    public RouteRepository(IDbContextFactory<OutpostImmobileDbContext> dbContextFactory)
     {
-        _context = context;
+        _dbContextFactory = dbContextFactory;
     }
 
     public async Task<List<RouteEntity>> GetRouteFromCourierAsync(Guid courierId)
     {
-        var vehicle = await _context.Vehicles
+        await using var context = await _dbContextFactory.CreateDbContextAsync();
+        
+        var vehicle = await context.Vehicles
             .AsNoTracking()
             .Where(x => x.DriverId == courierId)
             .FirstOrDefaultAsync();
@@ -26,7 +28,7 @@ public class RouteRepository : IRouteRepository
             throw new EntityNotFoundException("Vehicle not found");
         }
 
-        return await _context.Routes
+        return await context.Routes
             .AsNoTracking()
             .Where(x => x.AssignedVehicles.Contains(vehicle))
             .ToListAsync();

@@ -11,13 +11,13 @@ namespace OutpostImmobile.Persistence.Repositories;
 
 public class ParcelRepository : IParcelRepository
 {
-    private readonly OutpostImmobileDbContext _context;
+    private readonly IDbContextFactory<OutpostImmobileDbContext> _dbContextFactory;
     private readonly IEventLogFactory _eventLogFactory;
 
-    public ParcelRepository(OutpostImmobileDbContext context, ParcelEventLogFactory eventLogFactory)
+    public ParcelRepository(ParcelEventLogFactory eventLogFactory, IDbContextFactory<OutpostImmobileDbContext> dbContextFactory)
     {
-        _context = context;
         _eventLogFactory = eventLogFactory;
+        _dbContextFactory = dbContextFactory;
     }
 
     public Task UpdateParcelStatusAsync(Guid parcelId, ParcelStatus status)
@@ -32,7 +32,9 @@ public class ParcelRepository : IParcelRepository
 
     public async Task<IEnumerable<ParcelEventLogEntity>> GetParcelEventLogsAsync(string friendlyId)
     {
-        var parcelId = await _context.Parcels
+        await using var context = await _dbContextFactory.CreateDbContextAsync();
+        
+        var parcelId = await context.Parcels
             .Where(p => p.FriendlyId == friendlyId)
             .Select(p => p.Id)
             .FirstOrDefaultAsync();
@@ -42,7 +44,7 @@ public class ParcelRepository : IParcelRepository
             throw new EntityNotFoundException("Parcel not found");
         }
         
-        return await _context.ParcelEventLogs
+        return await context.ParcelEventLogs
             .AsNoTracking()
             .Where(x => x.ParcelId == parcelId)
             .ToListAsync();

@@ -22,6 +22,8 @@ internal class TrackParcelByFriendlyIdQueryHandler : IRequestHandler<TrackParcel
     {
         var eventLogs = await _parcelRepository.GetParcelEventLogsAsync(query.FriendlyId);
 
+        await Task.Yield();
+
         return eventLogs.Select(x => new ParcelLogDto
         {
             Message = x.Message,

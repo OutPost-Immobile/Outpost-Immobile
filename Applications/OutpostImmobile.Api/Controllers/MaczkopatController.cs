@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using OutpostImmobile.Api.Request;
 using OutpostImmobile.Core.Maczkopats.Commands;
 using OutpostImmobile.Core.Mediator;
-using OutpostImmobile.Persistence.Domain.StaticEnums.Enums;
 
 namespace OutpostImmobile.Api.Controllers;
 
