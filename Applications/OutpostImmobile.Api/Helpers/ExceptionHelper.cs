@@ -10,7 +10,7 @@ public class ExceptionHelper
         return new TypedResponse<T>
         {
             StatusCode = HttpStatusCode.BadRequest,
-            Data = data,
+            Data = default,
             Errors = message
         };
     }
