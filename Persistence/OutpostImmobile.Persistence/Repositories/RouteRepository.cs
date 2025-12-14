@@ -18,19 +18,19 @@ public class RouteRepository : IRouteRepository
     {
         await using var context = await _dbContextFactory.CreateDbContextAsync();
         
-        var vehicle = await context.Vehicles
-            .AsNoTracking()
-            .Where(x => x.DriverId == courierId)
-            .FirstOrDefaultAsync();
+        var courierRouteId = await context.UsersInternal
+            .Where(x => x.Id == courierId)
+            .Select(x => (long?) x.RouteId)
+            .FirstOrDefaultAsync() ?? null;
 
-        if (vehicle is null)
+        if (courierRouteId == null)
         {
-            throw new EntityNotFoundException("Vehicle not found");
+            throw new EntityNotFoundException("Route not found");
         }
-
+        
         return await context.Routes
             .AsNoTracking()
-            .Where(x => x.AssignedVehicles.Contains(vehicle))
+            .Where(x => x.Id == courierRouteId)
             .ToListAsync();
     }
 }

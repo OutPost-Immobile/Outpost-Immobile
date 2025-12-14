@@ -13,7 +13,7 @@ public static class MaczkopatController
         var group = routes.MapGroup("/api/maczkopats/");
         group.WithTags("Maczkopats");
         
-        group.MapPost("/addLLog", AddLogAsync);
+        group.MapPost("/AddLog", AddLogAsync);
         
         return routes;
     }
