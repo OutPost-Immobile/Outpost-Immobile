@@ -17,6 +17,9 @@ W momencie kiedy są jakieś konflikty, to proszę nie robić force pushy, tylko
 
 https://mui.com/material-ui/getting-started/
 
+## Testowanie
+W route wejść w endpoint ```/scalar```
+
 ## Skryptowanie migracji:
 
 ```
