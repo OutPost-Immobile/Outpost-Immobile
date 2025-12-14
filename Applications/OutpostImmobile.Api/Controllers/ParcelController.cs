@@ -4,8 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 using OutpostImmobile.Api.Helpers;
 using OutpostImmobile.Api.Request;
 using OutpostImmobile.Api.Response;
-using OutpostImmobile.Core.Parcels.Queries;
 using OutpostImmobile.Core.Mediator;
+using OutpostImmobile.Core.Parcels.Queries;
 using OutpostImmobile.Core.Parcels.QueryResults;
 
 namespace OutpostImmobile.Api.Controllers;
@@ -17,18 +17,37 @@ public static class ParcelController
         var group = routes.MapGroup("/api/Parcels");
         
         group.MapGet("/{parcelFriendlyId}/track", GetParcelLogsAsync);
+
+        group.MapPost("/Update", UpdateParcelStatusAsync);
+        
+        group.MapGet("Maczkopat/{maczkopatId:Guid}", GetParcelsFromMaczkopatAsync);
         
         return routes;
     }
 
-    private static async Task<TypedResponse<List<ParcelDto>>> GetParcelsFromMaczkopatAsync([FromServices] IMediator mediator, GetParcelsFromMaczkopatRequest request)
+    private static async Task<TypedResponse<List<ParcelDto>>> GetParcelsFromMaczkopatAsync([FromServices] IMediator mediator,[FromRoute] Guid maczkopatId)
     {
-        throw new NotImplementedException();
+        var parcels = await mediator.Send(new GetParcelsFromMaczkopatQuery
+        {
+            MaczkopatId = maczkopatId
+        });
+
+        return new TypedResponse<List<ParcelDto>>
+        {
+            Data = parcels,
+            Errors = null,
+            StatusCode = HttpStatusCode.OK
+        };
     }
 
-    private static async Task<Results<NoContent, BadRequest>> UpdateParcelStatusAsync([FromServices] IMediator mediator, UpdateParcelStatusRequest request)
+    private static async Task<Results<NoContent, BadRequest>> UpdateParcelStatusAsync([FromServices] IMediator mediator,[FromBody] UpdateParcelStatusRequest request)
     {
-        throw new NotImplementedException();
+        await mediator.Send(new UpdateParcelStatusCommand
+        {
+            FriendlyId = request.FriendlyId,
+            Status = request.ParcelStatus
+        });
+        return TypedResults.NoContent();
     }
     
     private static async Task<TypedResponse<IEnumerable<ParcelLogDto>>> GetParcelLogsAsync([FromServices] IMediator mediator,

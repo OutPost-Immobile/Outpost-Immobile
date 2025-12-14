@@ -1,26 +1,29 @@
 using OutpostImmobile.Communication.Interfaces;
 using OutpostImmobile.Core.Mediator.Abstraction;
 using OutpostImmobile.Persistence.Domain.StaticEnums.Enums;
+using OutpostImmobile.Persistence.Interfaces;
 
-namespace OutpostImmobile.Core.Parcels.Commands;
+namespace OutpostImmobile.Core.Parcels.Queries;
 
 public record UpdateParcelStatusCommand : IRequest<UpdateParcelStatusCommand, Task>
 {
-    public required Guid ParcelId { get; init; }
+    public required string FriendlyId { get; init; }
     public required ParcelStatus Status { get; init; }
 }
 
 internal class UpdateParcelStatusCommandHandler : IRequestHandler<UpdateParcelStatusCommand, Task>
 {
+    private readonly IParcelRepository _parcelRepository;
     private readonly IMailService _mailService;
-
-    public UpdateParcelStatusCommandHandler(IMailService mailService)
+    
+    public UpdateParcelStatusCommandHandler(IParcelRepository parcelRepository, IMailService mailService)
     {
+        _parcelRepository = parcelRepository;
         _mailService = mailService;
     }
-
-    public Task Handle(UpdateParcelStatusCommand request, CancellationToken cancellationToken)
+    
+    public async Task Handle(UpdateParcelStatusCommand command, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        await _parcelRepository.UpdateParcelStatusAsync(command.FriendlyId, command.Status);
     }
 }

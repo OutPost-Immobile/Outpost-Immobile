@@ -20,14 +20,25 @@ public class ParcelRepository : IParcelRepository
         _dbContextFactory = dbContextFactory;
     }
 
-    public Task UpdateParcelStatusAsync(Guid parcelId, ParcelStatus status)
+    public async Task UpdateParcelStatusAsync(string friendlyId, ParcelStatus status)
     {
-        throw new NotImplementedException();
+        await using var context = await _dbContextFactory.CreateDbContextAsync();
+        
+        var parcelToUpdate = await context.Parcels.FirstOrDefaultAsync(p => p.FriendlyId == friendlyId);
+        
+        parcelToUpdate.Status = status;
+        
+        await context.SaveChangesAsync();
     }
 
-    public Task<ParcelEntity> GetParcelsFromMaczkopatAsync(Guid maczkopatId)
+    public async Task<List<ParcelEntity>> GetParcelsFromMaczkopatAsync(Guid maczkopatId)
     {
-        throw new NotImplementedException();
+        await using var context = await _dbContextFactory.CreateDbContextAsync();
+
+        return await context.Parcels
+            .AsNoTracking()
+            .Where(p => p.MaczkopatEntityId == maczkopatId)
+            .ToListAsync();
     }
 
     public async Task<IEnumerable<ParcelEventLogEntity>> GetParcelEventLogsAsync(string friendlyId)
