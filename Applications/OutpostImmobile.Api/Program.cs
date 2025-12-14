@@ -4,6 +4,7 @@ using OutpostImmobile.Core;
 using OutpostImmobile.Core.Mediator;
 using OutpostImmobile.Persistence;
 using OutpostImmobile.Persistence.Seeding;
+using Scalar.AspNetCore;
 using Serilog;
 
 namespace OutpostImmobile.Api;
@@ -18,6 +19,8 @@ public class Program
         
         builder.Services.AddSerilog((context, configuration) =>
             configuration.ReadFrom.Configuration(builder.Configuration));
+
+        builder.Services.AddEndpointsApiExplorer();
         
         builder.Services.AddCors(options =>
         {
@@ -45,6 +48,8 @@ public class Program
         if (app.Environment.IsDevelopment())
         {
             app.MapOpenApi();
+            app.MapScalarApiReference();
+            app.MapGet("/", () => Results.Redirect("/scalar/v1")).ExcludeFromDescription();
         }
 
         app.UseHttpsRedirection();

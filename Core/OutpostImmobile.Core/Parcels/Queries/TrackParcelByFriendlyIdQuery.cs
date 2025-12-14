@@ -4,12 +4,12 @@ using OutpostImmobile.Persistence.Interfaces;
 
 namespace OutpostImmobile.Core.Parcels.Queries;
 
-public record TrackParcelByFriendlyIdQuery : IRequest<TrackParcelByFriendlyIdQuery, IEnumerable<ParcelLogDto>>
+public record TrackParcelByFriendlyIdQuery : IRequest<TrackParcelByFriendlyIdQuery, Task<IEnumerable<ParcelLogDto>>>
 {
     public required string FriendlyId { get; init; }
 }
 
-internal class TrackParcelByFriendlyIdQueryHandler : IRequestHandler<TrackParcelByFriendlyIdQuery, IEnumerable<ParcelLogDto>>
+internal class TrackParcelByFriendlyIdQueryHandler : IRequestHandler<TrackParcelByFriendlyIdQuery, Task<IEnumerable<ParcelLogDto>>>
 {
     private readonly IParcelRepository _parcelRepository;
 
@@ -21,6 +21,8 @@ internal class TrackParcelByFriendlyIdQueryHandler : IRequestHandler<TrackParcel
     public async Task<IEnumerable<ParcelLogDto>> Handle(TrackParcelByFriendlyIdQuery query, CancellationToken cancellationToken)
     {
         var eventLogs = await _parcelRepository.GetParcelEventLogsAsync(query.FriendlyId);
+
+        await Task.Yield();
 
         return eventLogs.Select(x => new ParcelLogDto
         {

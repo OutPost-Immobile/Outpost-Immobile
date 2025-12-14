@@ -4,13 +4,13 @@ using OutpostImmobile.Persistence.Domain.StaticEnums.Enums;
 
 namespace OutpostImmobile.Core.Parcels.Commands;
 
-public record UpdateParcelStatusCommand : IRequest<UpdateParcelStatusCommand, bool>
+public record UpdateParcelStatusCommand : IRequest<UpdateParcelStatusCommand, Task>
 {
     public required Guid ParcelId { get; init; }
     public required ParcelStatus Status { get; init; }
 }
 
-internal class UpdateParcelStatusCommandHandler : IRequestHandler<UpdateParcelStatusCommand, bool>
+internal class UpdateParcelStatusCommandHandler : IRequestHandler<UpdateParcelStatusCommand, Task>
 {
     private readonly IMailService _mailService;
 
@@ -19,7 +19,7 @@ internal class UpdateParcelStatusCommandHandler : IRequestHandler<UpdateParcelSt
         _mailService = mailService;
     }
 
-    public Task<bool> Handle(UpdateParcelStatusCommand request, CancellationToken cancellationToken)
+    public Task Handle(UpdateParcelStatusCommand request, CancellationToken cancellationToken)
     {
         throw new NotImplementedException();
     }
