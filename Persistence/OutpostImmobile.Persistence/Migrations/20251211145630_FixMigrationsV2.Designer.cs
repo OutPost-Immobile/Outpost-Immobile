@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NetTopologySuite.Geometries;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
@@ -12,9 +13,11 @@ using OutpostImmobile.Persistence;
 namespace OutpostImmobile.Persistence.Migrations
 {
     [DbContext(typeof(OutpostImmobileDbContext))]
-    partial class OutpostImmobileDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251211145630_FixMigrationsV2")]
+    partial class FixMigrationsV2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -455,9 +458,6 @@ namespace OutpostImmobile.Persistence.Migrations
                     b.Property<Guid>("RoleId")
                         .HasColumnType("uuid");
 
-                    b.Property<long>("RouteId")
-                        .HasColumnType("bigint");
-
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("text");
 
@@ -470,8 +470,6 @@ namespace OutpostImmobile.Persistence.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("RoleId");
-
-                    b.HasIndex("RouteId");
 
                     b.ToTable("UsersInternal");
                 });
@@ -676,15 +674,7 @@ namespace OutpostImmobile.Persistence.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("OutpostImmobile.Persistence.Domain.RouteEntity", "Route")
-                        .WithMany("Couriers")
-                        .HasForeignKey("RouteId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("Role");
-
-                    b.Navigation("Route");
                 });
 
             modelBuilder.Entity("OutpostImmobile.Persistence.Domain.VehicleEntity", b =>
@@ -722,8 +712,6 @@ namespace OutpostImmobile.Persistence.Migrations
             modelBuilder.Entity("OutpostImmobile.Persistence.Domain.RouteEntity", b =>
                 {
                     b.Navigation("AssignedVehicles");
-
-                    b.Navigation("Couriers");
                 });
 
             modelBuilder.Entity("OutpostImmobile.Persistence.Domain.StaticEnums.StaticEnumEntity", b =>

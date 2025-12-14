@@ -16,10 +16,10 @@ public static class ServiceExtensions
     {
         services.AddSingleton<AuditableEntityInterceptor>();
         
-        services.AddDbContext<OutpostImmobileDbContext>((sp, options) => options
+        services.AddDbContextFactory<OutpostImmobileDbContext>((sp, options) => options
             .UseNpgsql(connStr, o => o.UseNetTopologySuite())
             .AddInterceptors(sp.GetRequiredService<AuditableEntityInterceptor>()));
-        
+
         services
             .AddScoped<MaczkopatEventLogFactory>()
             .AddScoped<CommunicationsEventLogFactory>()

@@ -1,8 +1,8 @@
-using OutpostImmobile.Persistence.Domain.Logs;
+using OutpostImmobile.Persistence.Domain.StaticEnums.Enums;
 
 namespace OutpostImmobile.Persistence.Interfaces;
 
 public interface IMaczkopatRepository
 {
-    Task AddLogAsync(MaczkopatEventLogEntity log);
+    Task AddLogAsync(Guid maczkopatId, MaczkopatEventLogType logType, CancellationToken ct);
 }

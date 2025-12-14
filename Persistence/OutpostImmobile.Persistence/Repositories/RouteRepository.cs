@@ -1,19 +1,36 @@
+using Microsoft.EntityFrameworkCore;
 using OutpostImmobile.Persistence.Domain;
+using OutpostImmobile.Persistence.Exceptions;
 using OutpostImmobile.Persistence.Interfaces;
 
 namespace OutpostImmobile.Persistence.Repositories;
 
 public class RouteRepository : IRouteRepository
 {
-    private readonly OutpostImmobileDbContext _context;
+    private readonly IDbContextFactory<OutpostImmobileDbContext> _dbContextFactory;
 
-    public RouteRepository(OutpostImmobileDbContext context)
+    public RouteRepository(IDbContextFactory<OutpostImmobileDbContext> dbContextFactory)
     {
-        _context = context;
+        _dbContextFactory = dbContextFactory;
     }
 
-    public Task<List<RouteEntity>> GetRouteFromCourierAsync(Guid courierId)
+    public async Task<List<RouteEntity>> GetRouteFromCourierAsync(Guid courierId)
     {
-        throw new NotImplementedException();
+        await using var context = await _dbContextFactory.CreateDbContextAsync();
+        
+        var courierRouteId = await context.UsersInternal
+            .Where(x => x.Id == courierId)
+            .Select(x => (long?) x.RouteId)
+            .FirstOrDefaultAsync() ?? null;
+
+        if (courierRouteId == null)
+        {
+            throw new EntityNotFoundException("Route not found");
+        }
+        
+        return await context.Routes
+            .AsNoTracking()
+            .Where(x => x.Id == courierRouteId)
+            .ToListAsync();
     }
 }
