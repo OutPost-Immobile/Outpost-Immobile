@@ -81,7 +81,7 @@ internal class BulkUpdateParcelStatusCommandHandler : IRequestHandler<BulkUpdate
             
             await _mailService.SendMessage(request);
 
-            await _parcelRepository.UpdateParcelStatusAsync(parcelModel.FriendlyId, parcelModel.Status);
+            await _parcelRepository.UpdateParcelStatusAsync(parcelModel.FriendlyId, parcelModel.Status, parcelStatusTranslations[(int)parcelModel.Status]);
         }
     }
 }

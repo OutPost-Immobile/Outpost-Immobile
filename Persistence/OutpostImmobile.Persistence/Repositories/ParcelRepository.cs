@@ -5,6 +5,7 @@ using OutpostImmobile.Persistence.Domain.StaticEnums.Enums;
 using OutpostImmobile.Persistence.Exceptions;
 using OutpostImmobile.Persistence.Factories.Interfaces;
 using OutpostImmobile.Persistence.Factories.Internal;
+using OutpostImmobile.Persistence.Factories.Request;
 using OutpostImmobile.Persistence.Interfaces;
 
 namespace OutpostImmobile.Persistence.Repositories;
@@ -20,13 +21,30 @@ public class ParcelRepository : IParcelRepository
         _dbContextFactory = dbContextFactory;
     }
 
-    public async Task UpdateParcelStatusAsync(string friendlyId, ParcelStatus status)
+    public async Task UpdateParcelStatusAsync(string friendlyId, ParcelStatus status, string statusStr)
     {
         await using var context = await _dbContextFactory.CreateDbContextAsync();
         
-        var parcelToUpdate = await context.Parcels.FirstOrDefaultAsync(p => p.FriendlyId == friendlyId);
+        var parcelToUpdate = await context.Parcels
+            .Include(x => x.ParcelEventLogs)
+            .FirstOrDefaultAsync(p => p.FriendlyId == friendlyId);
+
+        if (parcelToUpdate == null)
+        {
+            throw new EntityNotFoundException("Parcel not found");
+        }
+
+        var request = new CreateParcelEventLogTypeRequest
+        {
+            ParcelId = parcelToUpdate.Id,
+            EventLog = ParcelEventLogType.StatusChange,
+            Message = $"Status zmieniony na: {statusStr}"
+        };
+
+        var parcelEventLog = (ParcelEventLogEntity)(await _eventLogFactory.CreateEventLogAsync(request));
         
         parcelToUpdate.Status = status;
+        parcelToUpdate.ParcelEventLogs.Add(parcelEventLog);
         
         await context.SaveChangesAsync();
     }
