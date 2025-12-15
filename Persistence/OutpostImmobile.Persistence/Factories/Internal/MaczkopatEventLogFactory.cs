@@ -18,7 +18,7 @@ public class MaczkopatEventLogFactory : IEventLogFactory
         {
             MaczkopatId = maczkopatEventLogRequest.MaczkopatId,
             EventLogType = maczkopatEventLogRequest.EventLog,
-            Message = ""
+            Message = request.Message ??  string.Empty,
         };
 
         return Task.FromResult<IEventLog>(log);

@@ -27,7 +27,8 @@ public class MaczkopatRepository : IMaczkopatRepository
         var request = new CreateMaczkopatEventLogRequest
         {
             MaczkopatId = maczkopatId,
-            EventLog = logType
+            EventLog = logType,
+            Message = null
         };
 
         var eventLogToAdd = await _eventLogFactory.CreateEventLogAsync(request, ct);

@@ -7,13 +7,13 @@ namespace OutpostImmobile.Communication.Options;
 public class MailOptions
 {
     [Required]
-    public string Sender { get; init; } = string.Empty; 
+    public required string Sender { get; init; }
     [Required]
-    public string SenderMailAddress { get; init; } = string.Empty;
+    public required string SenderMailAddress { get; init; }
     [Required]
-    public string SenderPassword { get; init; } = string.Empty;
+    public required string SenderPassword { get; init; }
     [Required]
-    public string SmtpHost { get; init; } = string.Empty;
+    public required string SmtpHost { get; init; }
     [Required]
-    public int Port { get ; init; }
+    public required int Port { get ; init; }
 }

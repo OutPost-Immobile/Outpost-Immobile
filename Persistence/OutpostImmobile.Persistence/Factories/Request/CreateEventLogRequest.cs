@@ -5,6 +5,7 @@ namespace OutpostImmobile.Persistence.Factories.Request;
 public abstract record CreateEventLogRequestBase<TEventLogType> where TEventLogType : Enum
 {
     public required TEventLogType EventLog { get; init; }
+    public required string? Message { get; init; }
 }
 
 public record CreateMaczkopatEventLogRequest : CreateEventLogRequestBase<MaczkopatEventLogType>
@@ -21,5 +22,4 @@ public record CreateCommunicationEventLogType : CreateEventLogRequestBase<Commun
 {
     public required string Sender { get; init; }   
     public required string Receiver { get; init; }   
-    public required string Message { get; init; }   
 }
