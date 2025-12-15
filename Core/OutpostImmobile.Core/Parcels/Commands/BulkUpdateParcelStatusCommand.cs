@@ -59,15 +59,25 @@ internal class BulkUpdateParcelStatusCommandHandler : IRequestHandler<BulkUpdate
         foreach (var parcelModel in command.ParcelModels)
         {
             var (email, name) = userDataDict[parcelModel.FriendlyId];
-
+            
             var request = new SendEmailRequest
             {
                 RecipientMailAddress = email,
                 RecipientName = name,
                 MailSubject = "Zmiana statusu",
-                MailBody =
-                    $"Status paczki: {parcelModel.FriendlyId} został zmieniony na: {parcelStatusTranslations[(int)parcelModel.Status]}"
-            };
+                MailBody = $"Status paczki: {parcelModel.FriendlyId} został zmieniony na: {parcelStatusTranslations[(int)parcelModel.Status]}"
+            };   
+            
+            if (parcelModel.Status == ParcelStatus.Forgotten)
+            {
+                request = new SendEmailRequest
+                {
+                    RecipientMailAddress = "adresKierownika@kierownik.com",
+                    RecipientName = "Kierownik",
+                    MailSubject = "Zmiana statusu",
+                    MailBody = $"Status paczki: {parcelModel.FriendlyId} został zmieniony na: {parcelStatusTranslations[(int)parcelModel.Status]}"
+                };   
+            }
             
             await _mailService.SendMessage(request);
 

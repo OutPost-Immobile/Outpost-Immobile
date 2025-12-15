@@ -55,8 +55,7 @@ public static class ParcelController
         return TypedResults.NoContent();
     }
     
-    private static async Task<TypedResponse<IEnumerable<ParcelLogDto>>> GetParcelLogsAsync([FromServices] IMediator mediator,
-        [FromRoute] string parcelFriendlyId)
+    private static async Task<TypedResponse<IEnumerable<ParcelLogDto>>> GetParcelLogsAsync([FromServices] IMediator mediator, [FromRoute] string parcelFriendlyId)
     {
         try
         {
