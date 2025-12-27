@@ -5,9 +5,14 @@ import {Link} from "react-router";
 
 export const DrawerMenu = ({open, onClose}) => {
 
-    const navItems = [{
+    const navItems = [
+    {
         Text: "Infrastruktura",
         Link: "/Infrastructure"
+    },
+    {
+        Text: "Stan maczkopatu",
+        Link: "/Maczkopat"
     }];
 
     const drawerContent = (
