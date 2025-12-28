@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http.HttpResults;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using OutpostImmobile.Core.Mediator;
 using OutpostImmobile.Persistence.Domain.StaticEnums.Enums;
@@ -15,7 +16,7 @@ public static class UserController
         
         return routes;
     }
-
+    [Authorize(Roles = "Admin")]
     private static async Task<Results<NoContent, BadRequest>> UpdateUserRoleAsync([FromServices] IMediator mediator,
         [FromBody] UserRoles userRoles)
     {

@@ -13,8 +13,8 @@ using OutpostImmobile.Persistence;
 namespace OutpostImmobile.Persistence.Migrations
 {
     [DbContext(typeof(OutpostImmobileDbContext))]
-    [Migration("20251228194656_AddIdentity")]
-    partial class AddIdentity
+    [Migration("20251228220909_AddIdentityFixes")]
+    partial class AddIdentityFixes
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

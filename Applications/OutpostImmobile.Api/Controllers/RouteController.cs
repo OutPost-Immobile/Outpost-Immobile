@@ -1,4 +1,5 @@
 using System.Net;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using OutpostImmobile.Api.Helpers;
 using OutpostImmobile.Api.Request;
@@ -19,7 +20,7 @@ public static class RouteController
         
         return routes;
     }
-
+    [Authorize(Roles = "Admin,Manager,Courier")]
     private static async Task<TypedResponse<List<RouteDto>>> GetRouteFromCourierAsync([FromServices] IMediator mediator, [FromRoute] Guid courierId)
     {
         try

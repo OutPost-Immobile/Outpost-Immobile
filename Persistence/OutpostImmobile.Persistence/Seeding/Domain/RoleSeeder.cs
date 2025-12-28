@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using OutpostImmobile.Persistence.Common.Consts;
 using OutpostImmobile.Persistence.Domain.StaticEnums.Enums;
 using OutpostImmobile.Persistence.Domain.Users;
 
@@ -6,16 +7,18 @@ namespace OutpostImmobile.Persistence.Seeding.Domain;
 
 public class RoleSeeder
 {
-    private static readonly UserRoles[] roles =
-    {
-        UserRoles.Admin,
-        UserRoles.Manager,
-        UserRoles.Courier,
-        UserRoles.User
-    };
+    
 
     public static async ValueTask SeedRoles(UserManager<UserInternal> userManager, RoleManager<IdentityRole<Guid>> roleManager)
     {
+        var roles = new List<UserRoles>
+        {
+            UserRoles.Admin,
+            UserRoles.Manager,
+            UserRoles.Courier,
+            UserRoles.User
+        };
+        
         foreach (var role in roles) 
         {
             string roleName = role.ToString();
@@ -28,17 +31,16 @@ public class RoleSeeder
                 });
             }
         }
-        string adminEmail = "admin@outpost.com";
-        var adminUser = await userManager.FindByEmailAsync(adminEmail);
+        var adminUser = await userManager.FindByEmailAsync(AdminConsts.AdminEmail);
         if (adminUser == null)
         {
             adminUser = new UserInternal
             {
-                UserName = adminEmail,
-                Email = adminEmail
+                UserName = AdminConsts.AdminEmail,
+                Email = AdminConsts.AdminEmail,
             };
 
-            await userManager.CreateAsync(adminUser, "admin");
+            await userManager.CreateAsync(adminUser, AdminConsts.AdminPassword);
             await userManager.AddToRoleAsync(adminUser, nameof(UserRoles.Admin));
         }
     }

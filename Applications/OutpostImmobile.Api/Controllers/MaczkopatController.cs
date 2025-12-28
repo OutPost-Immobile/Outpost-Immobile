@@ -17,7 +17,7 @@ public static class MaczkopatController
         
         return routes;
     }
-
+    
     private static async Task<Results<Created, BadRequest>> AddLogAsync([FromServices] IMediator mediator, AddLogRequest request)
     {
         try

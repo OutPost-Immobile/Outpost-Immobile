@@ -1,4 +1,5 @@
 using System.Net;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using OutpostImmobile.Api.Helpers;
@@ -25,7 +26,7 @@ public static class ParcelController
         
         return routes;
     }
-
+    [Authorize(Roles = "Admin,Manager")]
     private static async Task<TypedResponse<List<ParcelDto>>> GetParcelsFromMaczkopatAsync([FromServices] IMediator mediator,[FromRoute] Guid maczkopatId)
     {
         var parcels = await mediator.Send(new GetParcelsFromMaczkopatQuery
@@ -40,7 +41,7 @@ public static class ParcelController
             StatusCode = HttpStatusCode.OK
         };
     }
-
+    [Authorize(Roles = "Admin,Manager,Courier")]
     private static async Task<Results<NoContent, BadRequest>> UpdateParcelStatusAsync([FromServices] IMediator mediator,[FromBody] List<UpdateParcelStatusRequest> requests)
     {
         await mediator.Send(new BulkUpdateParcelStatusCommand
