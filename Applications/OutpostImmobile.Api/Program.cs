@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using OutpostImmobile.Api.Extensions;
 using OutpostImmobile.Core;
@@ -38,6 +39,10 @@ public class Program
             .AddMediator(typeof(Core.ServiceExtensions).Assembly)
             .AddCoreServices(builder.Configuration)
             .AddPersistence(connStr);
+
+        builder.Services.AddDefaultIdentity<IdentityUser>()
+            .AddRoles<IdentityRole>()
+            .AddEntityFrameworkStores<OutpostImmobileDbContext>();
         
         var app = builder.Build();
         
@@ -54,6 +59,9 @@ public class Program
 
         app.UseHttpsRedirection();
         app.UseCors("AllowAll");
+        
+        app.UseAuthentication();
+        app.UseAuthorization();
         
         using (var scope = app.Services.CreateScope())
         {
