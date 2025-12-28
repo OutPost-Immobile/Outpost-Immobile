@@ -13,8 +13,8 @@ using OutpostImmobile.Persistence;
 namespace OutpostImmobile.Persistence.Migrations
 {
     [DbContext(typeof(OutpostImmobileDbContext))]
-    [Migration("20251228192128_AddIdentityFix")]
-    partial class AddIdentityFix
+    [Migration("20251228194656_AddIdentity")]
+    partial class AddIdentity
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -107,12 +107,10 @@ namespace OutpostImmobile.Persistence.Migrations
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<System.Guid>", b =>
                 {
                     b.Property<string>("LoginProvider")
-                        .HasMaxLength(128)
-                        .HasColumnType("character varying(128)");
+                        .HasColumnType("text");
 
                     b.Property<string>("ProviderKey")
-                        .HasMaxLength(128)
-                        .HasColumnType("character varying(128)");
+                        .HasColumnType("text");
 
                     b.Property<string>("ProviderDisplayName")
                         .HasColumnType("text");
@@ -148,12 +146,10 @@ namespace OutpostImmobile.Persistence.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<string>("LoginProvider")
-                        .HasMaxLength(128)
-                        .HasColumnType("character varying(128)");
+                        .HasColumnType("text");
 
                     b.Property<string>("Name")
-                        .HasMaxLength(128)
-                        .HasColumnType("character varying(128)");
+                        .HasColumnType("text");
 
                     b.Property<string>("Value")
                         .HasColumnType("text");
@@ -593,7 +589,7 @@ namespace OutpostImmobile.Persistence.Migrations
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("boolean");
 
-                    b.Property<long>("RouteId")
+                    b.Property<long?>("RouteId")
                         .HasColumnType("bigint");
 
                     b.Property<string>("SecurityStamp")
@@ -853,9 +849,7 @@ namespace OutpostImmobile.Persistence.Migrations
                 {
                     b.HasOne("OutpostImmobile.Persistence.Domain.RouteEntity", "Route")
                         .WithMany("Couriers")
-                        .HasForeignKey("RouteId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("RouteId");
 
                     b.Navigation("Route");
                 });

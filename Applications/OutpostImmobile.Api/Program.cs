@@ -40,10 +40,9 @@ public class Program
             .AddMediator(typeof(Core.ServiceExtensions).Assembly)
             .AddCoreServices(builder.Configuration)
             .AddPersistence(connStr);
-
-        builder.Services.AddDefaultIdentity<UserInternal>()
-            .AddRoles<IdentityRole<Guid>>()
-            .AddEntityFrameworkStores<OutpostImmobileDbContext>();
+        
+        
+        builder.Services.AddAuthorization();
         
         var app = builder.Build();
         
