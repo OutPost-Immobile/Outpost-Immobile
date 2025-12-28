@@ -8,7 +8,6 @@ using OutpostImmobile.Core.Mediator;
 using OutpostImmobile.Core.Parcels.Commands;
 using OutpostImmobile.Core.Parcels.Queries;
 using OutpostImmobile.Core.Parcels.QueryResults;
-using OutpostImmobile.Persistence.Domain.StaticEnums.Enums;
 
 namespace OutpostImmobile.Api.Controllers;
 

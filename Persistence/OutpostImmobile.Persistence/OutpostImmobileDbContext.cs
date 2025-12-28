@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using OutpostImmobile.Persistence.Domain;
 using OutpostImmobile.Persistence.Domain.Logs;
@@ -6,7 +8,7 @@ using OutpostImmobile.Persistence.Domain.Users;
 
 namespace OutpostImmobile.Persistence;
 
-public class OutpostImmobileDbContext : DbContext
+public class OutpostImmobileDbContext : IdentityDbContext<UserInternal, IdentityRole<Guid>, Guid>
 {
     public OutpostImmobileDbContext()
     {
@@ -29,15 +31,18 @@ public class OutpostImmobileDbContext : DbContext
     public virtual DbSet<RouteEntity> Routes => Set<RouteEntity>();
     public virtual DbSet<UserInternal> UsersInternal => Set<UserInternal>();
     public virtual DbSet<UserExternal> UsersExternal => Set<UserExternal>();
-    public virtual DbSet<UserRoles> UserRoles => Set<UserRoles>();
     public virtual DbSet<VehicleEntity> Vehicles => Set<VehicleEntity>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        base.OnModelCreating(modelBuilder);
+        
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(OutpostImmobileDbContext).Assembly);
 
         modelBuilder.HasPostgresExtension("postgis");
         modelBuilder.HasPostgresExtension("pgrouting");
         modelBuilder.HasPostgresExtension("hstore");
+        
+        modelBuilder.Ignore(typeof(Microsoft.AspNetCore.Identity.IdentityPasskeyData));
     }
 }

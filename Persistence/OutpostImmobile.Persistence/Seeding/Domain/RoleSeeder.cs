@@ -1,39 +1,45 @@
-using OutpostImmobile.Persistence.Domain;
+﻿using Microsoft.AspNetCore.Identity;
+using OutpostImmobile.Persistence.Domain.StaticEnums.Enums;
 using OutpostImmobile.Persistence.Domain.Users;
-using OutpostImmobile.Persistence.Enums;
 
 namespace OutpostImmobile.Persistence.Seeding.Domain;
 
 public class RoleSeeder
 {
-    public static async ValueTask SeedRolesAsync(OutpostImmobileDbContext context, CancellationToken ct)
+    private static readonly UserRoles[] roles =
     {
-        if (context.UserRoles.Any())
+        UserRoles.Admin,
+        UserRoles.Manager,
+        UserRoles.Courier,
+        UserRoles.User
+    };
+
+    public static async ValueTask SeedRoles(UserManager<UserInternal> userManager, RoleManager<IdentityRole<Guid>> roleManager)
+    {
+        foreach (var role in roles) 
         {
-            return;
-        }
-        
-        var rolesList = new List<UserRoles>
-        {
-            new()
+            string roleName = role.ToString();
+            if (!await roleManager.RoleExistsAsync(roleName))
             {
-                RoleName = UserRoleNames.Admin
-            },
-            new()
-            {
-                RoleName = UserRoleNames.Client
-            },
-            new()
-            {
-                RoleName = UserRoleNames.Courier
-            },
-            new()
-            {
-                RoleName = UserRoleNames.Manager
+                await roleManager.CreateAsync(new IdentityRole<Guid>
+                {
+                    Name = roleName,
+                    NormalizedName = roleName.ToUpper()
+                });
             }
-        };
-        
-        context.AddRange(rolesList);
-        await context.SaveChangesAsync(ct);
+        }
+        string adminEmail = "admin@outpost.com";
+        var adminUser = await userManager.FindByEmailAsync(adminEmail);
+        if (adminUser == null)
+        {
+            adminUser = new UserInternal
+            {
+                UserName = adminEmail,
+                Email = adminEmail
+            };
+
+            await userManager.CreateAsync(adminUser, "admin");
+            await userManager.AddToRoleAsync(adminUser, nameof(UserRoles.Admin));
+        }
     }
 }

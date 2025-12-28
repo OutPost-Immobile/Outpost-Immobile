@@ -4,6 +4,7 @@ using OutpostImmobile.Api.Extensions;
 using OutpostImmobile.Core;
 using OutpostImmobile.Core.Mediator;
 using OutpostImmobile.Persistence;
+using OutpostImmobile.Persistence.Domain.Users;
 using OutpostImmobile.Persistence.Seeding;
 using Scalar.AspNetCore;
 using Serilog;
@@ -40,8 +41,8 @@ public class Program
             .AddCoreServices(builder.Configuration)
             .AddPersistence(connStr);
 
-        builder.Services.AddDefaultIdentity<IdentityUser>()
-            .AddRoles<IdentityRole>()
+        builder.Services.AddDefaultIdentity<UserInternal>()
+            .AddRoles<IdentityRole<Guid>>()
             .AddEntityFrameworkStores<OutpostImmobileDbContext>();
         
         var app = builder.Build();
@@ -65,10 +66,13 @@ public class Program
         
         using (var scope = app.Services.CreateScope())
         {
+            var userManager = scope.ServiceProvider.GetRequiredService<UserManager<UserInternal>>();
+            var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole<Guid>>>();
+            
             var context = scope.ServiceProvider.GetRequiredService<OutpostImmobileDbContext>();
             await context.Database.MigrateAsync();
             
-            await ApplicationSeeder.SeedAsync(context);
+            await ApplicationSeeder.SeedAsync(context, userManager, roleManager);
         }
 
         await app.RunAsync();
