@@ -17,6 +17,8 @@ public static class UserController
 
         group.MapPost("/Register", RegisterUserAsync);
         
+        group.MapPost("/Login", LoginUserAsync);
+        
         return routes;
     }
     [Authorize(Roles = "Admin")]
@@ -32,8 +34,26 @@ public static class UserController
         return TypedResults.NoContent();
     }
 
+    private static async Task<Results<Ok, BadRequest>> LoginUserAsync([FromServices] IMediator mediator,
+        [FromBody] LoginRequest loginRequest)
+    {
+        try
+        {
+            var user = await mediator.Send(new LoginUserCommand
+            {
+                UserEmail = loginRequest.Email,
+                UserPassword = loginRequest.Password
+            });
+            return TypedResults.Ok();
+        }
+        catch (UnauthorizedAccessException)
+        {
+            return TypedResults.BadRequest();
+        }
+    }
+    
     private static async Task<Results<NoContent, BadRequest>> RegisterUserAsync([FromServices] IMediator mediator,
-        RegisterUserRequest registerUserRequest)
+        [FromBody] RegisterUserRequest registerUserRequest)
     {
         return TypedResults.NoContent();
     }

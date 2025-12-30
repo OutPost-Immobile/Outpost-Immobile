@@ -43,7 +43,26 @@ public class Program
         
         
         builder.Services.AddAuthorization();
-        
+
+        builder.Services.ConfigureApplicationCookie(options =>
+        {
+            options.Events.OnRedirectToLogin = context =>
+            {
+                context.Response.StatusCode = 401;
+                return Task.CompletedTask;
+            };
+        });
+        builder.Services.AddCors(options =>
+        {
+            options.AddDefaultPolicy(policy =>
+            {
+                policy.WithOrigins("http://localhost:5188")
+                    .AllowCredentials()
+                    .AllowAnyHeader()
+                    .AllowAnyMethod()
+                    .AllowCredentials();
+            });
+        });
         var app = builder.Build();
         
         app.MapRoutes();
@@ -59,7 +78,6 @@ public class Program
 
         app.UseHttpsRedirection();
         app.UseCors("AllowAll");
-        
         app.UseAuthentication();
         app.UseAuthorization();
         

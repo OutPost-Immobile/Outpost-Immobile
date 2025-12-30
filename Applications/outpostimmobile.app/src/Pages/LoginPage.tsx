@@ -3,9 +3,36 @@ import {useState} from "react";
 
 export const LoginPage = () => {
     const [loading, setLoading] = useState(false);
-    function handleButtonClick() {
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [error, setError] = useState("");
+
+    const handleButtonClick = async () => {
         setLoading(true);
+        setError("");
+
+        try {
+            const response = await fetch("/login", {
+                method: "POST",
+                body: JSON.stringify({
+                    email: email,
+                    password: password,
+                    rememberMe: false,
+                })
+            });
+
+            if (response.ok) {
+                window.location.href = '';
+            } else {
+                setError("Błąd logowania");
+            }
+        } catch (err) {
+            setError("Błąd logowania");
+        } finally {
+            setLoading(false);
+        }
     }
+
     return (
         <Stack spacing={2} style={{justifyContent: 'center', alignItems: 'center', paddingTop: 64}}>
             <Paper elevation={6} style={{padding: 16, margin: 64}}>
@@ -14,18 +41,29 @@ export const LoginPage = () => {
                         Logowanie
                     </Typography>
                     <TextField
-                    required
-                    id="outlined-basic"
-                    label="Email"
-                    variant="outlined"
-                    sx={{width: 500, height: 32}}/>
+                        required
+                        id="email-field"
+                        label="Email"
+                        variant="outlined"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        error={!!error}
+                        sx={{width: 500, height: 32}}/>
                     <TextField
                         required
                         type="password"
-                        id="outlined-basic"
+                        id="password-field"
                         label="Hasło"
                         variant="outlined"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        error={!!error}
                         sx={{width: 500, height: 32}}/>
+                    {error && (
+                        <Typography color="error" sx={{textAlign: 'center'}}>
+                            {error}
+                        </Typography>
+                    )}
                     <Button
                         onClick={handleButtonClick}
                         loading={loading}

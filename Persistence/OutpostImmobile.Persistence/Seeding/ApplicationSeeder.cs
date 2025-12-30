@@ -19,7 +19,7 @@ public class ApplicationSeeder
         await StaticEnumSeeder.SeedAsync<PayloadSize>(context, StaticEnumTranslations.GetPayloadSizeTranslations(), ct);
         await StaticEnumSeeder.SeedAsync<MaczkopatEventLogType>(context, StaticEnumTranslations.GetMaczkopatEventLogTypeTranslations(), ct);
         await StaticEnumSeeder.SeedAsync<ParcelEventLogType>(context, StaticEnumTranslations.GetParcelEventLogTypeTranslations(), ct);
-        await RoleSeeder.SeedRoles(userManager, roleManager);
+        await RoleSeeder.SeedRolesAsync(userManager, roleManager);
         await UserExternalSeeder.SeedExternalUserAsync(context, ct);
         await AreaSeeder.SeedAreasAsync(context, ct);
         await AddressSeeder.SeedAddressesAsync(context, ct);

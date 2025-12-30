@@ -10,11 +10,13 @@ namespace OutpostImmobile.Persistence.Repositories;
 public class UserRepository : IUserRepository
 {
     private readonly IDbContextFactory<OutpostImmobileDbContext> _dbContextFactory;
-    private readonly UserManager<UserInternal> _userManager; 
+    private readonly UserManager<UserInternal> _userManager;
+    private readonly SignInManager<UserInternal> _signInManager;
 
-    public UserRepository(IDbContextFactory<OutpostImmobileDbContext> dbContextFactory, UserManager<UserInternal> userManager)
+    public UserRepository(IDbContextFactory<OutpostImmobileDbContext> dbContextFactory, UserManager<UserInternal> userManager, SignInManager<UserInternal> signInManager)
     {
-        _userManager = _userManager;
+        _userManager = userManager;
+        _signInManager = signInManager;
         _dbContextFactory = dbContextFactory;
     }
 
@@ -56,5 +58,19 @@ public class UserRepository : IUserRepository
             // for debugging
             throw new Exception($"Failed to update user role: {error}");
         }
+    }
+
+    public async Task<UserInternal> LoginUserAsync(string email, string password)
+    {
+        var result = await _signInManager.PasswordSignInAsync(email, password, false, false);
+        
+        if (!result.Succeeded)
+        {
+            throw new UnauthorizedAccessException("Invalid  login attempt");
+        }
+        
+        var user = await _userManager.FindByEmailAsync(email);
+
+        return user ?? throw new EntityNotFoundException("User not found");
     }
 }
