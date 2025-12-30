@@ -49,16 +49,16 @@ export const Layout = () => {
                                    <Typography variant="h6" style={{display: 'inline-block', verticalAlign: 'middle', color: 'black'}}>Outpost Immobile</Typography>
                                </Box>
                            </Link>
-                           <Divider orientation="vertical" style={{width: 1450, visibility: 'hidden'}} flexItem/>
-                           <Link to="/Login" style={{textDecoration: 'none'}}>
-                               <Typography variant="h6" style={
-                                   {display: 'inline-block',
-                                    verticalAlign: 'middle',
-                                    color: 'black',
-                                    textAlign: 'right'}}>
-                                   Zaloguj się
-                               </Typography>
-                           </Link>
+                            <Divider orientation="vertical" style={{width: 1450, visibility: 'hidden'}} flexItem/>
+                            <Link to="/Login" style={{textDecoration: 'none'}}>
+                                <Typography variant="h6" style={
+                                    {display: 'inline-block',
+                                        verticalAlign: 'middle',
+                                        color: 'black',
+                                        textAlign: 'right'}}>
+                                    Zaloguj się
+                                </Typography>
+                            </Link>
                         </Toolbar>
                     </AppBar>
                 </div>

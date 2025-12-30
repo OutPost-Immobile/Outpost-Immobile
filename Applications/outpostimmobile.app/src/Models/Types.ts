@@ -7,7 +7,6 @@ export type TypedResponse<T> = {
 export type PingDto = {
    message: string
 }
-
 export type ParcelDto = {
     friendlyId: string,
     status: string
