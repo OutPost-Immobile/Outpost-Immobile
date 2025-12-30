@@ -1,10 +1,18 @@
+using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using OutpostImmobile.Api.Consts;
 using OutpostImmobile.Api.Extensions;
+using OutpostImmobile.Api.Helpers;
+using OutpostImmobile.Api.Utils;
 using OutpostImmobile.Core;
 using OutpostImmobile.Core.Mediator;
 using OutpostImmobile.Persistence;
 using OutpostImmobile.Persistence.Domain.Users;
+using OutpostImmobile.Persistence.Enums;
 using OutpostImmobile.Persistence.Seeding;
 using Scalar.AspNetCore;
 using Serilog;
@@ -17,12 +25,13 @@ public class Program
     {
         var builder = WebApplication.CreateBuilder(args);
         
-        builder.Services.AddOpenApi();
+        builder.Services.AddOpenApi(options =>
+        {
+            options.AddDocumentTransformer<BearerSecuritySchemeTransformer>(); 
+        });
         
         builder.Services.AddSerilog((context, configuration) =>
             configuration.ReadFrom.Configuration(builder.Configuration));
-
-        builder.Services.AddEndpointsApiExplorer();
         
         builder.Services.AddCors(options =>
         {
@@ -40,29 +49,55 @@ public class Program
             .AddMediator(typeof(Core.ServiceExtensions).Assembly)
             .AddCoreServices(builder.Configuration)
             .AddPersistence(connStr);
-        
-        
-        builder.Services.AddAuthorization();
 
-        builder.Services.ConfigureApplicationCookie(options =>
+        builder.Services.AddAuthentication(options =>
         {
-            options.Events.OnRedirectToLogin = context =>
+            options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+        })
+        .AddJwtBearer(options =>
+        {
+            options.TokenValidationParameters = new TokenValidationParameters
             {
-                context.Response.StatusCode = 401;
-                return Task.CompletedTask;
+                ValidateIssuer = true,
+                ValidateAudience = true,
+                ValidateLifetime = true,
+                ValidIssuer = builder.Configuration["Jwt:Issuer"],
+                ValidAudience = builder.Configuration["Jwt:Audience"],
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
             };
-        });
-        builder.Services.AddCors(options =>
+        })
+        .AddCookie("MyCookie", options =>
         {
-            options.AddDefaultPolicy(policy =>
-            {
-                policy.WithOrigins("http://localhost:5188")
-                    .AllowCredentials()
-                    .AllowAnyHeader()
-                    .AllowAnyMethod()
-                    .AllowCredentials();
-            });
+            options.Cookie.HttpOnly = true;
+            options.Cookie.SameSite = SameSiteMode.Strict;
+            options.LoginPath = "/api/Users/Login";
+            options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
         });
+
+        builder.Services.AddAuthorization(options =>
+        {
+            options.AddPolicy(PolicyNames.AdminOnly, policy =>
+                policy.RequireAuthenticatedUser()
+                    .RequireRole(nameof(UserRoleName.Admin)));
+            
+            options.AddPolicy(PolicyNames.AdminManager, policy =>
+                policy.RequireAuthenticatedUser()
+                    .RequireRole(nameof(UserRoleName.Admin), nameof(UserRoleName.Manager)));
+            
+            options.AddPolicy(PolicyNames.AdminManagerCourier, policy =>
+                policy.RequireAuthenticatedUser()
+                    .RequireRole(nameof(UserRoleName.Admin), nameof(UserRoleName.Manager), nameof(UserRoleName.Courier)));
+            
+            options.AddPolicy(PolicyNames.ClientOnly, policy =>
+                policy.RequireAuthenticatedUser()
+                    .RequireRole(nameof(UserRoleName.Client)));
+        });
+        
+        builder.Services.AddExceptionHandler<UnauthorizedExceptionHandler>();
+        builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+        builder.Services.AddProblemDetails();
+        
         var app = builder.Build();
         
         app.MapRoutes();
@@ -80,6 +115,7 @@ public class Program
         app.UseCors("AllowAll");
         app.UseAuthentication();
         app.UseAuthorization();
+        app.UseExceptionHandler();
         
         using (var scope = app.Services.CreateScope())
         {

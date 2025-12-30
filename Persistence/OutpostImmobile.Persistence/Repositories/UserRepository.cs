@@ -1,8 +1,4 @@
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using OutpostImmobile.Persistence.Domain.Users;
-using OutpostImmobile.Persistence.Enums;
-using OutpostImmobile.Persistence.Exceptions;
 using OutpostImmobile.Persistence.Interfaces;
 
 namespace OutpostImmobile.Persistence.Repositories;
@@ -10,13 +6,9 @@ namespace OutpostImmobile.Persistence.Repositories;
 public class UserRepository : IUserRepository
 {
     private readonly IDbContextFactory<OutpostImmobileDbContext> _dbContextFactory;
-    private readonly UserManager<UserInternal> _userManager;
-    private readonly SignInManager<UserInternal> _signInManager;
 
-    public UserRepository(IDbContextFactory<OutpostImmobileDbContext> dbContextFactory, UserManager<UserInternal> userManager, SignInManager<UserInternal> signInManager)
+    public UserRepository(IDbContextFactory<OutpostImmobileDbContext> dbContextFactory)
     {
-        _userManager = userManager;
-        _signInManager = signInManager;
         _dbContextFactory = dbContextFactory;
     }
 
@@ -35,42 +27,5 @@ public class UserRepository : IUserRepository
             .ToListAsync();
 
         return usersInternal.Concat(usersExternal);
-    }
-
-    public async Task UpdateUserRoleAsync(string userEmail, UserRoleName roleName)
-    {
-        var userToUpdate = await _userManager.FindByEmailAsync(userEmail);
-
-        if (userToUpdate == null)
-        {
-            throw new EntityNotFoundException("User not found");
-        }
-
-        var currentRoles = await _userManager.GetRolesAsync(userToUpdate);
-        
-        await _userManager.RemoveFromRolesAsync(userToUpdate, currentRoles);
-        
-        var result = await _userManager.AddToRoleAsync(userToUpdate, roleName.ToString());
-
-        if (!result.Succeeded)
-        {
-            var error = result.Errors.Select(x => x.Description);
-            // for debugging
-            throw new Exception($"Failed to update user role: {error}");
-        }
-    }
-
-    public async Task<UserInternal> LoginUserAsync(string email, string password)
-    {
-        var result = await _signInManager.PasswordSignInAsync(email, password, false, false);
-        
-        if (!result.Succeeded)
-        {
-            throw new UnauthorizedAccessException("Invalid  login attempt");
-        }
-        
-        var user = await _userManager.FindByEmailAsync(email);
-
-        return user ?? throw new EntityNotFoundException("User not found");
     }
 }

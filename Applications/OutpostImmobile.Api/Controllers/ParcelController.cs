@@ -2,6 +2,7 @@ using System.Net;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using OutpostImmobile.Api.Consts;
 using OutpostImmobile.Api.Helpers;
 using OutpostImmobile.Api.Request;
 using OutpostImmobile.Api.Response;
@@ -19,14 +20,17 @@ public static class ParcelController
         var group = routes.MapGroup("/api/Parcels");
         
         group.MapGet("/{parcelFriendlyId}/track", GetParcelLogsAsync);
-
-        group.MapPost("/Update", UpdateParcelStatusAsync);
         
-        group.MapGet("Maczkopat/{maczkopatId:Guid}", GetParcelsFromMaczkopatAsync);
+        group.MapPost("/Update", UpdateParcelStatusAsync)
+            .RequireAuthorization(PolicyNames.AdminManagerCourier);
+        
+        group.MapGet("Maczkopat/{maczkopatId:Guid}", GetParcelsFromMaczkopatAsync)
+            .RequireAuthorization(PolicyNames.AdminManager);
         
         return routes;
     }
-    [Authorize(Roles = "Admin,Manager")]
+    
+    
     private static async Task<TypedResponse<List<ParcelDto>>> GetParcelsFromMaczkopatAsync([FromServices] IMediator mediator,[FromRoute] Guid maczkopatId)
     {
         var parcels = await mediator.Send(new GetParcelsFromMaczkopatQuery
@@ -41,7 +45,7 @@ public static class ParcelController
             StatusCode = HttpStatusCode.OK
         };
     }
-    [Authorize(Roles = "Admin,Manager,Courier")]
+    
     private static async Task<Results<NoContent, BadRequest>> UpdateParcelStatusAsync([FromServices] IMediator mediator,[FromBody] List<UpdateParcelStatusRequest> requests)
     {
         await mediator.Send(new BulkUpdateParcelStatusCommand
@@ -57,23 +61,16 @@ public static class ParcelController
     
     private static async Task<TypedResponse<IEnumerable<ParcelLogDto>>> GetParcelLogsAsync([FromServices] IMediator mediator, [FromRoute] string parcelFriendlyId)
     {
-        try
+        var parcelEventLogs = await mediator.Send(new TrackParcelByFriendlyIdQuery
         {
-            var parcelEventLogs = await mediator.Send(new TrackParcelByFriendlyIdQuery
-            {
-                FriendlyId = parcelFriendlyId
-            });
+            FriendlyId = parcelFriendlyId
+        });
 
-            return new TypedResponse<IEnumerable<ParcelLogDto>>
-            {
-                Data = parcelEventLogs,
-                Errors = null,
-                StatusCode = HttpStatusCode.OK
-            };
-        }
-        catch(Exception ex)
+        return new TypedResponse<IEnumerable<ParcelLogDto>>
         {
-            return ExceptionHelper.HandleErrors<IEnumerable<ParcelLogDto>>([], ex.Message);
-        }
+            Data = parcelEventLogs,
+            Errors = null,
+            StatusCode = HttpStatusCode.OK
+        };
     }
 }

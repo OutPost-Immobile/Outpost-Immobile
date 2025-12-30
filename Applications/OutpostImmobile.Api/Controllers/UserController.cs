@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using OutpostImmobile.Api.Consts;
 using OutpostImmobile.Api.Request;
 using OutpostImmobile.Core.Mediator;
 using OutpostImmobile.Core.Users.Commands;
@@ -13,17 +14,16 @@ public static class UserController
     {
         var group = routes.MapGroup("/api/Users");
 
-        group.MapPut("/Role", UpdateUserRoleAsync);
-
-        group.MapPost("/Register", RegisterUserAsync);
+        group.MapPut("/Role", UpdateUserRoleAsync)
+            .RequireAuthorization(PolicyNames.AdminOnly);
         
+        group.MapPost("/Register", RegisterUserAsync);
         group.MapPost("/Login", LoginUserAsync);
         
         return routes;
     }
-    [Authorize(Roles = "Admin")]
-    private static async Task<Results<NoContent, BadRequest>> UpdateUserRoleAsync([FromServices] IMediator mediator,
-        [FromBody] UpdateRoleRequest updateRoleRequest)
+    
+    private static async Task<Results<NoContent, BadRequest>> UpdateUserRoleAsync([FromServices] IMediator mediator, [FromBody] UpdateRoleRequest updateRoleRequest)
     {
         await mediator.Send(new UpdateUserRoleCommand
         {
@@ -34,22 +34,15 @@ public static class UserController
         return TypedResults.NoContent();
     }
 
-    private static async Task<Results<Ok, BadRequest>> LoginUserAsync([FromServices] IMediator mediator,
-        [FromBody] LoginRequest loginRequest)
+    private static async Task<Results<Ok<string>, BadRequest>> LoginUserAsync([FromServices] IMediator mediator, [FromBody] LoginRequest loginRequest)
     {
-        try
+        var token = await mediator.Send(new LoginUserCommand
         {
-            var user = await mediator.Send(new LoginUserCommand
-            {
-                UserEmail = loginRequest.Email,
-                UserPassword = loginRequest.Password
-            });
-            return TypedResults.Ok();
-        }
-        catch (UnauthorizedAccessException)
-        {
-            return TypedResults.BadRequest();
-        }
+            UserEmail = loginRequest.Email,
+            UserPassword = loginRequest.Password
+        });
+        
+        return TypedResults.Ok(token);
     }
     
     private static async Task<Results<NoContent, BadRequest>> RegisterUserAsync([FromServices] IMediator mediator,
