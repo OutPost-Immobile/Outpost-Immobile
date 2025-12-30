@@ -11,7 +11,7 @@ namespace OutpostImmobile.Api.Controllers;
 
 public static class RouteController
 {
-    public static IEndpointRouteBuilder MapRouteController(this IEndpointRouteBuilder routes)
+    public static IEndpointRouteBuilder MapRoute(this IEndpointRouteBuilder routes)
     {
         var group = routes.MapGroup("/api/routes");
 
