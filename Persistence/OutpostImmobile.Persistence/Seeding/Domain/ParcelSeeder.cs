@@ -1,6 +1,7 @@
 using Bogus;
 using Microsoft.EntityFrameworkCore;
 using OutpostImmobile.Persistence.Domain;
+using OutpostImmobile.Persistence.Domain.StaticEnums.Enums;
 
 namespace OutpostImmobile.Persistence.Seeding.Domain;
 
@@ -25,7 +26,8 @@ public class ParcelSeeder
             .RuleFor(x => x.FromUserExternalId, f => f.PickRandom(externalUsers.Select(x => x.Id)))
             .RuleFor(x => x.ReceiverUserExternalId, f => f.PickRandom(externalUsers.Select(x => x.Id)))
             .RuleFor(x => x.Maczkopat, f => f.PickRandom(maczkopats))
-            .RuleFor(x => x.FriendlyId, (faker, entity) => $"{entity.Maczkopat.Code}-{faker.IndexFaker}");
+            .RuleFor(x => x.FriendlyId, (faker, entity) => $"{entity.Maczkopat.Code}-{faker.IndexFaker}")
+            .RuleFor(x => x.Status, f => f.PickRandom<ParcelStatus>());
         
         var parcels = faker.Generate(10000);
         await context.AddRangeAsync(parcels, ct);
