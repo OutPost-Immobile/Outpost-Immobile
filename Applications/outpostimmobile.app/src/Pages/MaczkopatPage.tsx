@@ -1,4 +1,4 @@
-﻿import { Button, Stack, Paper, TextField } from "@mui/material";
+﻿import {Button, Stack, Paper, TextField, Typography} from "@mui/material";
 import { DataGrid, type GridColDef } from "@mui/x-data-grid";
 import type { ParcelDto, TypedResponse } from "../Models/Types.ts";
 import { useState } from "react";
@@ -31,14 +31,18 @@ export const MaczkopatPage = () => {
     }
 
     const columns: GridColDef[] = [
-        {field: "friendlyId", headerName: "Friendly ID", width: 300},
-        {field: "status", headerName: "Parcel status", width: 300}
+        {field: "id", headerName: "#", width: 70},
+        {field: "friendlyId", headerName: "ID", width: 215},
+        {field: "status", headerName: "Status", width: 215}
     ];
 
     return (
-        <Stack spacing={2} style={{justifyContent: 'center', alignItems: 'center', paddingTop: 64}}>
+        <Stack spacing={2} style={{justifyContent: 'center', alignItems: 'center', paddingTop: 16}}>
             <Paper elevation={6} style={{padding: 16, margin: 16}}>
-                <Stack spacing={2} style={{justifyContent: 'center', alignItems: 'center', paddingTop: 16}}>
+                <Stack spacing={5} style={{justifyContent: 'center', alignItems: 'center', paddingTop: 16}}>
+                    <Typography variant="h5" style={{fontWeight: 'bold', textAlign: 'center'}}>
+                        Zawartość maczkopatu
+                    </Typography>
                     <TextField
                         required
                         id="id-field"
@@ -50,23 +54,41 @@ export const MaczkopatPage = () => {
                         sx={{width: 500}}
                     />
                     <Button
-                        variant="outlined"
-                        onClick={handleButtonClick}>
+                        onClick={handleButtonClick}
+                        variant="contained"
+                        sx={{width: 500, height: 64, color: '#323232', backgroundColor: '#FFDE59'}}>
+                        Sprawdź
                     </Button>
                 </Stack>
             </Paper>
             <Paper elevation={6} style={{padding: 16}}>
                 <DataGrid
                     rows={parcels.map((p, index) => ({
-                        id: index,
+                        id: index+1,
                         friendlyId: p.friendlyId,
                         status: p.status
                     }))}
                     columns={columns}
-                    autoHeight
                     loading={loading}
-                    pageSizeOptions={[5, 10, 25]}
-                ></DataGrid>
+                    initialState={{
+                        pagination: {
+                            paginationModel: {
+                                pageSize: 5,
+                            },
+                        },
+                    }}
+                    pageSizeOptions={[5]}
+                    sx={{
+                        boxShadow: 2,
+                        border: 2,
+                        borderColor: '#FFDE59',
+                        "& .MuiDataGrid-footerContainer": {
+                            backgroundColor: "#FFDE59",
+                            color: "black",
+                        }
+                    }}
+                >
+                </DataGrid>
             </Paper>
         </Stack>
     )
