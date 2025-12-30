@@ -1,6 +1,6 @@
 namespace OutpostImmobile.Persistence.Enums;
 
-public enum UserRoleNames
+public enum UserRoleName
 {
     Client,
     Admin,
