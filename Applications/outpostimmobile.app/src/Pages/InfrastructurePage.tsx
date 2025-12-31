@@ -1,19 +1,17 @@
-import {UseGetInfrastructure} from "../Hooks/UseGetInfrastructure.ts";
 import {Typography} from "@mui/material";
+import {$api} from "../Api/Api.ts";
+import { INFRASTRUCTURE_URL } from "../Consts.ts";
 
 export const InfrastructurePage = () => {
-
-    console.log("Wysyłam");
-
-    const { data } = UseGetInfrastructure();
-
-    console.log(data?.data);
-    console.log(data);
+    
+    const { data } = $api.useQuery("get", INFRASTRUCTURE_URL);
+    
+    const message = data?.data?.message;
 
     return (
         <>
             <div>
-                <Typography variant="h4">{data?.data.message}</Typography>
+                <Typography variant="h4">{message}</Typography>
                 <Typography variant="h4">AAAAAAAAAAAAAAAaa</Typography>
             </div>
         </>

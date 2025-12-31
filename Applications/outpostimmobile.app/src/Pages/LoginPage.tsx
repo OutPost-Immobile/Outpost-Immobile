@@ -1,5 +1,7 @@
 ﻿import {Button, Paper, Stack, TextField, Typography} from "@mui/material";
 import {useState} from "react";
+import {$api} from "../Api/Api.ts";
+import {LOGIN_URL, POST_METHOD} from "../Consts.ts";
 
 export const LoginPage = () => {
     const [loading, setLoading] = useState(false);
@@ -7,27 +9,26 @@ export const LoginPage = () => {
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
 
+    const { mutateAsync } = $api.useMutation(POST_METHOD, LOGIN_URL);
+
     const handleButtonClick = async () => {
         setLoading(true);
         setError("");
 
         try {
-            const response = await fetch("/login", {
-                method: "POST",
-                body: JSON.stringify({
+            const response = await mutateAsync({
+                body: {
                     email: email,
-                    password: password,
-                    rememberMe: false,
-                })
+                    password: password
+                }
             });
 
-            if (response.ok) {
-                window.location.href = '';
-            } else {
-                setError("Błąd logowania");
+            if (response) {
+                localStorage.setItem("token", response);
+                window.location.href = '/';
             }
         } catch (err) {
-            setError("Błąd logowania");
+            setError("Błędny email lub hasło");
         } finally {
             setLoading(false);
         }

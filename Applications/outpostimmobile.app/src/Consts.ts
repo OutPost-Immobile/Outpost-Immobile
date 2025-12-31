@@ -1,2 +1,6 @@
-export const API_URL: string = "https://localhost:7078/api";
-export const INFRASTRUCTURE_URL: string = "/infrastructure";
+export const API_URL = "https://localhost:7078"; // Base URL for the client
+export const INFRASTRUCTURE_URL = "/api/infrastructure" as const;
+export const LOGIN_URL = "/api/Users/Login" as const;
+
+export const POST_METHOD = "post" as const;
+export const GET_METHOD = "get" as const;

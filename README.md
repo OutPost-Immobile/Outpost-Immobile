@@ -20,6 +20,15 @@ https://mui.com/material-ui/getting-started/
 ## Testowanie
 W route wejść w endpoint ```/scalar```
 
+## Dodawanie rzeczy do schematu:
+Dokumentacja do OpenApi-Ts:
+https://openapi-ts.dev/openapi-react-query/use-query
+
+W terminalu w folderze `outpostImmobile.app` wpisac ładnie 
+```
+npx openapi-typescript /home/kollibroman/LosoweProjekty/Outpost-Immobile/Applications/OutpostImmobile.Api/out/OutpostImmobile.Api.json -o ./src/schema.d.ts
+```
+
 ## Skryptowanie migracji:
 
 ```
