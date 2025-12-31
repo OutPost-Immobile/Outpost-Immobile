@@ -1,39 +1,40 @@
 ﻿import {Button, Stack, Paper, TextField, Typography} from "@mui/material";
 import { DataGrid, type GridColDef } from "@mui/x-data-grid";
-import type { ParcelDto, TypedResponse } from "../Models/Types.ts";
 import { useState } from "react";
+import {$api} from "../Api/Api.ts";
+import {GET_METHOD, MACZKOPAT_PARCELS_URL} from "../Consts.ts";
 
 export const MaczkopatPage = () => {
-
     const [maczkopatId, setMaczkopatId] = useState("");
-    const [parcels, setParcels] = useState<ParcelDto[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState("");
+    const [searchId, setSearchId] = useState<string | null>(null);
 
-    const handleButtonClick = async () => {
-        setLoading(true);
-        setError("");
+    // useQuery will automatically trigger when searchId changes
+    const { data, isLoading, isError } = $api.useQuery(
+        GET_METHOD,
+        MACZKOPAT_PARCELS_URL,
+        {
+            params: {
+                path: { maczkopatId: searchId as string },
+            },
+        },
+        {
+            enabled: !!searchId, // Only run the query if we have an ID to search for
+        }
+    );
 
-        try {
-            const response = await fetch(`http://localhost:5188/api/Parcels/Maczkopat/${maczkopatId}`);
-            const result: TypedResponse<ParcelDto[]> = await response.json();
-
-            if (result.data) {
-                setParcels(result.data);
-            } else if (result.errors) {
-                console.error(result.errors);
-            }
-        } catch (err) {
-            console.error(err);
-        } finally {
-            setLoading(false);
+    const handleButtonClick = () => {
+        if (maczkopatId.trim()) {
+            setSearchId(maczkopatId);
         }
     }
 
+    // Extract parcels safely from the typed response
+    const parcels = data?.data ?? [];
+
     const columns: GridColDef[] = [
-        {field: "id", headerName: "#", width: 70},
-        {field: "friendlyId", headerName: "ID", width: 215},
-        {field: "status", headerName: "Status", width: 215}
+        { field: "id", headerName: "#", width: 70 },
+        { field: "friendlyId", headerName: "ID", width: 215 },
+        { field: "status", headerName: "Status", width: 215 }
     ];
 
     return (
@@ -50,7 +51,7 @@ export const MaczkopatPage = () => {
                         variant="outlined"
                         value={maczkopatId}
                         onChange={(e) => setMaczkopatId(e.target.value)}
-                        error={!!error}
+                        error={isError}
                         sx={{width: 500}}
                     />
                     <Button
@@ -64,17 +65,15 @@ export const MaczkopatPage = () => {
             <Paper elevation={6} style={{padding: 16}}>
                 <DataGrid
                     rows={parcels.map((p, index) => ({
-                        id: index+1,
+                        id: index + 1,
                         friendlyId: p.friendlyId,
                         status: p.status
                     }))}
                     columns={columns}
-                    loading={loading}
+                    loading={isLoading}
                     initialState={{
                         pagination: {
-                            paginationModel: {
-                                pageSize: 5,
-                            },
+                            paginationModel: { pageSize: 5 },
                         },
                     }}
                     pageSizeOptions={[5]}
@@ -87,8 +86,7 @@ export const MaczkopatPage = () => {
                             color: "black",
                         }
                     }}
-                >
-                </DataGrid>
+                />
             </Paper>
         </Stack>
     )
