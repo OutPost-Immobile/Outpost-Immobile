@@ -21,7 +21,7 @@ jobs:
         node-version: '24.x' 
     - name: Install dependencies
       run: |
-        cd Applications/outpostimmobile.app
+        cd Applications/OutpostImmobile.App
         npm install
     - uses: actions/checkout@v4
     - name: Setup .NET
