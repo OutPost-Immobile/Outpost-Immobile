@@ -2,8 +2,14 @@
 import {useState} from "react";
 import {$api} from "../Api/Api.ts";
 import {LOGIN_URL, POST_METHOD} from "../Consts.ts";
+import {useAuth} from "../Auth/AuthProvider.tsx";
+import {useNavigate, useLocation} from "react-router";
 
 export const LoginPage = () => {
+    const { login } = useAuth();
+    const navigate = useNavigate();
+    const location = useLocation();
+
     const [loading, setLoading] = useState(false);
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -24,8 +30,12 @@ export const LoginPage = () => {
             });
 
             if (response) {
-                localStorage.setItem("token", response);
-                window.location.href = '/';
+                // Update global auth state
+                login(response);
+
+                // Redirect to previous page or home
+                const origin = location.state?.from?.pathname || "/";
+                navigate(origin, { replace: true });
             }
         } catch (err) {
             setError("Błędny email lub hasło");

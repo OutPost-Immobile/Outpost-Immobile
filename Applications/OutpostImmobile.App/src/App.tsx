@@ -5,16 +5,19 @@ import routings from "./Helpers/RoutesProvider.tsx";
 import {RouterProvider} from "react-router";
 import React from "react";
 import ReactDOM from 'react-dom/client'
+import {AuthProvider} from "./Auth/AuthProvider.tsx";
 
 const queryClient = new QueryClient()
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
     <React.StrictMode>
-        <QueryClientProvider client={queryClient}>
-            <SnackbarProvider anchorOrigin={{ horizontal: 'center', vertical: 'top' }}>
+        <AuthProvider>
+            <QueryClientProvider client={queryClient}>
+                <SnackbarProvider anchorOrigin={{ horizontal: 'center', vertical: 'top' }}>
                     <CssBaseline />
                     <RouterProvider router={routings} />
-            </SnackbarProvider>
-        </QueryClientProvider>
+                </SnackbarProvider>
+            </QueryClientProvider>
+        </AuthProvider>
     </React.StrictMode>
 )

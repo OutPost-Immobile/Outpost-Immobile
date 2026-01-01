@@ -5,6 +5,7 @@ import {InfrastructurePage} from "../Pages/InfrastructurePage.tsx";
 import {LandingPage} from "../Pages/LandingPage.tsx";
 import {LoginPage} from "../Pages/LoginPage.tsx";
 import { MaczkopatPage } from "../Pages/MaczkopatPage.tsx";
+import {ProtectedRoute} from "../Auth/ProtectedRoute.tsx";
 
 const nonAuthRoutes = (
     <>
@@ -19,8 +20,10 @@ const nonAuthRoutes = (
 )
 const authRoutes = (
     <>
-        <Route element={<Layout />}>
-            <Route path="/Maczkopat" element={<MaczkopatPage/>}/>
+        <Route element={<ProtectedRoute />}>
+            <Route element={<Layout />}>
+                <Route path="/Maczkopat" element={<MaczkopatPage/>}/>
+            </Route>
         </Route>
     </>
 )
