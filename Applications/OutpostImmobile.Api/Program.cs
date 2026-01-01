@@ -108,7 +108,8 @@ public class Program
         {
             app.MapOpenApi();
             app.MapScalarApiReference();
-            app.MapGet("/", () => Results.Redirect("/scalar/v1")).ExcludeFromDescription();
+            app.MapGet("/", () => Results.Redirect("/scalar/v1"))
+                .ExcludeFromDescription();
         }
 
         app.UseHttpsRedirection();

@@ -18,10 +18,11 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.Extensions.ApiDescription.Server" Version="10.0.1">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
+<!--    Uncomment to generate docs file on build-->
+<!--    <PackageReference Include="Microsoft.Extensions.ApiDescription.Server" Version="10.0.1">-->
+<!--      <PrivateAssets>all</PrivateAssets>-->
+<!--      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>-->
+<!--    </PackageReference>-->
     <PackageReference Include="Microsoft.OpenApi" Version="2.0.0" />
     <PackageReference Include="NetTopologySuite" Version="2.6.0" />
     <PackageReference Include="NetTopologySuite.IO.PostGis" Version="2.1.0" />
@@ -45,13 +46,13 @@
     <ProjectReference Include="..\..\Persistence\OutpostImmobile.Persistence\OutpostImmobile.Persistence.csproj" />
   </ItemGroup>
 
-  <Target Name="PostBuild" AfterTargets="Build">
-    <Copy SourceFiles="$(ProjectDir)obj\OutpostImmobile.Api.json" DestinationFolder="$(OutDir)" />
-    <Message Text="open api file copiied to $(OutDir)" Importance="high"/>
-  </Target>
+<!--  <Target Name="PostBuild" AfterTargets="Build">-->
+<!--    <Copy SourceFiles="$(ProjectDir)obj\OutpostImmobile.Api.json" DestinationFolder="$(OutDir)" />-->
+<!--    <Message Text="open api file copiied to $(OutDir)" Importance="high"/>-->
+<!--  </Target>-->
 
-  <Target Name="CopyFilesToPublish" AfterTargets="Publish">
-    <Copy SourceFiles="$(OutDir)\OutpostImmobile.Api.json" DestinationFolder="$(PublishDir)"/>
-  </Target>
+<!--  <Target Name="CopyFilesToPublish" AfterTargets="Publish">-->
+<!--    <Copy SourceFiles="$(OutDir)\OutpostImmobile.Api.json" DestinationFolder="$(PublishDir)"/>-->
+<!--  </Target>-->
 
 </Project>
