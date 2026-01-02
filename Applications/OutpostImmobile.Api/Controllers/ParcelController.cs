@@ -30,7 +30,6 @@ public static class ParcelController
         return routes;
     }
     
-    
     private static async Task<TypedResponse<List<ParcelDto>>> GetParcelsFromMaczkopatAsync([FromServices] IMediator mediator,[FromRoute] Guid maczkopatId)
     {
         var parcels = await mediator.Send(new GetParcelsFromMaczkopatQuery
