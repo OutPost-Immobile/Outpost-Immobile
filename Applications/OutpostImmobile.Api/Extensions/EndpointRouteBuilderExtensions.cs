@@ -15,6 +15,7 @@ public static class EndpointRouteBuilderExtensions
         routes.MapMaczkopats();
         routes.MapParcels();
         routes.MapRoute();
+        routes.MapUsers();
         
         return routes;
     }

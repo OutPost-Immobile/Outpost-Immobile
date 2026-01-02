@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using OutpostImmobile.Api.Consts;
 using OutpostImmobile.Api.Request;
 using OutpostImmobile.Core.Maczkopats.Commands;
 using OutpostImmobile.Core.Mediator;
@@ -13,26 +14,20 @@ public static class MaczkopatController
         var group = routes.MapGroup("/api/maczkopats/");
         group.WithTags("Maczkopats");
         
-        group.MapPost("/AddLog", AddLogAsync);
+        group.MapPost("/AddLog", AddLogAsync)
+            .RequireAuthorization(PolicyNames.AdminManagerCourier);
         
         return routes;
     }
-
+    
     private static async Task<Results<Created, BadRequest>> AddLogAsync([FromServices] IMediator mediator, AddLogRequest request)
     {
-        try
+        await mediator.Send(new MaczkopatAddLogCommand
         {
-            await mediator.Send(new MaczkopatAddLogCommand
-            {
-                LogType = request.LogType,
-                MaczkopatId = request.MaczkopatId
-            });
+            LogType = request.LogType,
+            MaczkopatId = request.MaczkopatId
+        });
 
-            return TypedResults.Created();
-        }
-        catch
-        {
-            return  TypedResults.BadRequest();
-        }
+        return TypedResults.Created();
     }
 }

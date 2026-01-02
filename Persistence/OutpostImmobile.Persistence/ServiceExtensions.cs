@@ -36,12 +36,15 @@ public static class ServiceExtensions
         services.AddIdentity<UserInternal, IdentityRole<Guid>>(options =>
             {
                 options.Password.RequireDigit = false;
-                options.Password.RequireLowercase = false;
+                options.Password.RequiredLength = 4;
                 options.Password.RequireNonAlphanumeric = false;
                 options.Password.RequireUppercase = false;
-                options.Password.RequiredLength = 6;
-                options.User.RequireUniqueEmail = true;
+                options.Password.RequireLowercase = false;
+                options.Password.RequiredUniqueChars = 0;
+                options.SignIn.RequireConfirmedEmail = false;
+                options.SignIn.RequireConfirmedPhoneNumber = false;
             })
+            .AddRoles<IdentityRole<Guid>>()
             .AddEntityFrameworkStores<OutpostImmobileDbContext>()
             .AddDefaultTokenProviders();
         

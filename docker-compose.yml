@@ -1,73 +1,108 @@
 ﻿services:
+  cert-setup:
+    image: mcr.microsoft.com/dotnet/sdk:8.0
+    container_name: cert-setup
+    volumes:
+      - ./certs:/https
+    environment:
+      - CERT_PASSWORD=mystrongpassword
+    command: >
+      bash -c "
+      if [ -f /https/aspnetapp.pfx ]; then
+        echo 'Certificate exists. Skipping generation.'
+      else
+        echo 'Generating new HTTPS certificate...'
+        dotnet dev-certs https -ep /https/aspnetapp.pfx -p $${CERT_PASSWORD}
+        # Fix permissions so the API container (user 'app') can read it
+        chmod 644 /https/aspnetapp.pfx
+        echo 'Certificate generated and permissions set.'
+      fi"
   outpostimmobile.api:
-    image: OutpostImmobile
-    depends_on: 
-      - "importer"
+    image: outpostimmobile.api
     build:
-      context: ./OutpostImmobile.Api
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: Applications/OutpostImmobile.Api/Dockerfile
+    depends_on:
+      importer:
+        condition: service_completed_successfully
+      cert-setup:
+        condition: service_completed_successfully
     ports:
-      - 5000:5000
+      - "7078:7078"
     environment:
-      - ASPNETCORE_URLS=http://*:5000
+      - ASPNETCORE_URLS=https://+:7078
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetapp.pfx
+      # This password MUST match the one in 'cert-setup' above
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=mystrongpassword
+      - ConnectionStrings__DefaultConnection=Host=database;Port=5432;Database=OutpostImmobile;Username=postgres;Password=postgres;Pooling=true;
+    volumes:
+      - ./certs:/https:ro
     networks:
       - Outpost-Network
-
   outpostimmobile.app:
-    image: OutpostImmobileApp
+    image: outpostimmobile.app
     build:
-      context: ./outpostimmobile.app
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: Applications/OutpostImmobile.App/Dockerfile
     ports:
-      - 5002:5002
+      - "5002:5002"
     environment:
-      - REACT_APP_API_URL=http://localhost:5002
+      - REACT_APP_API_URL=https://localhost:7078
     networks:
       - Outpost-Network
-  
   database:
     image: pgrouting/pgrouting:latest
     container_name: postgres
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=postgres
+      - POSTGRES_DB=OutpostImmobile
     volumes:
       - ./volumes/data/db:/var/lib/postgresql/data
     ports:
-      - 5433:5432
-    networks: 
+      - "5433:5432"
+    networks:
       - Outpost-Network
-  
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d OutpostImmobile"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
   importer:
-    image: docker-registry.geofabrik.de/osm2pgrouting/osm2pgrouting:latest
+    build:
+      context: .
+      dockerfile: Dockerfile.importer
+    security_opt:
+      - seccomp:unconfined
     depends_on:
-      - "database"
-    environment:
-      DB_HOST: db
-      DB_USER: user
-      DB_PASS: password
-      DB_NAME: routing_db
-      OSM_DATA_URL: "https://download.geofabrik.de/europe/poland-latest.osm.pbf"
-      LOCAL_FILE_PATH: "/tmp/poland.osm.pbf"
-    command: >
-      sh -c "
-        echo '1. Downloading OSM file...' &&
-        # Use curl to download the file to a temporary location
-        curl -L -o $$LOCAL_FILE_PATH $$OSM_DATA_URL &&
-      
-        echo '2. Running osm2pgrouting to import data...' &&
-        # Run osm2pgrouting using the downloaded file
-        osm2pgrouting -f $$LOCAL_FILE_PATH
-                      -c 'host=$$DB_HOST user=$$DB_USER dbname=$$DB_NAME password=$$DB_PASS' 
-                      -W $$DB_PASS
-                      -clean &&
-      
-        echo '3. Cleaning up temporary file...' &&
-        rm $$LOCAL_FILE_PATH
-      "
-    profiles: [ "importer" ]
-  
+      database:
+        condition: service_healthy
+    volumes:
+      - ./poland-roads-only.osm.pbf:/input/data.pbf
+    networks:
+      - Outpost-Network
+    entrypoint:
+      - /bin/bash
+      - -c
+    # Complex command to use pipes and avoid huge XML files
+    command: |
+      set -e
+      rm -f /tmp/pipe.osm
+      mkfifo /tmp/pipe.osm
+
+      echo "Starting background conversion stream..."
+      osmconvert /input/data.pbf --drop-author --drop-version --out-osm > /tmp/pipe.osm &
+
+      echo "Starting Import..."
+      osm2pgrouting \
+        --file /tmp/pipe.osm \
+        --conf /app/mapconfig.xml \
+        --dbname OutpostImmobile \
+        --username postgres \
+        --host database \
+        --password postgres \
+        --clean
+
 networks:
   Outpost-Network:
     driver: bridge
