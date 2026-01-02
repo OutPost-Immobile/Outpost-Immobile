@@ -1,0 +1,28 @@
+# Use Bookworm as discussed for Arch Linux compatibility
+FROM debian:bookworm-slim
+
+# Install dependencies + osmctools
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    cmake \
+    wget \
+    libboost-program-options-dev \
+    libexpat1-dev \
+    libpq-dev \
+    libpqxx-dev \
+    postgresql-client \
+    git \
+    osmctools \
+    && rm -rf /var/lib/apt/lists/*
+
+# Clone, Build, Install osm2pgrouting (Same as before)
+WORKDIR /usr/src
+RUN git clone https://github.com/pgRouting/osm2pgrouting.git
+WORKDIR /usr/src/osm2pgrouting
+RUN cmake -H. -Bbuild && cd build && make && make install
+
+WORKDIR /app
+RUN cp /usr/src/osm2pgrouting/mapconfig.xml /app/mapconfig.xml
+
+# Default CMD
+CMD ["osm2pgrouting", "--help"]

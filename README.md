@@ -3,6 +3,24 @@
 ## Opis projektu
 System obsługujący maczkopaty
 
+## Obsługa Dockera:
+
+Ważne jest odpalenie
+```
+git lfs pull
+```
+Żeby pobrał się plik pbf z mapą
+
+Pierwsze odpalenie z docker-compose za pomocą komendy:
+```
+sudo docker compose --profile importer up --build
+```
+
+Potem normalnie:
+```
+sudo docker compose up -d
+```
+
 ## Styl PR:
 [ "Czego temat dotyczy" ] #"numer zadania z issues" "Co się tutaj dzieje"
 

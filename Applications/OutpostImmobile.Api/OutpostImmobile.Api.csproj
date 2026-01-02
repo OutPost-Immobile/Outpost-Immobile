@@ -34,12 +34,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="..\.dockerignore">
-      <Link>.dockerignore</Link>
-    </Content>
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\..\Core\OutpostImmobile.Core.Common\OutpostImmobile.Core.Common.csproj" />
     <ProjectReference Include="..\..\Core\OutpostImmobile.Core.Mediator\OutpostImmobile.Core.Mediator.csproj" />
     <ProjectReference Include="..\..\Core\OutpostImmobile.Core\OutpostImmobile.Core.csproj" />
