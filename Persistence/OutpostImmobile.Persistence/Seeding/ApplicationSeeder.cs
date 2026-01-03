@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Identity;
 using OutpostImmobile.Persistence.Domain.StaticEnums.Enums;
 using OutpostImmobile.Persistence.Domain.Users;
 using OutpostImmobile.Persistence.Seeding.Domain;
+using OutpostImmobile.Persistence.Seeding.Domain.Address;
 using OutpostImmobile.Persistence.Seeding.StaticEnums;
 using OutpostImmobile.Persistence.Seeding.StaticEnums.EnumTranslations;
 

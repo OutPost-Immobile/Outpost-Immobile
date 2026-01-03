@@ -8,6 +8,7 @@ using OutpostImmobile.Api.Response;
 using OutpostImmobile.Core.Mediator;
 using OutpostImmobile.Core.Routes.Queries;
 using OutpostImmobile.Core.Routes.QueryResult;
+using OutpostImmobile.Persistence.Models;
 
 namespace OutpostImmobile.Api.Controllers;
 
@@ -20,28 +21,32 @@ public static class RouteController
         group.MapGet("/{courierId:Guid}", GetRouteFromCourierAsync)
             .RequireAuthorization(PolicyNames.AdminManagerCourier);
         
+        group.MapGet("/geojson-stream/{routeId:long}", GetRouteGeoJsonAsync)
+            .RequireAuthorization(PolicyNames.AdminManagerCourier);
+        
         return routes;
     }
     
     private static async Task<TypedResponse<List<RouteDto>>> GetRouteFromCourierAsync([FromServices] IMediator mediator, [FromRoute] Guid courierId)
     {
-        try
+        var routes = await mediator.Send(new GetRoutesFromCourierQuery
         {
-            var routes = await mediator.Send(new GetRoutesFromCourierQuery
-            {
-                CourierId = courierId
-            });
+            CourierId = courierId
+        });
 
-            return new TypedResponse<List<RouteDto>>
-            {
-                StatusCode = HttpStatusCode.OK,
-                Data = routes,
-                Errors = null
-            };
-        }
-        catch (Exception e)
+        return new TypedResponse<List<RouteDto>>
         {
-            return ExceptionHelper.HandleErrors<List<RouteDto>>([], e.Message);
-        }
+            StatusCode = HttpStatusCode.OK,
+            Data = routes,
+            Errors = null
+        };
+    }
+
+    private static async Task<IAsyncEnumerable<RouteSegmentDto>> GetRouteGeoJsonAsync([FromServices] IMediator mediator, long routeId)
+    {
+        return await mediator.Send(new GetRouteGeoJsonQuery
+        {
+            RouteId = routeId
+        });
     }
 }

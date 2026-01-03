@@ -7,7 +7,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="DispatchR.Mediator" Version="2.1.1" />
       <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.1" />
       <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.1" />
       <PackageReference Include="Microsoft.Extensions.Options" Version="10.0.1" />

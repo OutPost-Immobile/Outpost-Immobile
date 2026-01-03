@@ -1,5 +1,8 @@
 using Microsoft.EntityFrameworkCore;
+using NetTopologySuite.Geometries;
+using OutpostImmobile.Persistence.Exceptions;
 using OutpostImmobile.Persistence.Interfaces;
+using OutpostImmobile.Persistence.Models;
 
 namespace OutpostImmobile.Persistence.Repositories;
 

@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NetTopologySuite.Geometries;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
@@ -12,9 +13,11 @@ using OutpostImmobile.Persistence;
 namespace OutpostImmobile.Persistence.Migrations
 {
     [DbContext(typeof(OutpostImmobileDbContext))]
-    partial class OutpostImmobileDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260102233659_AddPostgisSupport")]
+    partial class AddPostgisSupport
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -165,11 +168,11 @@ namespace OutpostImmobile.Persistence.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
                     b.Property<string>("Alias")
-                        .HasColumnType("text");
-
-                    b.Property<string>("BuildingNumber")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<int>("BuildingNumber")
+                        .HasColumnType("integer");
 
                     b.Property<string>("City")
                         .IsRequired()
