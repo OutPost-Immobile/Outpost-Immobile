@@ -134,6 +134,63 @@ namespace OutpostImmobile.Persistence.Migrations
                                  END;
                                  $$ LANGUAGE plpgsql;
                                  """);
+
+            migrationBuilder.Sql("""
+                                 CREATE OR REPLACE FUNCTION calculate_driving_distance(
+                                     start_pt geometry(Point, 4326),
+                                     end_pt geometry(Point, 4326)
+                                 )
+                                     RETURNS bigint AS $$
+                                 DECLARE
+                                     start_node integer;
+                                     end_node integer;
+                                     total_meters float;
+                                     search_bbox geometry;
+                                 BEGIN
+                                     SELECT v.id INTO start_node
+                                     FROM planet_osm_line_noded_vertices_pgr v
+                                              JOIN planet_osm_line_noded e ON (v.id = e.source OR v.id = e.target)
+                                     WHERE ST_DWithin(v.the_geom, start_pt, 0.01)
+                                       AND e.highway IN ('motorway', 'trunk', 'primary', 'secondary', 'tertiary', 'residential', 'unclassified')
+                                     ORDER BY v.the_geom <-> start_pt LIMIT 1;
+                                 
+                                     SELECT v.id INTO end_node
+                                     FROM planet_osm_line_noded_vertices_pgr v
+                                              JOIN planet_osm_line_noded e ON (v.id = e.source OR v.id = e.target)
+                                     WHERE ST_DWithin(v.the_geom, end_pt, 0.01)
+                                       AND e.highway IN ('motorway', 'trunk', 'primary', 'secondary', 'tertiary', 'residential', 'unclassified')
+                                     ORDER BY v.the_geom <-> end_pt LIMIT 1;
+                                 
+                                     IF start_node IS NULL OR end_node IS NULL THEN RETURN 0; END IF;
+                                 
+                                     search_bbox := ST_Expand(ST_Envelope(ST_Collect(start_pt, end_pt)), 0.3);
+                                 
+                                     SELECT sum(cost) INTO total_meters
+                                     FROM pgr_dijkstra(
+                                             format(
+                                                     'SELECT id, source, target, 
+                                                             length_m as cost, 
+                                                             length_m as reverse_cost
+                                                      FROM planet_osm_line_noded 
+                                                      WHERE way && %L
+                                                      -- CRITICAL OPTIMIZATION: EXCLUDE non-car things
+                                                      AND highway IN (''motorway'', ''motorway_link'', 
+                                                                      ''trunk'', ''trunk_link'', 
+                                                                      ''primary'', ''primary_link'', 
+                                                                      ''secondary'', ''secondary_link'', 
+                                                                      ''tertiary'', ''tertiary_link'', 
+                                                                      ''residential'', ''unclassified'')',
+                                                     search_bbox
+                                             ),
+                                             start_node,
+                                             end_node,
+                                             false
+                                          );
+                                 
+                                     RETURN COALESCE(total_meters, 0)::bigint;
+                                 END;
+                                 $$ LANGUAGE plpgsql;
+                                 """);
         }
 
         /// <inheritdoc />
@@ -141,6 +198,7 @@ namespace OutpostImmobile.Persistence.Migrations
         {
             migrationBuilder.Sql("DROP FUNCTION IF EXISTS get_hybrid_route(geometry, geometry);");
             migrationBuilder.Sql("DROP FUNCTION IF EXISTS get_complete_route(geometry, geometry);");
+            migrationBuilder.Sql("DROP FUNCTION IF EXISTS calculate_driving_distance(geometry, geometry);");
         }
     }
 }

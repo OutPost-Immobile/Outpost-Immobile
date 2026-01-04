@@ -10,9 +10,13 @@ public class RouteEntity : AuditableEntity
 {
     public long Id { get; set; }
 
+    public string StarAddressName { get; set; }
     public long StartAddressId { get; set; }
+
+    public required string EndAddressName { get; set; }
     public long EndAddressId { get; set; }
-    public long Distace { get; set; }
+    
+    public long Distance { get; set; }
 
     public ICollection<UserInternal> Couriers { get; set; } = [];
     public ICollection<VehicleEntity> AssignedVehicles { get; set; } = [];

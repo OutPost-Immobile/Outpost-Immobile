@@ -1,9 +1,6 @@
 using System.Net;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using OutpostImmobile.Api.Consts;
-using OutpostImmobile.Api.Helpers;
-using OutpostImmobile.Api.Request;
 using OutpostImmobile.Api.Response;
 using OutpostImmobile.Core.Mediator;
 using OutpostImmobile.Core.Routes.Queries;
@@ -18,6 +15,9 @@ public static class RouteController
     {
         var group = routes.MapGroup("/api/routes");
 
+        group.MapGet("/", GetRoutesAsync)
+            .RequireAuthorization(PolicyNames.AdminManagerCourier);
+
         group.MapGet("/{courierId:Guid}", GetRouteFromCourierAsync)
             .RequireAuthorization(PolicyNames.AdminManagerCourier);
         
@@ -25,6 +25,18 @@ public static class RouteController
             .RequireAuthorization(PolicyNames.AdminManagerCourier);
         
         return routes;
+    }
+
+    private static async Task<TypedResponse<List<RouteDto>>> GetRoutesAsync([FromServices] IMediator mediator)
+    {
+        var routes = await mediator.Send(new GetRoutesQuery());
+        
+         return new TypedResponse<List<RouteDto>>
+        {
+            StatusCode = HttpStatusCode.OK,
+            Data = routes,
+            Errors = null
+        };
     }
     
     private static async Task<TypedResponse<List<RouteDto>>> GetRouteFromCourierAsync([FromServices] IMediator mediator, [FromRoute] Guid courierId)

@@ -16,6 +16,15 @@ public class RouteRepository : IRouteRepository
         _dbContextFactory = dbContextFactory;
     }
 
+    public async Task<List<RouteEntity>> GetRoutesAsync()
+    {
+        await using var context = await _dbContextFactory.CreateDbContextAsync();
+
+        return await context.Routes
+            .AsNoTracking()
+            .ToListAsync();
+    }
+
     public async Task<List<RouteEntity>> GetRouteFromCourierAsync(Guid courierId)
     {
         await using var context = await _dbContextFactory.CreateDbContextAsync();
@@ -65,6 +74,33 @@ public class RouteRepository : IRouteRepository
             .FirstAsync();
         
         return [ (true, startLocationPoint), (false, endLocationPoint) ];
+    }
+
+    public async Task CalculateRouteDistanceAsync(long routeId)
+    {
+        await using var context = await _dbContextFactory.CreateDbContextAsync();
+
+        var route = await context.Routes
+            .Where(x => x.Id == routeId)
+            .FirstAsync();
+
+        var startAddress = await context.Addresses
+            .Where(x => x.Id == route.StartAddressId)
+            .Select(x => x.Location)
+            .FirstAsync();
+        
+        var endAddress = await context.Addresses
+            .Where(x => x.Id == route.EndAddressId)
+            .Select(x => x.Location)
+            .FirstAsync();
+        
+        var distance = await context.Database
+            .SqlQuery<long>($"SELECT calculate_driving_distance({startAddress}, {endAddress})")
+            .FirstAsync();
+        
+        route.Distance = distance;
+        
+        await context.SaveChangesAsync();
     }
     
     public async IAsyncEnumerable<RouteSegmentDto> GetRouteGeoJsonAsync(List<(bool, Point)> points)

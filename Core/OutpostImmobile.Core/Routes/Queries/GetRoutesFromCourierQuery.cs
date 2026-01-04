@@ -26,7 +26,9 @@ internal class GetRoutesFromCourierQueryHandler : IRequestHandler<GetRoutesFromC
             .Select(x => new RouteDto
             {
                 RouteId = x.Id,
-                Distance = x.Distace
+                Distance = x.Distance,
+                StartAddressName = x.StarAddressName,
+                EndAddressName = x.EndAddressName
             })
             .ToList();
     }
