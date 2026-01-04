@@ -14,14 +14,20 @@ public class RoutesSeeder
         }
 
         var addressIds = await context.Addresses
-            .Select(x => x.Id)
+            .Select(x => new
+            {
+                x.Id,
+                Name = $"{x.City} {x.Street} {x.BuildingNumber}"
+            })
             .ToListAsync(ct);
         
         var faker = new Faker<RouteEntity>("pl");
 
         faker
-            .RuleFor(x => x.StartAddressId, f => f.PickRandom(addressIds))
-            .RuleFor(x => x.EndAddressId, f => f.PickRandom(addressIds))
+            .RuleFor(x => x.StartAddressId, f => f.PickRandom(addressIds).Id)
+            .RuleFor(x => x.EndAddressId, f => f.PickRandom(addressIds).Id)
+            .RuleFor(x => x.StartAddressName, f => f.PickRandom(addressIds).Name)
+            .RuleFor(x => x.EndAddressName, f => f.PickRandom(addressIds).Name)
             .RuleFor(x => x.CreatedAt, f => DateTime.UtcNow)
             .RuleFor(x => x.UpdatedAt, f => DateTime.UtcNow);
         
