@@ -4,12 +4,15 @@ namespace OutpostImmobile.Persistence.Models;
 
 public record RouteSegmentDto
 {
+    [Column("seq")]
     public required int Seq { get; init; }
+
+    [Column("geojson")]
     public required string GeoJson { get; init; }
     
-    [Column(TypeName = "Segment_Dist")]
+    [Column("segmentdist")]
     public required double SegmentDist { get; init; }
-    
-    [Column(TypeName = "Total_Dist")]
+
+    [Column("totaldist")]
     public required double TotalDist { get; init; }
 }

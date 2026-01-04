@@ -6,7 +6,7 @@ namespace OutpostImmobile.Persistence.Seeding.Domain.Address;
 
 internal class AddressImporter
 {
-    public static IEnumerable<AddressModel> Import()
+    public static List<AddressModel> Import()
     {
         var config = new CsvConfiguration(CultureInfo.InvariantCulture)
         {
@@ -16,6 +16,6 @@ internal class AddressImporter
         using var reader = new StreamReader("../../Adresy.csv");
         using var csv = new CsvReader(reader, config);
         
-        return csv.GetRecords<AddressModel>();
+        return csv.GetRecords<AddressModel>().ToList();
     }
 }

@@ -67,7 +67,7 @@ public class RouteRepository : IRouteRepository
         return [ (true, startLocationPoint), (false, endLocationPoint) ];
     }
     
-    public async ValueTask<IAsyncEnumerable<RouteSegmentDto>> GetRouteGeoJsonAsync(List<(bool, Point)> points)
+    public async IAsyncEnumerable<RouteSegmentDto> GetRouteGeoJsonAsync(List<(bool, Point)> points)
     {
         if (points.Count > 2)
         {
@@ -82,9 +82,14 @@ public class RouteRepository : IRouteRepository
         
         var query = "SELECT * FROM get_hybrid_route({0}, {1})";
         
-        return context.Database
+        var result = context.Database
             .SqlQueryRaw<RouteSegmentDto>(query, start, end
             )
             .AsAsyncEnumerable();
+
+        await foreach (var segment in result)
+        {
+            yield return segment;
+        }
     }
 }

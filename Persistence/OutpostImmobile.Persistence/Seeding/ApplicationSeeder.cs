@@ -24,6 +24,7 @@ public class ApplicationSeeder
         await UserExternalSeeder.SeedExternalUserAsync(context, ct);
         await AreaSeeder.SeedAreasAsync(context, ct);
         await AddressSeeder.SeedAddressesAsync(context, ct);
+        await RoutesSeeder.SeedRoutesAsync(context, ct);
         await MaczkopatSeeder.SeedMaczkopatsAsync(context, ct);
         await ParcelSeeder.SeedParcelsAsync(context, ct);
         await NumberTemplateSeeder.SeedNumberTemplatesAsync(context, ct);

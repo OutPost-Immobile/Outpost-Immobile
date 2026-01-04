@@ -13,10 +13,10 @@ public class RouteEntity : AuditableEntity
     public long StartAddressId { get; set; }
     public long EndAddressId { get; set; }
     public long Distace { get; set; }
-    
-    public ICollection<UserInternal> Couriers { get; set; }
-    public ICollection<VehicleEntity> AssignedVehicles { get; set; } = null!;
-    public ICollection<Point> Locations { get; set; }
+
+    public ICollection<UserInternal> Couriers { get; set; } = [];
+    public ICollection<VehicleEntity> AssignedVehicles { get; set; } = [];
+    public ICollection<Point> Locations { get; set; } = [];
 }
 
 internal class RouteEntityConfiguration : IEntityTypeConfiguration<RouteEntity>

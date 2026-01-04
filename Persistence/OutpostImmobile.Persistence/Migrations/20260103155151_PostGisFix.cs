@@ -11,22 +11,6 @@ namespace OutpostImmobile.Persistence.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.Sql("""
-                                 ALTER TABLE planet_osm_line ADD COLUMN IF NOT EXISTS gid SERIAL;
-                                 """);
-            
-            migrationBuilder.Sql("""
-                                 ALTER TABLE planet_osm_line DROP CONSTRAINT IF EXISTS planet_osm_line_pkey;
-                                 """);
-            
-            migrationBuilder.Sql("""
-                                 ALTER TABLE planet_osm_line ADD PRIMARY KEY (gid);
-                                 """);
-            
-            migrationBuilder.Sql("""
-                                 CREATE INDEX IF NOT EXISTS planet_osm_line_gix ON planet_osm_line USING GIST (way);
-                                 """);
-
-            migrationBuilder.Sql("""
                                  CREATE INDEX IF NOT EXISTS idx_line_way_gist ON planet_osm_line USING GIST (way);
                                  CREATE INDEX IF NOT EXISTS idx_line_source ON planet_osm_line (source);
                                  CREATE INDEX IF NOT EXISTS idx_line_target ON planet_osm_line (target);
@@ -34,93 +18,119 @@ namespace OutpostImmobile.Persistence.Migrations
                                  """);
 
             migrationBuilder.Sql("""
-                                 CREATE OR REPLACE FUNCTION get_hybrid_route(start_pt geometry, end_pt geometry)
-                                 RETURNS TABLE (
-                                                       seq integer,
-                                                       geo_json text,
-                                                       segment_dist float,
-                                                       total_dist float
+                                 CREATE OR REPLACE FUNCTION get_hybrid_route(
+                                     start_pt geometry(Point, 4326),
+                                     end_pt geometry(Point, 4326)
+                                 )
+                                     RETURNS TABLE (
+                                                       Seq integer,
+                                                       GeoJson text,
+                                                       SegmentDist float,
+                                                       TotalDist float
                                                    ) AS $$
                                  DECLARE
                                      start_node integer;
                                      end_node integer;
                                      search_bbox geometry;
-                                     buffer_degree float := 0.5;
                                  BEGIN
-                                     search_bbox := ST_Expand(ST_Envelope(ST_MakeLine(start_pt, end_pt)), buffer_degree);
+                                     SELECT id INTO start_node FROM planet_osm_line_noded_vertices_pgr
+                                     ORDER BY the_geom <-> start_pt LIMIT 1;
                                  
-                                     SELECT v.id INTO start_node
-                                     FROM planet_osm_line_vertices_pgr v
-                                              JOIN planet_osm_line r ON (v.id = r.source OR v.id = r.target)
-                                     WHERE v.the_geom && ST_Expand(start_pt, 0.01)
-                                       AND ST_DWithin(v.the_geom, start_pt, 0.01)
-                                       AND r.highway IN ('motorway', 'trunk', 'primary', 'secondary', 'tertiary', 'residential')
-                                     ORDER BY v.the_geom <-> start_pt LIMIT 1;
+                                     SELECT id INTO end_node FROM planet_osm_line_noded_vertices_pgr
+                                     ORDER BY the_geom <-> end_pt LIMIT 1;
                                  
-                                     SELECT v.id INTO end_node
-                                     FROM planet_osm_line_vertices_pgr v
-                                              JOIN planet_osm_line r ON (v.id = r.source OR v.id = r.target)
-                                     WHERE v.the_geom && ST_Expand(end_pt, 0.01)
-                                       AND ST_DWithin(v.the_geom, end_pt, 0.01)
-                                       AND r.highway IN ('motorway', 'trunk', 'primary', 'secondary', 'tertiary', 'residential')
-                                     ORDER BY v.the_geom <-> end_pt LIMIT 1;
+                                     IF start_node IS NULL OR end_node IS NULL THEN
+                                         RETURN;
+                                     END IF;
+                                 
+                                     search_bbox := ST_Expand(ST_Envelope(ST_Collect(start_pt, end_pt)), 1.0);
                                  
                                      RETURN QUERY
+                                         WITH route_query AS (
+                                             SELECT * FROM pgr_dijkstra(
+                                                     format(
+                                                             'SELECT id, source, target, ST_Length(way::geography) as cost 
+                                                              FROM planet_osm_line_noded 
+                                                              WHERE way && %L 
+                                                              -- Optional: Filter by highway type if needed
+                                                              -- AND highway IS NOT NULL 
+                                                              ',
+                                                             search_bbox
+                                                     ),
+                                                     start_node,
+                                                     end_node,
+                                                     false
+                                                           )
+                                         )
                                          SELECT
-                                             a.seq,
-                                             ST_AsGeoJSON(b.way)::text,
-                                             ST_Length(b.way::geography)::float,
-                                             SUM(ST_Length(b.way::geography)::float) OVER ()
-                                         FROM pgr_astar(
-                                                      format(
-                                                              'SELECT gid as id, source, target, 
-                                                                      st_length(way) as cost, 
-                                                                      -- We calculate coordinates dynamically because columns x1/y1 might not exist
-                                                                      ST_X(ST_StartPoint(way)) as x1, ST_Y(ST_StartPoint(way)) as y1,
-                                                                      ST_X(ST_EndPoint(way)) as x2,   ST_Y(ST_EndPoint(way)) as y2,
-                                                                      st_length(way) as reverse_cost 
-                                                               FROM planet_osm_line 
-                                                               WHERE way && %L::geometry 
-                                                               AND highway IS NOT NULL',
-                                                              search_bbox
-                                                      ),
-                                                      start_node, end_node, false
-                                              ) as a
-                                                  JOIN planet_osm_line as b ON a.edge = b.gid
-                                         ORDER BY a.seq;
+                                             r.seq AS Seq,
+                                             ST_AsGeoJSON(e.way)::text AS GeoJson,
+                                             ST_Length(e.way::geography)::float AS SegmentDist,
+                                             SUM(ST_Length(e.way::geography)::float) OVER (ORDER BY r.seq) AS TotalDist
+                                         FROM route_query r
+                                                  JOIN planet_osm_line_noded e ON r.edge = e.id
+                                         ORDER BY r.seq;
                                  END;
                                  $$ LANGUAGE plpgsql;
                                  """);
             
             migrationBuilder.Sql("""
-                                 CREATE OR REPLACE FUNCTION get_complete_route(start_pt geometry, end_pt geometry)
-                                 RETURNS json AS $$
+                                 CREATE OR REPLACE FUNCTION get_complete_route(
+                                     start_pt geometry(Point, 4326),
+                                     end_pt geometry(Point, 4326)
+                                 )
+                                     RETURNS json AS $$
                                  DECLARE
-                                     start_node integer;
-                                     end_node integer;
-                                     result json;
+                                     start_node_id integer;
+                                     end_node_id integer;
+                                     search_bbox geometry;
+                                     result_json json;
                                  BEGIN
-                                     -- Reuse logic or copy snapping logic here (abbreviated for clarity)
-                                     SELECT v.id INTO start_node FROM planet_osm_line_vertices_pgr v
-                                     ORDER BY v.the_geom <-> start_pt LIMIT 1;
+                                     SELECT v.id INTO start_node_id
+                                     FROM planet_osm_line_noded_vertices_pgr v
+                                              JOIN planet_osm_line_noded r ON (v.id = r.source OR v.id = r.target)
+                                     WHERE r.highway IN ('motorway', 'trunk', 'primary', 'secondary', 'tertiary', 'residential', 'service', 'unclassified')
+                                     ORDER BY v.the_geom <-> start_pt
+                                     LIMIT 1;
                                  
-                                     SELECT v.id INTO end_node FROM planet_osm_line_vertices_pgr v
-                                     ORDER BY v.the_geom <-> end_pt LIMIT 1;
+                                     SELECT v.id INTO end_node_id
+                                     FROM planet_osm_line_noded_vertices_pgr v
+                                              JOIN planet_osm_line_noded r ON (v.id = r.source OR v.id = r.target)
+                                     WHERE r.highway IN ('motorway', 'trunk', 'primary', 'secondary', 'tertiary', 'residential', 'service', 'unclassified')
+                                     ORDER BY v.the_geom <-> end_pt
+                                     LIMIT 1;
+                                 
+                                     IF start_node_id IS NULL OR end_node_id IS NULL THEN
+                                         RETURN NULL;
+                                     END IF;
+                                 
+                                     search_bbox := ST_Expand(ST_Envelope(ST_Collect(start_pt, end_pt)), 1.0);
                                  
                                      SELECT json_build_object(
-                                         'type', 'Feature',
-                                         'geometry', ST_AsGeoJSON(ST_MakeLine(b.way ORDER BY a.seq))::json,
-                                         'properties', json_build_object(
-                                             'distance_meters', SUM(ST_Length(b.way::geography))
-                                         )
-                                     ) INTO result
+                                                    'type', 'Feature',
+                                                    'geometry', ST_AsGeoJSON(ST_MakeLine(b.way ORDER BY a.seq))::json,
+                                                    'properties', json_build_object(
+                                                            'distance_meters', SUM(ST_Length(b.way::geography)),
+                                                            'start_id', start_node_id,
+                                                            'end_id', end_node_id
+                                                                  )
+                                            ) INTO result_json
                                      FROM pgr_dijkstra(
-                                         'SELECT gid as id, source, target, st_length(way) as cost FROM planet_osm_line', 
-                                         start_node, end_node, false
-                                     ) as a
-                                     JOIN planet_osm_line as b ON a.edge = b.gid;
+                                                  format(
+                                                          'SELECT id, source, target, ST_Length(way::geography) as cost 
+                                                           FROM planet_osm_line_noded 
+                                                           WHERE way && %L 
+                                                           -- Ensure we only route on actual roads
+                                                           AND highway IS NOT NULL',
+                                                          search_bbox
+                                                  ),
+                                                  start_node_id,
+                                                  end_node_id,
+                                                  false
+                                          ) as a
+                                              JOIN planet_osm_line_noded as b ON a.edge = b.id;
                                  
-                                     RETURN result;
+                                     RETURN result_json;
                                  END;
                                  $$ LANGUAGE plpgsql;
                                  """);

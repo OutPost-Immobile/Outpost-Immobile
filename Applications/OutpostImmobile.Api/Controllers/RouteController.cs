@@ -44,9 +44,11 @@ public static class RouteController
 
     private static async Task<IAsyncEnumerable<RouteSegmentDto>> GetRouteGeoJsonAsync([FromServices] IMediator mediator, long routeId)
     {
-        return await mediator.Send(new GetRouteGeoJsonQuery
+        var result = await mediator.Send(new GetRouteGeoJsonQuery
         {
             RouteId = routeId
         });
+
+        return result;
     }
 }

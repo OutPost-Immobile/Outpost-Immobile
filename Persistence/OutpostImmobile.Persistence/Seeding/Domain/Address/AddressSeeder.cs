@@ -26,7 +26,7 @@ public class AddressSeeder
             CountryCode = "Pl",
             BuildingNumber = x.HouseNumber,
             Location = geometryFactory.CreatePoint(new Coordinate(x.Longitude, x.Latitude))
-        });
+        }).ToList();
 
         await context.AddRangeAsync(addresses, ct);
         await context.SaveChangesAsync(ct);

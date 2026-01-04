@@ -7,6 +7,6 @@ namespace OutpostImmobile.Persistence.Interfaces;
 public interface IRouteRepository
 {
     Task<List<RouteEntity>> GetRouteFromCourierAsync(Guid courierId);
-    ValueTask<IAsyncEnumerable<RouteSegmentDto>> GetRouteGeoJsonAsync(List<(bool, Point)> points);
+    IAsyncEnumerable<RouteSegmentDto> GetRouteGeoJsonAsync(List<(bool, Point)> points);
     Task<List<(bool, Point)>> GetPointsFromRouteAsync(long routeId);
 }

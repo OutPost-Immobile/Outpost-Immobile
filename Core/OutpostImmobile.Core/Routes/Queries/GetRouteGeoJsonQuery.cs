@@ -22,6 +22,6 @@ internal class GetRouteGeoJsonQueryHandler : IRequestHandler<GetRouteGeoJsonQuer
     {
         var points = await _routeRepository.GetPointsFromRouteAsync(request.RouteId);
         
-        return await _routeRepository.GetRouteGeoJsonAsync(points);
+        return _routeRepository.GetRouteGeoJsonAsync(points);
     }
 }

@@ -1,0 +1,32 @@
+using Bogus;
+using Microsoft.EntityFrameworkCore;
+using OutpostImmobile.Persistence.Domain;
+
+namespace OutpostImmobile.Persistence.Seeding.Domain;
+
+public class RoutesSeeder
+{
+    public static async ValueTask SeedRoutesAsync(OutpostImmobileDbContext context, CancellationToken ct = default)
+    {
+        if (context.Routes.Any())
+        {
+            return;
+        }
+
+        var addressIds = await context.Addresses
+            .Select(x => x.Id)
+            .ToListAsync(ct);
+        
+        var faker = new Faker<RouteEntity>("pl");
+
+        faker
+            .RuleFor(x => x.StartAddressId, f => f.PickRandom(addressIds))
+            .RuleFor(x => x.EndAddressId, f => f.PickRandom(addressIds))
+            .RuleFor(x => x.CreatedAt, f => DateTime.UtcNow)
+            .RuleFor(x => x.UpdatedAt, f => DateTime.UtcNow);
+        
+        var routes = faker.Generate(10000);
+        await context.AddRangeAsync(routes, ct);
+        await context.SaveChangesAsync(ct);
+    }
+}
