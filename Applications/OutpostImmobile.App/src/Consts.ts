@@ -3,6 +3,7 @@ export const INFRASTRUCTURE_URL = "/api/infrastructure" as const;
 export const LOGIN_URL = "/api/Users/Login" as const;
 export const MACZKOPAT_PARCELS_URL = "/api/Parcels/Maczkopat/{maczkopatId}" as const;
 export const ROUTE_STREAM_URL = "/api/routes/geojson-stream/{routeId}" as const;
+export const ROUTE_URL = "/api/routes"
 
 export const POST_METHOD = "post" as const;
 export const GET_METHOD = "get" as const;

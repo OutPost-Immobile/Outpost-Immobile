@@ -10,25 +10,58 @@ export async function* streamJsonArray<T>(response: Response): AsyncGenerator<T,
         if (done) break;
 
         buffer += decoder.decode(value, { stream: true });
-        
-        let boundary = buffer.indexOf("}");
 
-        while (boundary !== -1) {
-            const chunk = buffer.slice(0, boundary + 1);
-            buffer = buffer.slice(boundary + 1);
-            
-            const cleanChunk = chunk.replace(/^[,\s\[]+/, "");
+        let startIndex = 0;
+        let depth = 0;
+        let inString = false;
+        let isEscaped = false;
 
-            if (cleanChunk.trim().startsWith("{")) {
-                try {
-                    const parsed: T = JSON.parse(cleanChunk);
-                    yield parsed;
-                } catch (e) {
-                    console.warn("Skipped malformed chunk", e);
-                }
+        for (let i = 0; i < buffer.length; i++) {
+            const char = buffer[i];
+
+            if (isEscaped) {
+                isEscaped = false;
+                continue;
+            }
+            if (char === '\\') {
+                isEscaped = true;
+                continue;
             }
 
-            boundary = buffer.indexOf("}");
+            if (char === '"') {
+                inString = !inString;
+                continue;
+            }
+
+            if (!inString) {
+                if (char === '{') {
+                    depth++;
+                } else if (char === '}') {
+                    depth--;
+
+                    if (depth === 0) {
+                        const chunk = buffer.slice(startIndex, i + 1);
+
+                        const cleanChunk = chunk.replace(/^[,\s\[]+/, "");
+
+                        if (cleanChunk.trim()) {
+                            try {
+                                const parsed: T = JSON.parse(cleanChunk);
+                                yield parsed;
+                            } catch (e) {
+                                console.warn("Skipped malformed chunk", e);
+                            }
+                        }
+
+                        startIndex = i + 1;
+                    }
+                }
+            }
+        }
+
+        // Remove the processed portion from the buffer
+        if (startIndex > 0) {
+            buffer = buffer.slice(startIndex);
         }
     }
 }

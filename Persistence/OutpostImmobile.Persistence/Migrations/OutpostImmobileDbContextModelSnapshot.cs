@@ -462,7 +462,7 @@ namespace OutpostImmobile.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("geometry[]");
 
-                    b.Property<string>("StarAddressName")
+                    b.Property<string>("StartAddressName")
                         .IsRequired()
                         .HasColumnType("text");
 

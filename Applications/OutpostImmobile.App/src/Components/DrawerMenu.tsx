@@ -13,6 +13,10 @@ export const DrawerMenu = ({open, onClose}) => {
     {
         Text: "Stan maczkopatu",
         Link: "/Maczkopat"
+    },
+    {
+        Text: "Trasy",
+        Link: "/Routes"
     }];
 
     const drawerContent = (

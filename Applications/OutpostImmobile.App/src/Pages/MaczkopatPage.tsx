@@ -8,7 +8,6 @@ export const MaczkopatPage = () => {
     const [maczkopatId, setMaczkopatId] = useState("");
     const [searchId, setSearchId] = useState<string | null>(null);
 
-    // useQuery will automatically trigger when searchId changes
     const { data, isLoading, isError } = $api.useQuery(
         GET_METHOD,
         MACZKOPAT_PARCELS_URL,
@@ -18,7 +17,7 @@ export const MaczkopatPage = () => {
             },
         },
         {
-            enabled: !!searchId, // Only run the query if we have an ID to search for
+            enabled: !!searchId,
         }
     );
 
@@ -28,7 +27,6 @@ export const MaczkopatPage = () => {
         }
     }
 
-    // Extract parcels safely from the typed response
     const parcels = data?.data ?? [];
 
     const columns: GridColDef[] = [

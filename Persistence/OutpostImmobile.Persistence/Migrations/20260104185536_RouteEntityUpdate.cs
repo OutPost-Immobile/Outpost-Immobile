@@ -23,27 +23,19 @@ namespace OutpostImmobile.Persistence.Migrations
                 defaultValue: "");
 
             migrationBuilder.AddColumn<string>(
-                name: "StarAddressName",
+                name: "StartAddressName",
                 table: "Routes",
                 type: "text",
                 nullable: false,
                 defaultValue: "");
 
             migrationBuilder.Sql("""
-                                 UPDATE r
-                                 SET r.EndAddressName = updateEnd.EndAddressName,
-                                     r.StartAddressName = updateStart.StartAddressName
-                                 From "Routes" r
-                                 JOIN (
-                                     SELECT a."Id", a."Location", CONCAT(a."City", ' ', a."Street", ' ', a."BuildingNumber") AS StartAddressName
-                                     FROM "Addresses" a
-                                     WHERE a."Id" = r."StartAddressId"
-                                 ) AS updateStart ON r."StartAddressId" = updateStart."Id"
-                                 JOIN (
-                                     SELECT a."Id", a."Location", CONCAT(a."City", ' ', a."Street", ' ', a."BuildingNumber") AS EndAddressName
-                                     FROM "Addresses" a
-                                     WHERE a."Id" = r."EndAddressId"
-                                 ) AS updateEnd ON r."StartAddressId" = updateStart."Id"
+                                 UPDATE "Routes" r
+                                 SET "EndAddressName" = CONCAT(ae."City", ' ', ae."Street", ' ', ae."BuildingNumber"),
+                                     "StartAddressName" = CONCAT(asrt."City", ' ', asrt."Street", ' ', asrt."BuildingNumber")
+                                 FROM "Addresses" asrt, "Addresses" ae
+                                 WHERE r."StartAddressId" = asrt."Id" 
+                                   AND r."EndAddressId" = ae."Id";
                                  """);
         }
 

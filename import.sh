@@ -5,6 +5,7 @@ echo "------------------------------------------------"
 echo " STREAMED IMPORT (osm2pgsql)"
 echo "------------------------------------------------"
 
+# 1. Install Client Tools
 if command -v apt-get >/dev/null; then
     apt-get update && apt-get install -y postgresql-client
 elif command -v apk >/dev/null; then
@@ -14,6 +15,7 @@ else
     exit 1
 fi
 
+# 2. Wait for Database
 echo "Waiting for database to be ready..."
 until pg_isready -h database -U postgres; do
   echo "Database not ready yet... sleeping 2s"
@@ -23,6 +25,8 @@ echo "Database is ready!"
 
 export PGPASSWORD=postgres
 
+# 3. Run Import
+# --slim is required for reliable large imports
 osm2pgsql --create \
           --database OutpostImmobile \
           --host database \
@@ -39,6 +43,7 @@ echo "------------------------------------------------"
 echo "Fixing Graph Disconnections & Building Topology..."
 echo "(This step may take several minutes for large maps)"
 
+# 4. RUN SQL FIXES
 psql -h database -U postgres -d OutpostImmobile -c "
 ALTER TABLE planet_osm_line DROP COLUMN IF EXISTS gid;
 ALTER TABLE planet_osm_line ADD COLUMN gid SERIAL PRIMARY KEY;
@@ -57,6 +62,17 @@ WHERE new.old_id = old.gid;
 CREATE INDEX IF NOT EXISTS noded_geom_idx ON planet_osm_line_noded USING GIST (geom);
 
 SELECT pgr_analyzeGraph('planet_osm_line_noded', 0.0001, 'geom', 'id');
+
+ALTER TABLE planet_osm_line_noded ADD COLUMN IF NOT EXISTS length_m float;
+
+UPDATE planet_osm_line_noded
+SET length_m = ST_Length(way::geography)
+WHERE length_m IS NULL;
+
+CREATE INDEX IF NOT EXISTS idx_noded_source ON planet_osm_line_noded(source);
+CREATE INDEX IF NOT EXISTS idx_noded_target ON planet_osm_line_noded(target);
+CREATE INDEX IF NOT EXISTS idx_noded_geom ON planet_osm_line_noded USING GIST(way);
+CREATE INDEX IF NOT EXISTS idx_noded_highway ON planet_osm_line_noded(highway);
 "
 
 echo "------------------------------------------------"

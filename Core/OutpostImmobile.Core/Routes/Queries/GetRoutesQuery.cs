@@ -22,7 +22,7 @@ internal class GetRoutesQueryHandler : IRequestHandler<GetRoutesQuery, Task<List
         return routes.Select(x => new RouteDto
         {
             RouteId = x.Id,
-            StartAddressName = x.StarAddressName,
+            StartAddressName = x.StartAddressName,
             EndAddressName = x.EndAddressName,
             Distance = x.Distance
         }).ToList();
