@@ -70,18 +70,18 @@
       timeout: 5s
       retries: 5
 
-    importer:
-      image: iboates/osm2pgsql
-      depends_on:
-        database:
-          condition: service_healthy
-      volumes:
-        - ./poland-roads-only.osm.pbf:/data.pbf
-        - ./import.sh:/import.sh
-      networks:
-        - Outpost-Network
-      profiles: [ "importer" ]
-      entrypoint: [ "/bin/sh", "/import.sh" ]
+  importer:
+    image: iboates/osm2pgsql
+    depends_on:
+      database:
+        condition: service_healthy
+    volumes:
+      - ./poland-roads-only.osm.pbf:/data.pbf
+      - ./import.sh:/import.sh
+    networks:
+      - Outpost-Network
+    profiles: [ "importer" ]
+    entrypoint: [ "/bin/sh", "/import.sh" ]
 
 networks:
   Outpost-Network:
