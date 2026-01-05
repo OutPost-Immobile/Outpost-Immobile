@@ -201,6 +201,41 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/routes": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["TypedResponseOfListOfRouteDto"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/routes/{courierId}": {
         parameters: {
             query?: never;
@@ -226,6 +261,43 @@ export interface paths {
                     };
                     content: {
                         "application/json": components["schemas"]["TypedResponseOfListOfRouteDto"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/routes/geojson-stream/{routeId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    routeId: number;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["RouteSegmentDto"][];
                     };
                 };
             };
@@ -408,8 +480,19 @@ export interface components {
         RouteDto: {
             /** Format: int64 */
             routeId: number | string;
+            startAddressName: string;
+            endAddressName: string;
             /** Format: int64 */
             distance: number | string;
+        };
+        RouteSegmentDto: {
+            /** Format: int32 */
+            seq: number | string;
+            geoJson: string;
+            /** Format: double */
+            segmentDist: number | string;
+            /** Format: double */
+            totalDist: number | string;
         };
         TypedResponseOfIEnumerableOfParcelLogDto: {
             statusCode: components["schemas"]["HttpStatusCode"];

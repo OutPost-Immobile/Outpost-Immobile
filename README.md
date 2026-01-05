@@ -3,6 +3,30 @@
 ## Opis projektu
 System obsługujący maczkopaty
 
+## Źródło adresów:
+
+https://overpass-turbo.eu/
+
+querka do ich pobrania:
+
+```
+[out:csv(::lat, ::lon, "addr:city", "addr:street", "addr:housenumber", "addr:postcode"; true; ",")];
+
+(
+  area["name"="Warszawa"]["admin_level"="8"];
+  area["name"="Kraków"]["admin_level"="8"];
+  area["name"="Wrocław"]["admin_level"="8"];
+  area["name"="Gdańsk"]["admin_level"="8"];
+  area["name"="Poznań"]["admin_level"="8"];
+)->.searchArea;
+
+(
+  node["addr:housenumber"]["addr:street"](area.searchArea);
+);
+
+out qt 10000;
+```
+
 ## Obsługa Dockera:
 
 Ważne jest odpalenie

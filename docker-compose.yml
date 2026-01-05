@@ -60,48 +60,28 @@
     volumes:
       - ./volumes/data/db:/var/lib/postgresql/data
     ports:
-      - "5433:5432"
+      - "5432:5432"
     networks:
       - Outpost-Network
+    command: postgres -c shared_buffers=1GB -c work_mem=32MB -c maintenance_work_mem=256MB
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d OutpostImmobile"]
-      interval: 5s
+      test: [ "CMD-SHELL", "pg_isready -U postgres -d OutpostImmobile" ]
+      interval: 10s
       timeout: 5s
       retries: 5
-  importer:
-    build:
-      context: .
-      dockerfile: Dockerfile.importer
-    security_opt:
-      - seccomp:unconfined
-    depends_on:
-      database:
-        condition: service_healthy
-    volumes:
-      - ./poland-roads-only.osm.pbf:/input/data.pbf
-    networks:
-      - Outpost-Network
-    entrypoint:
-      - /bin/bash
-      - -c
-    # Complex command to use pipes and avoid huge XML files
-    command: |
-      set -e
-      rm -f /tmp/pipe.osm
-      mkfifo /tmp/pipe.osm
 
-      echo "Starting background conversion stream..."
-      osmconvert /input/data.pbf --drop-author --drop-version --out-osm > /tmp/pipe.osm &
-
-      echo "Starting Import..."
-      osm2pgrouting \
-        --file /tmp/pipe.osm \
-        --conf /app/mapconfig.xml \
-        --dbname OutpostImmobile \
-        --username postgres \
-        --host database \
-        --password postgres \
-        --clean
+    importer:
+      image: iboates/osm2pgsql
+      depends_on:
+        database:
+          condition: service_healthy
+      volumes:
+        - ./poland-roads-only.osm.pbf:/data.pbf
+        - ./import.sh:/import.sh
+      networks:
+        - Outpost-Network
+      profiles: [ "importer" ]
+      entrypoint: [ "/bin/sh", "/import.sh" ]
 
 networks:
   Outpost-Network:

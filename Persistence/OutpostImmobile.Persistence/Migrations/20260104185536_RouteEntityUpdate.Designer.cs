@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NetTopologySuite.Geometries;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
@@ -12,9 +13,11 @@ using OutpostImmobile.Persistence;
 namespace OutpostImmobile.Persistence.Migrations
 {
     [DbContext(typeof(OutpostImmobileDbContext))]
-    partial class OutpostImmobileDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260104185536_RouteEntityUpdate")]
+    partial class RouteEntityUpdate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -462,7 +465,7 @@ namespace OutpostImmobile.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("geometry[]");
 
-                    b.Property<string>("StartAddressName")
+                    b.Property<string>("StarAddressName")
                         .IsRequired()
                         .HasColumnType("text");
 

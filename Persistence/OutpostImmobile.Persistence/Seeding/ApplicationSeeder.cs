@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Identity;
 using OutpostImmobile.Persistence.Domain.StaticEnums.Enums;
 using OutpostImmobile.Persistence.Domain.Users;
 using OutpostImmobile.Persistence.Seeding.Domain;
+using OutpostImmobile.Persistence.Seeding.Domain.Address;
 using OutpostImmobile.Persistence.Seeding.StaticEnums;
 using OutpostImmobile.Persistence.Seeding.StaticEnums.EnumTranslations;
 
@@ -23,6 +24,7 @@ public class ApplicationSeeder
         await UserExternalSeeder.SeedExternalUserAsync(context, ct);
         await AreaSeeder.SeedAreasAsync(context, ct);
         await AddressSeeder.SeedAddressesAsync(context, ct);
+        await RoutesSeeder.SeedRoutesAsync(context, ct);
         await MaczkopatSeeder.SeedMaczkopatsAsync(context, ct);
         await ParcelSeeder.SeedParcelsAsync(context, ct);
         await NumberTemplateSeeder.SeedNumberTemplatesAsync(context, ct);

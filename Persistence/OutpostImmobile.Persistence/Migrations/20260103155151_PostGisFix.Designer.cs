@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NetTopologySuite.Geometries;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
@@ -12,9 +13,11 @@ using OutpostImmobile.Persistence;
 namespace OutpostImmobile.Persistence.Migrations
 {
     [DbContext(typeof(OutpostImmobileDbContext))]
-    partial class OutpostImmobileDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260103155151_PostGisFix")]
+    partial class PostGisFix
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -448,23 +451,15 @@ namespace OutpostImmobile.Persistence.Migrations
                     b.Property<Guid?>("CreatedById")
                         .HasColumnType("uuid");
 
-                    b.Property<long>("Distance")
+                    b.Property<long>("Distace")
                         .HasColumnType("bigint");
 
                     b.Property<long>("EndAddressId")
                         .HasColumnType("bigint");
 
-                    b.Property<string>("EndAddressName")
-                        .IsRequired()
-                        .HasColumnType("text");
-
                     b.PrimitiveCollection<Point[]>("Locations")
                         .IsRequired()
                         .HasColumnType("geometry[]");
-
-                    b.Property<string>("StartAddressName")
-                        .IsRequired()
-                        .HasColumnType("text");
 
                     b.Property<long>("StartAddressId")
                         .HasColumnType("bigint");
