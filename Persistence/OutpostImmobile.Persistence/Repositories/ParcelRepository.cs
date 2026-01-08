@@ -25,7 +25,7 @@ public class ParcelRepository : IParcelRepository
     {
         await using var context = await _dbContextFactory.CreateDbContextAsync();
         
-        var parcelToUpdate = await context.Parcels
+         var parcelToUpdate = await context.Parcels
             .Include(x => x.ParcelEventLogs)
             .FirstOrDefaultAsync(p => p.FriendlyId == friendlyId);
 
