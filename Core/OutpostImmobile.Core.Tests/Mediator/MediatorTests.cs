@@ -8,9 +8,9 @@ namespace OutpostImmobile.Core.Tests.Mediator;
 [TestFixture]
 public class MediatorTests
 {
-    public class TestRequest : IRequest<TestRequest, string> { }
+    public class TestRequest : IRequest<TestRequest, string>;
 
-    public interface ITestHandler : IRequestHandler<TestRequest, string> { }
+    public interface ITestHandler : IRequestHandler<TestRequest, string>;
 
     [Test]
     public void SendAsyncShouldResolveAndInvokeHandler()
@@ -41,7 +41,7 @@ public class MediatorTests
 
         var mediator = new Core.Mediator.Internal.Mediator(mockScopeFactory.Object, registry);
 
-        var result = mediator.Send<TestRequest, string>(request);
+        var result = mediator.Send(request);
 
         Assert.That(result, Is.EqualTo(expectedResponse));
 
@@ -58,7 +58,7 @@ public class MediatorTests
 
         Assert.Throws<InvalidOperationException>(() =>
         {
-            mediator.Send<TestRequest, string>(new TestRequest());
+            mediator.Send(new TestRequest());
         });
     }
 }

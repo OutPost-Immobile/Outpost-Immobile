@@ -41,4 +41,7 @@
       <ProjectReference Include="..\OutpostImmobile.Core.Mediator\OutpostImmobile.Core.Mediator.csproj" />
       <ProjectReference Include="..\OutpostImmobile.Core\OutpostImmobile.Core.csproj" />
     </ItemGroup>
+    <ItemGroup>
+      <Folder Include="Factories\" />
+    </ItemGroup>
 </Project>

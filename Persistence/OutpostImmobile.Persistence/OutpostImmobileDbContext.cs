@@ -10,6 +10,8 @@ namespace OutpostImmobile.Persistence;
 
 public class OutpostImmobileDbContext : IdentityDbContext<UserInternal, IdentityRole<Guid>, Guid>
 {
+    public bool IsInTestEnv { get; set; } = false;
+    
     public OutpostImmobileDbContext()
     {
     }
@@ -43,6 +45,11 @@ public class OutpostImmobileDbContext : IdentityDbContext<UserInternal, Identity
         modelBuilder.HasPostgresExtension("pgrouting");
         modelBuilder.HasPostgresExtension("hstore");
         
-        modelBuilder.Ignore(typeof(Microsoft.AspNetCore.Identity.IdentityPasskeyData));
+        modelBuilder.Ignore(typeof(IdentityPasskeyData));
+
+        if (IsInTestEnv)
+        {
+            modelBuilder.Entity<RouteEntity>().Ignore(x => x.Locations);
+        }
     }
 }
