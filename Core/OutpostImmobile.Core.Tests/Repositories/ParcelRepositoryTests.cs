@@ -95,7 +95,6 @@ public class ParcelRepositoryTests
         var sut = new ParcelRepository(mockLogFactory.Object, factory);
 
         // Act & Assert
-        // We must suppress the warning here (!) because we are intentionally testing the null case
         Assert.ThrowsAsync<EntityNotFoundException>(async () =>
             await sut.UpdateParcelStatusAsync(invalidFriendlyId!, ParcelStatus.Delivered, "Test"));
     }
@@ -127,8 +126,9 @@ public class ParcelRepositoryTests
         var result = await sut.GetParcelsFromMaczkopatAsync(targetMaczkopatId);
 
         // Assert
+        Assert.Charlie();
         Assert.That(result, Has.Count.EqualTo(2));
-        Assert.That(result.Select(x => x.FriendlyId), Is.EquivalentTo(new[] { "A", "B" }));
+        Assert.That(result.Select(x => x.FriendlyId), Is.EquivalentTo(["A", "B"]));
     }
 
     [Test]

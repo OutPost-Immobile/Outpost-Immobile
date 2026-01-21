@@ -225,20 +225,4 @@ public class RouteRepositoryTests
             await enumerator.MoveNextAsync();
         });
     }
-    
-    // -------------------------------------------------------------------------
-    // NOTE on SQL Methods:
-    // CalculateRouteDistanceAsync & GetRouteGeoJsonAsync (success scenario)
-    // -------------------------------------------------------------------------
-    /*
-     * These tests are commented out because they require a real PostgreSQL database 
-     * with the functions 'calculate_driving_distance' and 'get_hybrid_route' defined.
-     * Running these against EF Core InMemory or SQLite will fail with a "Function not found" error.
-     
-    [Test]
-    public async Task CalculateRouteDistanceAsync_UpdatesDistance_UsingSqlFunction()
-    {
-        // This requires Integration Test setup (TestContainers)
-    }
-    */
 }
