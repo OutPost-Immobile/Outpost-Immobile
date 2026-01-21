@@ -69,17 +69,13 @@ public class ParcelRepositoryTests
 
             using (Assert.EnterMultipleScope())
             {
-                // Verify status transition
                 Assert.That(updatedParcel!.Status, Is.EqualTo(newStatus));
-                
-                // Verify log count
                 Assert.That(updatedParcel.ParcelEventLogs, Has.Count.EqualTo(1));
             }
 
             var log = updatedParcel.ParcelEventLogs.First();
             using (Assert.EnterMultipleScope())
             {
-                // Verify specific log message matches the parameter
                 Assert.That(log.Message, Is.EqualTo($"Status zmieniony na: {statusMessage}"));
                 Assert.That(log.Id, Is.Not.EqualTo(Guid.Empty));
             }

@@ -14,7 +14,7 @@ public class StaticEnumHelperTests
         
         var factory = new MockDbContextFactory(dbName);
 
-        await using var dbContext = factory.CreateDbContext();
+        await using var dbContext = await factory.CreateDbContextAsync();
         
         dbContext.StaticEnums.Add(new StaticEnumEntity
         {
@@ -63,9 +63,12 @@ public class StaticEnumHelperTests
         var result = await sut.GetStaticEnumTranslations("VehicleType", TranslationLanguage.Pl);
 
         Assert.That(result, Has.Count.EqualTo(2));
-        Assert.That(result[1], Is.EqualTo("Car"));
-        Assert.That(result[2], Is.EqualTo("Truck"));
-        Assert.That(result.ContainsValue("ShouldNotAppear"), Is.False);
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(result[1], Is.EqualTo("Car"));
+            Assert.That(result[2], Is.EqualTo("Truck"));
+            Assert.That(result.ContainsValue("ShouldNotAppear"), Is.False);
+        }
     }
 
     [Test]
@@ -75,7 +78,7 @@ public class StaticEnumHelperTests
         
         var factory = new MockDbContextFactory(dbName);
 
-        await using var dbContext = factory.CreateDbContext();
+        await using var dbContext = await factory.CreateDbContextAsync();
 
         dbContext.StaticEnums.Add(new StaticEnumEntity
         {

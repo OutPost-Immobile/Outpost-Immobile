@@ -19,6 +19,7 @@ public class BetterMailServiceTests
     [OneTimeSetUp]
     public void GlobalSetup()
     {
+        // Setup aplikacji - kontener DI i konfifuracja
         _smtpServer = SimpleSmtpServer.Start(_port);
         
         var inMemoryConfig = new Dictionary<string, string>
@@ -34,8 +35,7 @@ public class BetterMailServiceTests
         var configuration = new ConfigurationBuilder()
             .AddInMemoryCollection(inMemoryConfig)
             .Build();
-
-        // 3. Setup DI
+        
         var services = new ServiceCollection();
         services.AddSingleton<IConfiguration>(configuration);
         services.Configure<MailOptions>(configuration.GetSection("MailOptions"));

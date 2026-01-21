@@ -19,12 +19,6 @@ public class RouteRepositoryTests
         _factory = new MockDbContextFactory(dbName);
         _sut = new RouteRepository(_factory);
     }
-
-    [TearDown]
-    public void TearDown()
-    {
-        // Cleanup if necessary
-    }
     
     [Test]
     public async Task GetRoutesAsync_ReturnsAllRoutes()
@@ -101,7 +95,6 @@ public class RouteRepositoryTests
     {
         // Arrange
         var missingCourierId = Guid.NewGuid();
-        // Database is empty
 
         // Act & Assert
         var ex = Assert.ThrowsAsync<EntityNotFoundException>(async () => 
@@ -190,12 +183,10 @@ public class RouteRepositoryTests
         // Assert
         Assert.That(result, Has.Count.EqualTo(2));
         
-        // Verify Start Point (Item1 == true)
-        var startTuple = result.FirstOrDefault(x => x.Item1 == true);
+        var startTuple = result.FirstOrDefault(x => x.Item1);
         Assert.That(startTuple.Item2, Is.EqualTo(startPoint));
-
-        // Verify End Point (Item1 == false)
-        var endTuple = result.FirstOrDefault(x => x.Item1 == false);
+        
+        var endTuple = result.FirstOrDefault(x => !x.Item1);
         Assert.That(endTuple.Item2, Is.EqualTo(endPoint));
     }
 
