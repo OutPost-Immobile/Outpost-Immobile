@@ -1,5 +1,3 @@
-using Microsoft.EntityFrameworkCore;
-using Moq;
 using OutpostImmobile.Core.Common.Helpers;
 using OutpostImmobile.Persistence.Domain.StaticEnums;
 using OutpostImmobile.Persistence.Enums;

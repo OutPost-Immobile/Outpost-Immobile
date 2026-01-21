@@ -10,10 +10,10 @@ public class RouteEntity : AuditableEntity
 {
     public long Id { get; set; }
 
-    public string StartAddressName { get; set; }
+    public required string StartAddressName { get; set; }
     public long StartAddressId { get; set; }
 
-    public string EndAddressName { get; set; }
+    public required string EndAddressName { get; set; }
     public long EndAddressId { get; set; }
     
     public long Distance { get; set; }
