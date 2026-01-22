@@ -1,9 +1,9 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using OutpostImmobile.Persistence.Domain.Logs;
 using OutpostImmobile.Persistence.Domain.StaticEnums.Enums;
 using OutpostImmobile.Persistence.Exceptions;
 using OutpostImmobile.Persistence.Factories.Interfaces;
-using OutpostImmobile.Persistence.Factories.Internal;
 using OutpostImmobile.Persistence.Factories.Request;
 using OutpostImmobile.Persistence.Interfaces;
 
@@ -14,7 +14,7 @@ public class MaczkopatRepository : IMaczkopatRepository
     private readonly IDbContextFactory<OutpostImmobileDbContext> _dbContextFactory;
     private readonly IEventLogFactory _eventLogFactory;
 
-    public MaczkopatRepository(MaczkopatEventLogFactory eventLogFactory, IDbContextFactory<OutpostImmobileDbContext> dbContextFactory)
+    public MaczkopatRepository([FromKeyedServices("Maczkopat")]IEventLogFactory eventLogFactory, IDbContextFactory<OutpostImmobileDbContext> dbContextFactory)
     {
         _eventLogFactory = eventLogFactory;
         _dbContextFactory = dbContextFactory;

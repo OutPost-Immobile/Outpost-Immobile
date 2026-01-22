@@ -1,10 +1,10 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using OutpostImmobile.Persistence.Domain;
 using OutpostImmobile.Persistence.Domain.Logs;
 using OutpostImmobile.Persistence.Domain.StaticEnums.Enums;
 using OutpostImmobile.Persistence.Exceptions;
 using OutpostImmobile.Persistence.Factories.Interfaces;
-using OutpostImmobile.Persistence.Factories.Internal;
 using OutpostImmobile.Persistence.Factories.Request;
 using OutpostImmobile.Persistence.Interfaces;
 
@@ -15,7 +15,7 @@ public class ParcelRepository : IParcelRepository
     private readonly IDbContextFactory<OutpostImmobileDbContext> _dbContextFactory;
     private readonly IEventLogFactory _eventLogFactory;
 
-    public ParcelRepository(ParcelEventLogFactory eventLogFactory, IDbContextFactory<OutpostImmobileDbContext> dbContextFactory)
+    public ParcelRepository([FromKeyedServices("Parcel")] IEventLogFactory eventLogFactory, IDbContextFactory<OutpostImmobileDbContext> dbContextFactory)
     {
         _eventLogFactory = eventLogFactory;
         _dbContextFactory = dbContextFactory;
