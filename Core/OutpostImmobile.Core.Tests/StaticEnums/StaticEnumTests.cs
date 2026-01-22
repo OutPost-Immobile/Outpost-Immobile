@@ -8,6 +8,7 @@ namespace OutpostImmobile.Core.Tests.StaticEnums;
 public class StaticEnumHelperTests
 {
     [Test]
+    [Order(1)]
     public async Task GetStaticEnumTranslations_ReturnsDictionary_ForMatchingEnumName()
     {
         var dbName = Guid.NewGuid().ToString("N");
@@ -72,6 +73,7 @@ public class StaticEnumHelperTests
     }
 
     [Test]
+    [Order(2)]
     public async Task GetStaticEnumTranslations_ReturnsEmptyDictionary_WhenEnumNameDoesNotExist()
     {
         var dbName = Guid.NewGuid().ToString("N");

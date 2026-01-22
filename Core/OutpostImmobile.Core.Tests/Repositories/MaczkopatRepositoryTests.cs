@@ -38,6 +38,7 @@ public class MaczkopatRepositoryTests
     }
 
     [Test]
+    [Order(1)]
     public async Task AddLogAsync_Should_Add_Entity_To_Database_When_Type_Is_Correct()
     {
         // Arrange
@@ -79,6 +80,7 @@ public class MaczkopatRepositoryTests
     }
 
     [Test]
+    [Order(2)]
     public async Task AddLogAsync_Should_Throw_Exception_When_Factory_Returns_Wrong_Type()
     {
         // Arrange

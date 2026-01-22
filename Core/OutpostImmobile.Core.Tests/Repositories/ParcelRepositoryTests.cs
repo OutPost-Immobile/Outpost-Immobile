@@ -15,6 +15,7 @@ public class ParcelRepositoryTests
     [TestCase("PACK-123", ParcelStatus.Sent, ParcelStatus.Delivered, "Delivered")]
     [TestCase("ABC-987", ParcelStatus.InTransit, ParcelStatus.ToReturn, "Zwrot do nadawcy")]
     [TestCase("XYZ-000", ParcelStatus.InWarehouse, ParcelStatus.InMaczkopat, "Umieszczono w paczkomacie")]
+    [Order(1)]
     public async Task UpdateParcelStatusAsync_UpdatesStatus_And_AddsLog_WhenParcelExists(
         string friendlyId, 
         ParcelStatus initialStatus, 
@@ -33,7 +34,7 @@ public class ParcelRepositoryTests
             {
                 Id = parcelId,
                 FriendlyId = friendlyId,
-                Status = initialStatus, // Uses the parametrized initial status
+                Status = initialStatus,
                 Product = "Standard",
                 ParcelEventLogs = new List<ParcelEventLogEntity>() 
             });
@@ -84,7 +85,8 @@ public class ParcelRepositoryTests
 
     [TestCase("MISSING-ID")]
     [TestCase("")]
-    [TestCase(null)] // This works now because the parameter is nullable
+    [TestCase(null)]
+    [Order(2)]
     public async Task UpdateParcelStatusAsync_ThrowsEntityNotFound_WhenParcelDoesNotExist(string? invalidFriendlyId)
     {
         // Arrange
@@ -101,6 +103,7 @@ public class ParcelRepositoryTests
     
 
     [Test]
+    [Order(3)]
     public async Task GetParcelsFromMaczkopatAsync_ReturnsOnlyMatchingParcels()
     {
         // Arrange
@@ -132,6 +135,7 @@ public class ParcelRepositoryTests
     }
 
     [Test]
+    [Order(4)]
     public async Task GetParcelEventLogsAsync_ReturnsLogs_ForFriendlyId()
     {
         // Arrange
@@ -161,6 +165,7 @@ public class ParcelRepositoryTests
     }
 
     [Test]
+    [Order(5)]
     public async Task GetReceiverIdsFromParcels_ReturnsTuples_ForExistingFriendlyIds()
     {
         // Arrange

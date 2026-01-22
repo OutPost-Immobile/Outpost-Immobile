@@ -13,6 +13,7 @@ public class MediatorTests
     public interface ITestHandler : IRequestHandler<TestRequest, string>;
 
     [Test]
+    [Order(1)]
     public void SendAsyncShouldResolveAndInvokeHandler()
     {
         var request = new TestRequest();
@@ -49,6 +50,7 @@ public class MediatorTests
     }
 
     [Test]
+    [Order(2)]
     public void SendAsyncShouldThrowWhenHandlerNotRegistered()
     {
         var emptyRegistry = new HandlerRegistry();

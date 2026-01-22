@@ -21,6 +21,7 @@ public class RouteRepositoryTests
     }
     
     [Test]
+    [Order(1)]
     public async Task GetRoutesAsync_ReturnsAllRoutes()
     {
         // Arrange
@@ -57,6 +58,7 @@ public class RouteRepositoryTests
     }
 
     [Test]
+    [Order(2)]
     public async Task GetRouteFromCourierAsync_ReturnsRoute_WhenCourierHasAssignedRoute()
     {
         // Arrange
@@ -91,6 +93,7 @@ public class RouteRepositoryTests
     }
 
     [Test]
+    [Order(3)]
     public async Task GetRouteFromCourierAsync_ThrowsNotFound_WhenCourierDoesNotExist()
     {
         // Arrange
@@ -104,6 +107,7 @@ public class RouteRepositoryTests
     }
 
     [Test]
+    [Order(4)]
     public async Task GetRouteFromCourierAsync_ThrowsNotFound_WhenCourierHasNoRouteAssigned()
     {
         // Arrange
@@ -127,6 +131,7 @@ public class RouteRepositoryTests
     }
     
     [Test]
+    [Order(5)]
     public async Task GetPointsFromRouteAsync_ReturnsStartAndEndPoints_WhenRouteExists()
     {
         // Arrange
@@ -191,6 +196,7 @@ public class RouteRepositoryTests
     }
 
     [Test]
+    [Order(6)]
     public async Task GetPointsFromRouteAsync_ThrowsNotFound_WhenRouteDoesNotExist()
     {
         // Arrange
@@ -204,6 +210,7 @@ public class RouteRepositoryTests
     }
 
     [Test]
+    [Order(7)]
     public void GetRouteGeoJsonAsync_ThrowsException_WhenMoreThanTwoPointsProvided()
     {
         // Arrange
