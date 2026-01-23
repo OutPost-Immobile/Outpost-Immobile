@@ -6,6 +6,7 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <IsPackable>false</IsPackable>
+        <RootNamespace>OutpostImmobile.Core.Tests</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>

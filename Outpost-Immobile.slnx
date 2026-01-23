@@ -7,7 +7,6 @@
   </Folder>
   <Folder Name="/Core/">
     <Project Path="Core/OutpostImmobile.Core.Common/OutpostImmobile.Core.Common.csproj" />
-    <Project Path="Core/OutpostImmobile.Core.Tests/OutpostImmobile.Core.Tests.csproj" />
     <Project Path="Core/OutpostImmobile.Core/OutpostImmobile.Core.csproj" />
   </Folder>
   <Folder Name="/Core/Features/">
@@ -16,6 +15,10 @@
   </Folder>
   <Folder Name="/Core/Integrations/">
     <Project Path="Core/OutpostImmobile.Core.Integrations.KMZB/OutpostImmobile.Core.Integrations.KMZB.csproj" />
+  </Folder>
+  <Folder Name="/Core/Tests/">
+    <Project Path="Core/OutpostImmobile.Core.Tests.Playwright/OutpostImmobile.Core.Tests.Playwright.csproj" />
+    <Project Path="Core\OutpostImmobile.Core.Tests.Unit\OutpostImmobile.Core.Tests.Unit.csproj" />
   </Folder>
   <Folder Name="/Persistence/">
     <Project Path="Persistence/OutpostImmobile.Persistence/OutpostImmobile.Persistence.csproj" />
