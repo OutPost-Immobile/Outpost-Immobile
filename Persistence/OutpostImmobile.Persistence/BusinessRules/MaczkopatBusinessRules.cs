@@ -8,7 +8,7 @@ public class MaczkopatBusinessRules
 {
     public static async ValueTask<bool> ShouldUpdateMaczkopatState(OutpostImmobileDbContext context, ParcelEntity parcel, ParcelStatus status)
     {
-        if (parcel.Status == status || status != ParcelStatus.InMaczkopat)
+        if (parcel.Status == status || (status != ParcelStatus.InMaczkopat && status != ParcelStatus.Delivered))
         {
             return false;
         }
@@ -17,15 +17,26 @@ public class MaczkopatBusinessRules
             .Where(x => x.Id == parcel.MaczkopatEntityId)
             .FirstAsync();
 
-        var capacity = maczkopat.Capacity + 1;
-
-        if (capacity > maczkopat.Capacity)
+        switch (status)
         {
-            return false;
+            case ParcelStatus.Delivered:
+                maczkopat.Capacity -= 1;
+                break;
+            
+            case ParcelStatus.InMaczkopat:
+            {
+                var capacity = maczkopat.Capacity + 1;
+
+                if (capacity > maczkopat.Capacity)
+                {
+                    return false;
+                }
+            
+                maczkopat.Capacity += 1;
+                break;
+            }
         }
 
-        maczkopat.Capacity += 1;
-        
         await context.SaveChangesAsync();
 
         return true;
