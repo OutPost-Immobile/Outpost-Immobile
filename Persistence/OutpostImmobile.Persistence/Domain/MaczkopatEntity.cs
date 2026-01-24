@@ -9,6 +9,8 @@ public class MaczkopatEntity : AuditableEntity
 
     public required string Code { get; set; }
     
+    public required long Capacity { get; set; }
+    
     public long AreaId { get; set; }
     public AreaEntity Area { get; set; }
     

@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using OutpostImmobile.Persistence.BusinessRules;
 using OutpostImmobile.Persistence.Domain;
 using OutpostImmobile.Persistence.Domain.Logs;
 using OutpostImmobile.Persistence.Domain.StaticEnums.Enums;
@@ -32,6 +33,14 @@ public class ParcelRepository : IParcelRepository
         if (parcelToUpdate == null)
         {
             throw new EntityNotFoundException("Parcel not found");
+        }
+
+        var shouldUpdateParcelStatus =
+            await MaczkopatBusinessRules.ShouldUpdateMaczkopatState(context, parcelToUpdate, status);
+
+        if (!shouldUpdateParcelStatus)
+        {
+            throw new MaczkopatStateException("Could not update parcel status maczkopat is either full or retarded");
         }
 
         var request = new CreateParcelEventLogTypeRequest
