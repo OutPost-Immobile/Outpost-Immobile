@@ -21,7 +21,8 @@ public class MaczkopatSeeder
         faker
             .RuleFor(x => x.Code, x => x.Hacker.Verb())
             .RuleFor(x => x.Address, x => x.PickRandom(addresses))
-            .RuleFor(x => x.Area, x => x.PickRandom(areas));
+            .RuleFor(x => x.Area, x => x.PickRandom(areas))
+            .RuleFor(x => x.Capacity, x => x.PickRandom(10, 100));
 
         var maczkopats = faker.Generate(1000);
         

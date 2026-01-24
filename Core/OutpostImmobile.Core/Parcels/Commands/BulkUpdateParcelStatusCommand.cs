@@ -1,9 +1,11 @@
 using OutpostImmobile.Communication.Interfaces;
 using OutpostImmobile.Communication.Services;
 using OutpostImmobile.Core.Common.Helpers;
+using OutpostImmobile.Core.Integrations.KMZB.Interfaces;
 using OutpostImmobile.Core.Mediator.Abstraction;
 using OutpostImmobile.Persistence.Domain.StaticEnums.Enums;
 using OutpostImmobile.Persistence.Enums;
+using OutpostImmobile.Persistence.Exceptions;
 using OutpostImmobile.Persistence.Interfaces;
 
 namespace OutpostImmobile.Core.Parcels.Commands;
@@ -25,13 +27,15 @@ internal class BulkUpdateParcelStatusCommandHandler : IRequestHandler<BulkUpdate
     private readonly IMailService _mailService;
     private readonly IUserRepository _userRepository;
     private readonly IStaticEnumHelper _staticEnumHelper;
+    private readonly IKMZBService _kmzbService;
     
-    public BulkUpdateParcelStatusCommandHandler(IParcelRepository parcelRepository, IMailService mailService, IUserRepository userRepository, IStaticEnumHelper staticEnumHelper)
+    public BulkUpdateParcelStatusCommandHandler(IParcelRepository parcelRepository, IMailService mailService, IUserRepository userRepository, IStaticEnumHelper staticEnumHelper, IKMZBService kmzbService)
     {
         _parcelRepository = parcelRepository;
         _mailService = mailService;
         _userRepository = userRepository;
         _staticEnumHelper = staticEnumHelper;
+        _kmzbService = kmzbService;
     }
     
     public async Task Handle(BulkUpdateParcelStatusCommand command, CancellationToken cancellationToken)
@@ -59,29 +63,37 @@ internal class BulkUpdateParcelStatusCommandHandler : IRequestHandler<BulkUpdate
         foreach (var parcelModel in command.ParcelModels)
         {
             var (email, name) = userDataDict[parcelModel.FriendlyId];
-            
-            var request = new SendEmailRequest
+
+            try
             {
-                RecipientMailAddress = email,
-                RecipientName = name,
-                MailSubject = "Zmiana statusu",
-                MailBody = $"Status paczki: {parcelModel.FriendlyId} został zmieniony na: {parcelStatusTranslations[(int)parcelModel.Status]}"
-            };   
-            
-            if (parcelModel.Status == ParcelStatus.Forgotten)
-            {
-                request = new SendEmailRequest
+                await _parcelRepository.UpdateParcelStatusAsync(parcelModel.FriendlyId, parcelModel.Status,
+                    parcelStatusTranslations[(int)parcelModel.Status]);
+                
+                var request = new SendEmailRequest
                 {
-                    RecipientMailAddress = "adresKierownika@kierownik.com",
-                    RecipientName = "Kierownik",
+                    RecipientMailAddress = email,
+                    RecipientName = name,
                     MailSubject = "Zmiana statusu",
                     MailBody = $"Status paczki: {parcelModel.FriendlyId} został zmieniony na: {parcelStatusTranslations[(int)parcelModel.Status]}"
                 };   
-            }
             
-            await _mailService.SendMessage(request);
-
-            await _parcelRepository.UpdateParcelStatusAsync(parcelModel.FriendlyId, parcelModel.Status, parcelStatusTranslations[(int)parcelModel.Status]);
+                if (parcelModel.Status == ParcelStatus.Forgotten)
+                {
+                    request = new SendEmailRequest
+                    {
+                        RecipientMailAddress = "adresKierownika@kierownik.com",
+                        RecipientName = "Kierownik",
+                        MailSubject = "Zmiana statusu",
+                        MailBody = $"Status paczki: {parcelModel.FriendlyId} został zmieniony na: {parcelStatusTranslations[(int)parcelModel.Status]}"
+                    };   
+                }
+            
+                await _mailService.SendMessage(request);
+            }
+            catch (MaczkopatStateException e)
+            {
+                await _kmzbService.CreateNewWarningAsync();
+            }
         }
     }
 }
