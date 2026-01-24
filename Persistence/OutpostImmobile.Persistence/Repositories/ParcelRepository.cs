@@ -40,7 +40,7 @@ public class ParcelRepository : IParcelRepository
 
         if (!shouldUpdateParcelStatus)
         {
-            throw new MaczkopatStateException("Could not update parcel status maczkopat is either full or retarded");
+            throw new MaczkopatStateException("Could not update parcel status maczkopat is either full or not working");
         }
 
         var request = new CreateParcelEventLogTypeRequest
