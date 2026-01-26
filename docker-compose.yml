@@ -86,9 +86,10 @@
     profiles:
       - fitnesse
     ports:
-      - "9090:80"
+      - "9090:8080"
     volumes:
       - ./fitnesse/FitNesseRoot:/opt/fitnesse/FitNesseRoot
+      - ./Core/OutpostImmobile.Core.Tests.Acceptance/bin/Release/net10.0:/opt/fixtures
     networks:
       - Outpost-Network
 
