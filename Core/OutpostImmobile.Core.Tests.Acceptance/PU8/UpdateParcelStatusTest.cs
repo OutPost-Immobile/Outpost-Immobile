@@ -111,8 +111,3 @@ public sealed class UpdateParcelStatusUseCase
         return list;
     }
 }
-
-/// <summary>
-/// Fixture FitNesse (ColumnFixture) dla przypadku użycia UpdateParcelStatus.
-/// Na stronie FitNesse używasz tabeli z kolumnami Requests, Execute, StatusCode?, SentParcelModels?, MediatorSendCalls?
-/// </summary>
