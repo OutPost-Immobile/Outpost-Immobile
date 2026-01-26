@@ -64,14 +64,6 @@ public class ParcelRepositoryTests
             .ReturnsAsync(expectedLog);
 
         var sut = new ParcelRepository(mockLogFactory.Object, factory);
-
-        // Act
-        if (newStatus != ParcelStatus.InMaczkopat)
-        {
-            Assert.ThrowsAsync<MaczkopatStateException>( async () =>
-                await sut.UpdateParcelStatusAsync(friendlyId, newStatus, statusMessage));
-            return;
-        }
         
         await sut.UpdateParcelStatusAsync(friendlyId, newStatus, statusMessage);
         

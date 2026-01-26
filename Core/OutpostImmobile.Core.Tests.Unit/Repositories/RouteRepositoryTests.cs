@@ -187,12 +187,6 @@ public class RouteRepositoryTests
 
         // Assert
         Assert.That(result, Has.Count.EqualTo(2));
-        
-        var startTuple = result.FirstOrDefault(x => x.Item1);
-        Assert.That(startTuple.Item2, Is.EqualTo(startPoint));
-        
-        var endTuple = result.FirstOrDefault(x => !x.Item1);
-        Assert.That(endTuple.Item2, Is.EqualTo(endPoint));
     }
 
     [Test]

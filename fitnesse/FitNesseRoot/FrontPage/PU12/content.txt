@@ -1,0 +1,73 @@
+---
+Test
+---
+!define TEST_SYSTEM {slim}
+!define COMMAND_PATTERN {%m /opt/fitsharp/lib/net10.0/Runner.dll -c /opt/fitnesse/FitNesseRoot/suiteconfig.xml %p}
+!define TEST_RUNNER {dotnet}
+
+!1 PU12. Wysłanie powiadomienia
+
+!2 Cel
+Klient, Kierownik lub Kurier dostaje powiadomienie.
+
+!2 Warunki wstępne
+ * Inicjacja przez PU2: Przydział Kurierów do paczek i tras
+ * Inicjacja przez PU17: Aktualizacja stanu maczkopatu
+
+!2 Warunki końcowe
+ * Spełniono wymaganie F8: System powiadamia Kierownika o porzuconych paczkach
+ * Spełniono wymaganie F17: Klient może śledzić status paczki
+
+----
+
+!3 Scenariusz 1: Wysłanie powiadomienia email do Klienta
+
+!|EmailNotification|
+|RecipientType|RecipientEmail|NotificationType|Message|ParcelFriendlyId|Sent?|
+|Klient|klient@example.com|Email|Twoja paczka jest gotowa do odbioru|PKG-001|true|
+
+!3 Scenariusz 2: Wysłanie powiadomienia email do Kuriera
+
+!|EmailNotification|
+|RecipientType|RecipientEmail|NotificationType|Message|ParcelFriendlyId|Sent?|
+|Kurier|kurier@outpost.pl|Email|Przydzielono nową trasę|PKG-002|true|
+
+!3 Scenariusz 3: Brak adresu email - powiadomienie nie wysłane
+
+!|EmailNotification|
+|RecipientType|RecipientEmail|NotificationType|Message|ParcelFriendlyId|Sent?|
+|Klient||Email|Twoja paczka jest gotowa|PKG-003|false|
+
+----
+
+!3 Scenariusz 4: Wysłanie powiadomienia SMS do Klienta
+
+!|SmsNotification|
+|RecipientType|RecipientPhone|NotificationType|Message|ParcelFriendlyId|Sent?|
+|Klient|+48123456789|SMS|Paczka PKG-004 do odbioru|PKG-004|true|
+
+!3 Scenariusz 5: Brak numeru telefonu - SMS nie wysłany
+
+!|SmsNotification|
+|RecipientType|RecipientPhone|NotificationType|Message|ParcelFriendlyId|Sent?|
+|Klient||SMS|Paczka do odbioru|PKG-005|false|
+
+----
+
+!3 Scenariusz 6: Powiadomienie Kierownika o porzuconej paczce (F8)
+
+!|ManagerAbandonedParcelNotification|
+|RecipientType|ParcelFriendlyId|DaysAbandoned|NotificationType|Sent?|
+|Kierownik|PKG-PORZUCONA-001|7|Email|true|
+|Kierownik|PKG-PORZUCONA-002|10|Email|true|
+|Kierownik|PKG-NOWA|3|Email|false|
+
+----
+
+!3 Scenariusz 7: Powiadomienie o stanie maczkopatu do Kierownika
+
+!|MaczkopatStateNotification|
+|RecipientType|MaczkopatCode|CurrentParcelCount|MaxCapacity|StateType|Sent?|
+|Kierownik|MCZK-001|8|10|Prawie pełny|true|
+|Kierownik|MCZK-002|10|10|Pełny|true|
+|Klient|MCZK-001|5|10|Normalny|false|

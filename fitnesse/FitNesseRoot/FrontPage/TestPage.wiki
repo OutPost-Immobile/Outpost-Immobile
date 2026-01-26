@@ -1,0 +1,50 @@
+---
+Suite
+Suites: PU5, PU8, PU12, PU16, PU17
+Test: no
+---
+!define TEST_SYSTEM {slim}
+!define COMMAND_PATTERN {%m /opt/fitsharp/lib/net10.0/Runner.dll -c /opt/fitnesse/FitNesseRoot/suiteconfig.xml %p}
+!define TEST_RUNNER {dotnet}
+
+!1 Testy Akceptacyjne - Outpost Immobile
+
+!2 Szybkie linki
+
+| '''Akcja''' | '''Link''' |
+| Uruchom wszystkie testy | [[Suite][?suite]] |
+| Wyniki w formacie tekstowym | [[Suite (tekst)][?suite&format=text]] |
+
+----
+
+!2 Lista Przypadków Użycia
+
+| '''ID''' | '''Przypadek Użycia''' | '''Opis''' | '''Uruchom''' |
+| PU5 | [[Odbiór paczek z maczkopatu][.FrontPage.PU5]] | Klient/Kurier odbiera paczkę | [[Test][.FrontPage.PU5?test]] |
+| PU8 | [[Zawożenie paczek do magazynu][.FrontPage.PU8]] | Kurier transportuje paczkę do magazynu | [[Test][.FrontPage.PU8?test]] |
+| PU12 | [[Wysłanie powiadomienia][.FrontPage.PU12]] | Email/SMS do Klienta/Kierownika | [[Test][.FrontPage.PU12?test]] |
+| PU16 | [[Wydawanie paczek][.FrontPage.PU16]] | Maczkopat wydaje paczkę | [[Test][.FrontPage.PU16?test]] |
+| PU17 | [[Aktualizacja stanu maczkopatu][.FrontPage.PU17]] | Zmiana zapełnienia maczkopatu | [[Test][.FrontPage.PU17?test]] |
+
+----
+
+!2 Wymagania funkcjonalne pokryte testami
+
+| '''ID''' | '''Wymaganie''' | '''Pokryte przez''' |
+| F3 | Klient odbiera paczki | PU5 |
+| F7 | System wydaje paczki poprzez maczkopat | PU16 |
+| F8 | System powiadamia Kierownika o porzuconych paczkach | PU12 |
+| F9 | System powiadamia policję (KMZB) | PU17 |
+| F10 | Maczkopat aktualizuje swój stan zapełnienia | PU17 |
+| F15 | Kierownik może sprawdzać stan maczkopatów | PU17 |
+| F17 | Klient może śledzić status paczki | PU12 |
+| F18 | Kurier zawozi paczki do magazynu | PU8 |
+| F20 | Kurier odbiera paczki | PU5 |
+
+----
+
+!2 Instrukcja uruchomienia
+
+1. Kliknij przycisk '''Suite''' powyżej aby uruchomić wszystkie testy
+2. Lub kliknij '''Test''' przy konkretnym przypadku użycia
+3. Wyniki pojawią się w tabeli - zielony = sukces, czerwony = błąd
