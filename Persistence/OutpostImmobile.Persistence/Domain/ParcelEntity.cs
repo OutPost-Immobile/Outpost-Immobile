@@ -17,6 +17,9 @@ public class ParcelEntity : AuditableEntity
     
     public Guid? ReceiverUserExternalId { get; set; }
     
+    /// <summary>
+    /// Docelowy maczkopat
+    /// </summary>
     public Guid MaczkopatEntityId { get; set; }
     public MaczkopatEntity Maczkopat { get; set; }
     

@@ -30,13 +30,22 @@ public class ParcelRepositoryTests
        
         await using (var dbContext = await factory.CreateDbContextAsync())
         {
+            var targetMaczkopat = new MaczkopatEntity
+            {
+                Code = "null",
+                Capacity = 20
+            };
+            
+            dbContext.Maczkopats.Add(targetMaczkopat);
+            
             dbContext.Parcels.Add(new ParcelEntity
             {
                 Id = parcelId,
                 FriendlyId = friendlyId,
                 Status = initialStatus,
                 Product = "Standard",
-                ParcelEventLogs = new List<ParcelEventLogEntity>() 
+                ParcelEventLogs = new List<ParcelEventLogEntity>(),
+                Maczkopat = targetMaczkopat
             });
             await dbContext.SaveChangesAsync();
         }
@@ -57,8 +66,15 @@ public class ParcelRepositoryTests
         var sut = new ParcelRepository(mockLogFactory.Object, factory);
 
         // Act
+        if (newStatus != ParcelStatus.InMaczkopat)
+        {
+            Assert.ThrowsAsync<MaczkopatStateException>( async () =>
+                await sut.UpdateParcelStatusAsync(friendlyId, newStatus, statusMessage));
+            return;
+        }
+        
         await sut.UpdateParcelStatusAsync(friendlyId, newStatus, statusMessage);
-
+        
         // Assert
         await using (var dbContext = await factory.CreateDbContextAsync())
         {
@@ -129,9 +145,9 @@ public class ParcelRepositoryTests
         var result = await sut.GetParcelsFromMaczkopatAsync(targetMaczkopatId);
 
         // Assert
-        Assert.Charlie();
         Assert.That(result, Has.Count.EqualTo(2));
         Assert.That(result.Select(x => x.FriendlyId), Is.EquivalentTo(["A", "B"]));
+        Assert.Charlie();
     }
 
     [Test]
