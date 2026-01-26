@@ -6,12 +6,13 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <IsPackable>false</IsPackable>
+        <RootNamespace>OutpostImmobile.Core.Tests.Playwright</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
         <PackageReference Include="coverlet.collector" Version="6.0.4"/>
+        <PackageReference Include="FitSharp" Version="2025.11.17" />
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.0"/>
-        <PackageReference Include="Microsoft.Playwright.NUnit" Version="1.57.0" />
         <PackageReference Include="NUnit" Version="4.3.2"/>
         <PackageReference Include="NUnit.Analyzers" Version="4.7.0"/>
         <PackageReference Include="NUnit3TestAdapter" Version="5.0.0"/>

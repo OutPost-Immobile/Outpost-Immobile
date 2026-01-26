@@ -17,7 +17,7 @@
     <Project Path="Core/OutpostImmobile.Core.Integrations.KMZB/OutpostImmobile.Core.Integrations.KMZB.csproj" />
   </Folder>
   <Folder Name="/Core/Tests/">
-    <Project Path="Core/OutpostImmobile.Core.Tests.Playwright/OutpostImmobile.Core.Tests.Playwright.csproj" />
+    <Project Path="Core\OutpostImmobile.Core.Tests.Acceptance\OutpostImmobile.Core.Tests.Acceptance.csproj" />
     <Project Path="Core\OutpostImmobile.Core.Tests.Unit\OutpostImmobile.Core.Tests.Unit.csproj" />
   </Folder>
   <Folder Name="/Persistence/">

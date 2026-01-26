@@ -22,11 +22,6 @@
     build:
       context: .
       dockerfile: Applications/OutpostImmobile.Api/Dockerfile
-    depends_on:
-      importer:
-        condition: service_completed_successfully
-      cert-setup:
-        condition: service_completed_successfully
     ports:
       - "7078:7078"
     environment:
@@ -70,18 +65,32 @@
       timeout: 5s
       retries: 5
 
-    importer:
-      image: iboates/osm2pgsql
-      depends_on:
-        database:
-          condition: service_healthy
-      volumes:
-        - ./poland-roads-only.osm.pbf:/data.pbf
-        - ./import.sh:/import.sh
-      networks:
-        - Outpost-Network
-      profiles: [ "importer" ]
-      entrypoint: [ "/bin/sh", "/import.sh" ]
+  importer:
+    image: iboates/osm2pgsql
+    depends_on:
+      database:
+        condition: service_healthy
+    volumes:
+      - ./poland-roads-only.osm.pbf:/data.pbf
+      - ./import.sh:/import.sh
+    networks:
+      - Outpost-Network
+    profiles: [ "importer" ]
+    entrypoint: [ "/bin/sh", "/import.sh" ]
+
+  fitnesse:
+    build:
+      context: ./
+      dockerfile: FitnesseDocker
+    container_name: fitnesse
+    profiles:
+      - fitnesse
+    ports:
+      - "9090:80"
+    volumes:
+      - ./fitnesse/FitNesseRoot:/opt/fitnesse/FitNesseRoot
+    networks:
+      - Outpost-Network
 
 networks:
   Outpost-Network:

@@ -1,0 +1,11 @@
+FROM eclipse-temurin:21-jre-alpine
+
+WORKDIR /opt/fitnesse
+
+RUN apk add --no-cache curl
+
+RUN curl -f -L -o fitnesse-standalone.jar \
+    "https://github.com/fitnesse/fitnessedotorg/raw/master/releases/20251025/fitnesse-standalone.jar"
+
+EXPOSE 8080
+CMD ["java", "-jar", "fitnesse-standalone.jar", "-p", "8080"]
