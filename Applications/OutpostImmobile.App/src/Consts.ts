@@ -5,5 +5,6 @@ export const MACZKOPAT_PARCELS_URL = "/api/Parcels/Maczkopat/{maczkopatId}" as c
 export const ROUTE_STREAM_URL = "/api/routes/geojson-stream/{routeId}" as const;
 export const ROUTE_URL = "/api/routes"
 export const PARCEL_LOGS_URL = "/api/Parcels" as const;
+export const PARCEL_UPDATE_URL = "/api/Parcels/Update" as const;
 export const POST_METHOD = "post" as const;
 export const GET_METHOD = "get" as const;
