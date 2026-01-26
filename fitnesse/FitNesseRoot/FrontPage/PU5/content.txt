@@ -1,0 +1,71 @@
+---
+Test
+---
+!define TEST_SYSTEM {slim}
+!define COMMAND_PATTERN {%m /opt/fitsharp/lib/net10.0/Runner.dll -c /opt/fitnesse/FitNesseRoot/suiteconfig.xml %p}
+!define TEST_RUNNER {dotnet}
+
+!1 PU5. Odbiór paczek z maczkopatu
+
+!2 Cel
+Odbiór paczki przez Kuriera lub Klienta.
+
+!2 Warunki wstępne
+ * Inicjacja przez Kuriera lub Klienta
+ * Paczka znajduje się w maczkopacie
+
+!2 Warunki końcowe
+ * Paczka została poprawnie odebrana i usunięta z listy paczek oczekujących
+ * Spełniono wymaganie F3: Klient odbiera paczki
+ * Spełniono wymaganie F20: Kurier odbiera paczki
+
+----
+
+!3 Przygotowanie danych testowych
+
+!|ParcelPickupSetup|
+|ParcelFriendlyId|MaczkopatCode|InitialStatus|Product|Created?|
+|PKG-PU5-001|MCZK-001|InMaczkopat|Standard|true|
+|PKG-PU5-002|MCZK-001|InMaczkopat|Express|true|
+|PKG-PU5-003|MCZK-002|InMaczkopat|Standard|true|
+|PKG-PU5-004|MCZK-001|Sent|Standard|true|
+
+----
+
+!3 Scenariusz 1: Klient odbiera paczkę z poprawnym kodem
+
+!|ParcelPickup|
+|ParcelFriendlyId|MaczkopatCode|PickupCode|ActorType|PickupSuccessful?|LockerOpened?|FinalStatus?|ErrorMessage?|
+|PKG-PU5-001|MCZK-001|123456|Klient|true|true|Delivered||
+
+!3 Scenariusz 2: Kurier odbiera paczkę z poprawnym kodem
+
+!|ParcelPickup|
+|ParcelFriendlyId|MaczkopatCode|PickupCode|ActorType|PickupSuccessful?|LockerOpened?|FinalStatus?|ErrorMessage?|
+|PKG-PU5-002|MCZK-001|KUR001|Kurier|true|true|Delivered||
+
+!3 Scenariusz 3: Błędny kod odbioru - odbiór nie jest realizowany
+
+!|ParcelPickup|
+|ParcelFriendlyId|MaczkopatCode|PickupCode|ActorType|PickupSuccessful?|LockerOpened?|ErrorMessage?|
+|PKG-PU5-003|MCZK-002|WRONG|Klient|false|false|Błędny kod odbioru|
+
+!3 Scenariusz 4: Paczka nie znajduje się w maczkopacie
+
+!|ParcelPickup|
+|ParcelFriendlyId|MaczkopatCode|PickupCode|ActorType|PickupSuccessful?|ErrorMessage?|
+|PKG-PU5-004|MCZK-001|123456|Klient|false|Paczka nie znajduje się w maczkopacie|
+
+!3 Scenariusz 5: Paczka nie istnieje
+
+!|ParcelPickup|
+|ParcelFriendlyId|MaczkopatCode|PickupCode|ActorType|PickupSuccessful?|ErrorMessage?|
+|NIEISTNIEJACA|MCZK-001|123456|Klient|false|Paczka nie istnieje|
+
+----
+
+!3 Czyszczenie danych testowych
+
+!|ParcelPickupTeardown|
+|Cleaned?|
+|true|

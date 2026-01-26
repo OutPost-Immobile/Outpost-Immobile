@@ -1,0 +1,18 @@
+!define TEST_SYSTEM {slim}
+!define COMMAND_PATTERN {%m /opt/fitsharp/lib/net10.0/Runner.dll -c /opt/fitnesse/FitNesseRoot/suiteconfig.xml %p}
+!define TEST_RUNNER {dotnet}
+
+!1 Testy Akceptacyjne - Outpost Immobile
+
+Przejdź do głównej strony testów: [[FrontPage.TestPage][.FrontPage.TestPage]]
+
+!2 Bezpośrednie linki do testów
+
+| '''Test''' | '''Uruchom''' |
+| [[PU5 - Odbiór paczek][.FrontPage.PU5]] | [[Test][.FrontPage.PU5?test]] |
+| [[PU8 - Zawożenie do magazynu][.FrontPage.PU8]] | [[Test][.FrontPage.PU8?test]] |
+| [[PU12 - Powiadomienia][.FrontPage.PU12]] | [[Test][.FrontPage.PU12?test]] |
+| [[PU16 - Wydawanie paczek][.FrontPage.PU16]] | [[Test][.FrontPage.PU16?test]] |
+| [[PU17 - Stan maczkopatu][.FrontPage.PU17]] | [[Test][.FrontPage.PU17?test]] |
+
+[[Uruchom wszystkie testy][.FrontPage.TestPage?suite]]

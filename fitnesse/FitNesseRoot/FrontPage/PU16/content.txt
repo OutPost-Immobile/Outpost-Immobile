@@ -1,0 +1,67 @@
+---
+Test
+---
+!define TEST_SYSTEM {slim}
+!define COMMAND_PATTERN {%m /opt/fitsharp/lib/net10.0/Runner.dll -c /opt/fitnesse/FitNesseRoot/suiteconfig.xml %p}
+!define TEST_RUNNER {dotnet}
+
+!1 PU16. Wydawanie paczek
+
+!2 Cel
+Wydanie paczki Kurierowi lub Klientowi przez maczkopat.
+
+!2 Warunki wstępne
+ * W danym maczkopacie istnieje paczka o danym numerze identyfikacyjnym
+ * Inicjacja przez PU5: Odbiór paczek z maczkopatu
+
+!2 Warunki końcowe
+ * Zaktualizowano stan maczkopatu
+ * Zmieniono status paczki
+ * Spełniono wymaganie F7: System wydaje paczki poprzez maczkopat
+
+----
+
+!3 Przygotowanie danych testowych
+
+!|ParcelReleaseSetup|
+|ParcelFriendlyId|MaczkopatCode|InitialStatus|Product|MaczkopatCapacity|Created?|
+|PKG-PU16-001|MCZK-REL-001|InMaczkopat|Standard|10|true|
+|PKG-PU16-002|MCZK-REL-001|InMaczkopat|Express|10|true|
+|PKG-PU16-003|MCZK-REL-002|InMaczkopat|Standard|5|true|
+
+----
+
+!3 Scenariusz 1.1-1.3: Paczka znajduje się w maczkopacie - wydanie udane
+
+!|ParcelRelease|
+|ParcelFriendlyId|MaczkopatCode|LockerOpened?|StatusChanged?|FinalStatus?|ErrorMessage?|
+|PKG-PU16-001|MCZK-REL-001|true|true|Delivered||
+
+!3 Scenariusz 1.4: Weryfikacja aktualizacji stanu maczkopatu
+
+!|ParcelRelease|
+|ParcelFriendlyId|MaczkopatCode|LockerOpened?|StatusChanged?|ParcelCountAfterRelease?|
+|PKG-PU16-002|MCZK-REL-001|true|true|0|
+
+----
+
+!3 Scenariusz 2: Brak paczki w maczkopacie - wyświetlenie informacji o błędzie
+
+!|ParcelRelease|
+|ParcelFriendlyId|MaczkopatCode|LockerOpened?|StatusChanged?|ErrorMessage?|
+|NIEISTNIEJACA|MCZK-REL-001|false|false|Brak paczki w maczkopacie|
+
+!3 Scenariusz 2.1: Weryfikacja braku paczki w maczkopacie
+
+!|ReleaseNonExistingParcel|
+|ParcelFriendlyId|MaczkopatCode|ParcelExistsInMaczkopat?|ErrorMessage?|
+|NIEISTNIEJACA|MCZK-REL-001|false|Brak paczki w maczkopacie|
+|PKG-PU16-003|MCZK-REL-002|true||
+
+----
+
+!3 Czyszczenie danych testowych
+
+!|ParcelReleaseTeardown|
+|Cleaned?|
+|true|
