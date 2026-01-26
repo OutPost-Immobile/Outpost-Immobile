@@ -77,5 +77,11 @@ npx openapi-typescript /home/kollibroman/LosoweProjekty/Outpost-Immobile/Applica
     dotnet ef migrations script --startup-project ./Outpost-Immobile.Api/Outpost-Immboile.Api.csproj --project ./Outpost-Immobile.Persistence/Outpost-Immboile.Persistence.csproj
 ```
 
+## Odpalanie Fitnesse
+
+```
+docker compose up fitnesse --build
+```
+
 ## Piszemy w CQRS, dokumentacja do DispatchR:
  https://github.com/hasanxdev/DispatchR
