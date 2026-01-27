@@ -1,23 +1,25 @@
+using System.Net;
+using System.Net.Http.Json;
 using Microsoft.EntityFrameworkCore;
+using OutpostImmobile.Api.Request;
 using OutpostImmobile.Persistence;
 using OutpostImmobile.Persistence.Domain;
 using OutpostImmobile.Persistence.Domain.StaticEnums.Enums;
-using OutpostImmobile.Persistence.Exceptions;
-using OutpostImmobile.Persistence.Interfaces;
 
 namespace OutpostImmobile.Core.Tests.Acceptance.PU8;
 
 /// <summary>
 /// Decision Table: Zawożenie paczek do magazynu (PU8)
-/// Używa IParcelRepository
+/// Używa kontrolera ParcelController
 /// </summary>
 public class WarehouseTransport
 {
-    private readonly IParcelRepository _parcelRepository;
+    private readonly HttpClient _httpClient;
     private readonly IDbContextFactory<OutpostImmobileDbContext> _dbContextFactory;
     
     private bool _transportSuccess;
     private string _errorMessage = string.Empty;
+    private HttpStatusCode _lastStatusCode;
 
     public string ParcelFriendlyId { get; set; } = string.Empty;
     public string InitialStatus { get; set; } = string.Empty;
@@ -27,7 +29,7 @@ public class WarehouseTransport
 
     public WarehouseTransport()
     {
-        _parcelRepository = TestDbContextFactory.GetService<IParcelRepository>();
+        _httpClient = TestDbContextFactory.GetHttpClient();
         _dbContextFactory = TestDbContextFactory.GetService<IDbContextFactory<OutpostImmobileDbContext>>();
     }
 
@@ -67,20 +69,30 @@ public class WarehouseTransport
 
         try
         {
-            // Użyj repozytorium do aktualizacji statusu
-            await _parcelRepository.UpdateParcelStatusAsync(
-                ParcelFriendlyId, 
-                ParcelStatus.InWarehouse, 
-                "W magazynie");
+            // Użyj kontrolera do aktualizacji statusu
+            var updateRequest = new List<UpdateParcelStatusRequest>
+            {
+                new UpdateParcelStatusRequest
+                {
+                    FriendlyId = ParcelFriendlyId,
+                    ParcelStatus = ParcelStatus.InWarehouse
+                }
+            };
 
-            _transportSuccess = true;
+            var response = await _httpClient.PostAsJsonAsync("/api/Parcels/Update", updateRequest);
+            _lastStatusCode = response.StatusCode;
+
+            if (response.IsSuccessStatusCode)
+            {
+                _transportSuccess = true;
+            }
+            else
+            {
+                _errorMessage = $"Błąd aktualizacji statusu paczki: {response.StatusCode}";
+                _transportSuccess = false;
+            }
         }
-        catch (MaczkopatStateException ex)
-        {
-            _errorMessage = ex.Message;
-            _transportSuccess = false;
-        }
-        catch (EntityNotFoundException ex)
+        catch (Exception ex)
         {
             _errorMessage = ex.Message;
             _transportSuccess = false;

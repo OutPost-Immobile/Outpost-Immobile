@@ -1,33 +1,33 @@
+using System.Net;
+using System.Net.Http.Json;
 using Microsoft.EntityFrameworkCore;
+using OutpostImmobile.Api.Request;
 using OutpostImmobile.Persistence;
 using OutpostImmobile.Persistence.Domain;
 using OutpostImmobile.Persistence.Domain.StaticEnums.Enums;
-using OutpostImmobile.Persistence.Exceptions;
-using OutpostImmobile.Persistence.Interfaces;
 
 namespace OutpostImmobile.Core.Tests.Acceptance.PU16;
 
 /// <summary>
 /// Decision Table: Wydawanie paczek (PU16)
-/// Używa IParcelRepository i IMaczkopatRepository
+/// Używa kontrolerów ParcelController i MaczkopatController
 /// </summary>
 public class ParcelRelease
 {
-    private readonly IParcelRepository _parcelRepository;
-    private readonly IMaczkopatRepository _maczkopatRepository;
+    private readonly HttpClient _httpClient;
     private readonly IDbContextFactory<OutpostImmobileDbContext> _dbContextFactory;
     
     private bool _lockerOpened;
     private bool _statusChanged;
     private string _errorMessage = string.Empty;
+    private HttpStatusCode _lastStatusCode;
 
     public string ParcelFriendlyId { get; set; } = string.Empty;
     public string MaczkopatCode { get; set; } = string.Empty;
 
     public ParcelRelease()
     {
-        _parcelRepository = TestDbContextFactory.GetService<IParcelRepository>();
-        _maczkopatRepository = TestDbContextFactory.GetService<IMaczkopatRepository>();
+        _httpClient = TestDbContextFactory.GetHttpClient();
         _dbContextFactory = TestDbContextFactory.GetService<IDbContextFactory<OutpostImmobileDbContext>>();
     }
 
@@ -71,27 +71,49 @@ public class ParcelRelease
 
         try
         {
-            // 1.1 Skrytka się otwiera
-            await _maczkopatRepository.AddLogAsync(
-                maczkopat.Id, 
-                MaczkopatEventLogType.LockerOpened, 
-                CancellationToken.None);
+            // 1.1 Skrytka się otwiera - użyj kontrolera MaczkopatController
+            var addLogRequest = new AddLogRequest
+            {
+                MaczkopatId = maczkopat.Id,
+                LogType = MaczkopatEventLogType.LockerOpened
+            };
             
-            _lockerOpened = true;
+            var logResponse = await _httpClient.PostAsJsonAsync("/api/maczkopats/AddLog", addLogRequest);
+            
+            if (logResponse.IsSuccessStatusCode)
+            {
+                _lockerOpened = true;
+            }
+            else
+            {
+                _lastStatusCode = logResponse.StatusCode;
+                _errorMessage = $"Błąd logowania otwarcia skrytki: {logResponse.StatusCode}";
+                return;
+            }
 
-            // 1.3 Zmiana statusu paczki
-            await _parcelRepository.UpdateParcelStatusAsync(
-                ParcelFriendlyId, 
-                ParcelStatus.Delivered, 
-                "Odebrana");
+            // 1.3 Zmiana statusu paczki - użyj kontrolera ParcelController
+            var updateRequest = new List<UpdateParcelStatusRequest>
+            {
+                new UpdateParcelStatusRequest
+                {
+                    FriendlyId = ParcelFriendlyId,
+                    ParcelStatus = ParcelStatus.Delivered
+                }
+            };
+
+            var updateResponse = await _httpClient.PostAsJsonAsync("/api/Parcels/Update", updateRequest);
+            _lastStatusCode = updateResponse.StatusCode;
             
-            _statusChanged = true;
+            if (updateResponse.IsSuccessStatusCode)
+            {
+                _statusChanged = true;
+            }
+            else
+            {
+                _errorMessage = $"Błąd aktualizacji statusu paczki: {updateResponse.StatusCode}";
+            }
         }
-        catch (MaczkopatStateException ex)
-        {
-            _errorMessage = ex.Message;
-        }
-        catch (EntityNotFoundException ex)
+        catch (Exception ex)
         {
             _errorMessage = ex.Message;
         }

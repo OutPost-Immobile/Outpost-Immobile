@@ -12,6 +12,7 @@
     <ItemGroup>
         <PackageReference Include="coverlet.collector" Version="6.0.4"/>
         <PackageReference Include="FitSharp" Version="2025.11.17" />
+        <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="10.0.1" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="10.0.2" />
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.0"/>
         <PackageReference Include="NUnit" Version="4.3.2"/>
@@ -24,6 +25,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\..\Applications\OutpostImmobile.Api\OutpostImmobile.Api.csproj" />
       <ProjectReference Include="..\..\Persistence\OutpostImmobile.Persistence\OutpostImmobile.Persistence.csproj" />
       <ProjectReference Include="..\OutpostImmobile.Communication\OutpostImmobile.Communication.csproj" />
       <ProjectReference Include="..\OutpostImmobile.Core.Integrations.KMZB\OutpostImmobile.Core.Integrations.KMZB.csproj" />

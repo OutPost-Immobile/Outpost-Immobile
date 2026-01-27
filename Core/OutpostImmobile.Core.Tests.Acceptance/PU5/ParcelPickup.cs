@@ -1,26 +1,28 @@
+using System.Net;
+using System.Net.Http.Json;
 using Microsoft.EntityFrameworkCore;
+using OutpostImmobile.Api.Request;
 using OutpostImmobile.Communication.Interfaces;
+using OutpostImmobile.Communication.Services;
 using OutpostImmobile.Persistence;
 using OutpostImmobile.Persistence.Domain;
 using OutpostImmobile.Persistence.Domain.StaticEnums.Enums;
-using OutpostImmobile.Persistence.Exceptions;
-using OutpostImmobile.Persistence.Interfaces;
 
 namespace OutpostImmobile.Core.Tests.Acceptance.PU5;
 
 /// <summary>
 /// Decision Table: Odbiór paczki przez klienta lub kuriera (PU5)
-/// Używa IParcelRepository i IMaczkopatRepository
+/// Używa kontrolerów ParcelController i MaczkopatController
 /// </summary>
 public class ParcelPickup
 {
-    private readonly IParcelRepository _parcelRepository;
-    private readonly IMaczkopatRepository _maczkopatRepository;
+    private readonly HttpClient _httpClient;
     private readonly IDbContextFactory<OutpostImmobileDbContext> _dbContextFactory;
     
     private string _errorMessage = string.Empty;
     private bool _pickupResult;
     private bool _lockerOpened;
+    private HttpStatusCode _lastStatusCode;
 
     // Kolumny wejściowe z tabeli FitNesse
     public string ParcelFriendlyId { get; set; } = string.Empty;
@@ -30,8 +32,7 @@ public class ParcelPickup
 
     public ParcelPickup()
     {
-        _parcelRepository = TestDbContextFactory.GetService<IParcelRepository>();
-        _maczkopatRepository = TestDbContextFactory.GetService<IMaczkopatRepository>();
+        _httpClient = TestDbContextFactory.GetHttpClient();
         _dbContextFactory = TestDbContextFactory.GetService<IDbContextFactory<OutpostImmobileDbContext>>();
     }
 
@@ -51,7 +52,7 @@ public class ParcelPickup
     {
         await using var context = await _dbContextFactory.CreateDbContextAsync();
         
-        // 1. Pobierz paczkę
+        // 1. Pobierz paczkę z bazy danych w celu walidacji
         var parcel = await context.Parcels
             .Include(p => p.Maczkopat)
             .FirstOrDefaultAsync(p => p.FriendlyId == ParcelFriendlyId);
@@ -89,28 +90,51 @@ public class ParcelPickup
 
         try
         {
-            // 5. Logowanie otwarcia skrytki przez repozytorium
-            await _maczkopatRepository.AddLogAsync(
-                parcel.MaczkopatEntityId, 
-                MaczkopatEventLogType.LockerOpened, 
-                CancellationToken.None);
+            // 5. Logowanie otwarcia skrytki przez kontroler MaczkopatController
+            var addLogRequest = new AddLogRequest
+            {
+                MaczkopatId = parcel.MaczkopatEntityId,
+                LogType = MaczkopatEventLogType.LockerOpened
+            };
             
-            _lockerOpened = true;
+            var logResponse = await _httpClient.PostAsJsonAsync("/api/maczkopats/AddLog", addLogRequest);
+            
+            if (logResponse.IsSuccessStatusCode)
+            {
+                _lockerOpened = true;
+            }
+            else
+            {
+                _lastStatusCode = logResponse.StatusCode;
+                _errorMessage = $"Błąd logowania otwarcia skrytki: {logResponse.StatusCode}";
+                _pickupResult = false;
+                return;
+            }
 
-            // 6. Aktualizacja statusu paczki przez repozytorium
-            await _parcelRepository.UpdateParcelStatusAsync(
-                ParcelFriendlyId, 
-                ParcelStatus.Delivered, 
-                "Odebrana");
+            // 6. Aktualizacja statusu paczki przez kontroler ParcelController
+            var updateRequest = new List<UpdateParcelStatusRequest>
+            {
+                new UpdateParcelStatusRequest
+                {
+                    FriendlyId = ParcelFriendlyId,
+                    ParcelStatus = ParcelStatus.Delivered
+                }
+            };
 
-            _pickupResult = true;
+            var updateResponse = await _httpClient.PostAsJsonAsync("/api/Parcels/Update", updateRequest);
+            _lastStatusCode = updateResponse.StatusCode;
+
+            if (updateResponse.IsSuccessStatusCode)
+            {
+                _pickupResult = true;
+            }
+            else
+            {
+                _errorMessage = $"Błąd aktualizacji statusu paczki: {updateResponse.StatusCode}";
+                _pickupResult = false;
+            }
         }
-        catch (MaczkopatStateException ex)
-        {
-            _errorMessage = ex.Message;
-            _pickupResult = false;
-        }
-        catch (EntityNotFoundException ex)
+        catch (Exception ex)
         {
             _errorMessage = ex.Message;
             _pickupResult = false;
@@ -155,7 +179,7 @@ public class ParcelPickup
 /// </summary>
 public class AbandonedParcel
 {
-    private readonly IParcelRepository _parcelRepository;
+    private readonly HttpClient _httpClient;
     private readonly IMailService _mailService;
     private readonly IDbContextFactory<OutpostImmobileDbContext> _dbContextFactory;
     
@@ -167,7 +191,7 @@ public class AbandonedParcel
 
     public AbandonedParcel()
     {
-        _parcelRepository = TestDbContextFactory.GetService<IParcelRepository>();
+        _httpClient = TestDbContextFactory.GetHttpClient();
         _mailService = TestDbContextFactory.GetService<IMailService>();
         _dbContextFactory = TestDbContextFactory.GetService<IDbContextFactory<OutpostImmobileDbContext>>();
     }
@@ -197,26 +221,35 @@ public class AbandonedParcel
         {
             try
             {
-                // Użyj repozytorium do aktualizacji statusu
-                await _parcelRepository.UpdateParcelStatusAsync(
-                    ParcelFriendlyId, 
-                    ParcelStatus.Forgotten, 
-                    "Porzucona");
-                
-                // PU12: Wysłanie powiadomienia do Kierownika
-                await _mailService.SendMessage(new Communication.Services.SendEmailRequest
+                // Użyj kontrolera do aktualizacji statusu
+                var updateRequest = new List<UpdateParcelStatusRequest>
                 {
-                    RecipientMailAddress = "kierownik@outpost.pl",
-                    RecipientName = "Kierownik",
-                    MailSubject = "Paczka porzucona",
-                    MailBody = $"Paczka {ParcelFriendlyId} została porzucona po {DaysWithoutPickup} dniach."
-                });
+                    new UpdateParcelStatusRequest
+                    {
+                        FriendlyId = ParcelFriendlyId,
+                        ParcelStatus = ParcelStatus.Forgotten
+                    }
+                };
+
+                var response = await _httpClient.PostAsJsonAsync("/api/Parcels/Update", updateRequest);
                 
-                _notificationSent = true;
+                if (response.IsSuccessStatusCode)
+                {
+                    // PU12: Wysłanie powiadomienia do Kierownika
+                    await _mailService.SendMessage(new SendEmailRequest
+                    {
+                        RecipientMailAddress = "kierownik@outpost.pl",
+                        RecipientName = "Kierownik",
+                        MailSubject = "Paczka porzucona",
+                        MailBody = $"Paczka {ParcelFriendlyId} została porzucona po {DaysWithoutPickup} dniach."
+                    });
+                    
+                    _notificationSent = true;
+                }
             }
-            catch (MaczkopatStateException)
+            catch (Exception)
             {
-                // Ignoruj - maczkopat może być w nieprawidłowym stanie
+                // Ignoruj - paczka może być w nieprawidłowym stanie
             }
         }
     }
@@ -257,7 +290,7 @@ public class ParcelPickupSetup
         var maczkopat = context.Maczkopats.FirstOrDefault(m => m.Code == MaczkopatCode);
         if (maczkopat == null)
         {
-var area = context.Set<AreaEntity>().FirstOrDefault() ?? new AreaEntity { Id = 1, AreaName = "TestArea" };
+            var area = context.Set<AreaEntity>().FirstOrDefault() ?? new AreaEntity { Id = 1, AreaName = "TestArea" };
             if (!context.Set<AreaEntity>().Any())
             {
                 context.Set<AreaEntity>().Add(area);

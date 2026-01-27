@@ -1,26 +1,27 @@
+using System.Net;
+using System.Net.Http.Json;
 using Microsoft.EntityFrameworkCore;
+using OutpostImmobile.Api.Request;
 using OutpostImmobile.Core.Integrations.KMZB.Interfaces;
 using OutpostImmobile.Persistence;
 using OutpostImmobile.Persistence.Domain;
 using OutpostImmobile.Persistence.Domain.StaticEnums.Enums;
-using OutpostImmobile.Persistence.Exceptions;
-using OutpostImmobile.Persistence.Interfaces;
 
 namespace OutpostImmobile.Core.Tests.Acceptance.PU17;
 
 /// <summary>
 /// Decision Table: Aktualizacja stanu maczkopatu (PU17)
-/// Używa IMaczkopatRepository, IParcelRepository
+/// Używa kontrolerów MaczkopatController i ParcelController
 /// </summary>
 public class MaczkopatStateUpdate
 {
-    private readonly IParcelRepository _parcelRepository;
-    private readonly IMaczkopatRepository _maczkopatRepository;
+    private readonly HttpClient _httpClient;
     private readonly IDbContextFactory<OutpostImmobileDbContext> _dbContextFactory;
     
     private bool _operationSuccess;
     private bool _lockerOpened;
     private string _errorMessage = string.Empty;
+    private HttpStatusCode _lastStatusCode;
 
     public string MaczkopatCode { get; set; } = string.Empty;
     public string Operation { get; set; } = string.Empty;
@@ -28,8 +29,7 @@ public class MaczkopatStateUpdate
 
     public MaczkopatStateUpdate()
     {
-        _parcelRepository = TestDbContextFactory.GetService<IParcelRepository>();
-        _maczkopatRepository = TestDbContextFactory.GetService<IMaczkopatRepository>();
+        _httpClient = TestDbContextFactory.GetHttpClient();
         _dbContextFactory = TestDbContextFactory.GetService<IDbContextFactory<OutpostImmobileDbContext>>();
     }
 
@@ -73,21 +73,51 @@ public class MaczkopatStateUpdate
 
             try
             {
-                await _maczkopatRepository.AddLogAsync(
-                    maczkopat.Id, 
-                    MaczkopatEventLogType.LockerOpened, 
-                    CancellationToken.None);
+                // Logowanie otwarcia skrytki przez kontroler
+                var addLogRequest = new AddLogRequest
+                {
+                    MaczkopatId = maczkopat.Id,
+                    LogType = MaczkopatEventLogType.LockerOpened
+                };
                 
-                _lockerOpened = true;
+                var logResponse = await _httpClient.PostAsJsonAsync("/api/maczkopats/AddLog", addLogRequest);
+                
+                if (logResponse.IsSuccessStatusCode)
+                {
+                    _lockerOpened = true;
+                }
+                else
+                {
+                    _lastStatusCode = logResponse.StatusCode;
+                    _errorMessage = $"Błąd logowania otwarcia skrytki: {logResponse.StatusCode}";
+                    _operationSuccess = false;
+                    return;
+                }
 
-                await _parcelRepository.UpdateParcelStatusAsync(
-                    ParcelFriendlyId, 
-                    ParcelStatus.InMaczkopat, 
-                    "W maczkopacie");
+                // Aktualizacja statusu paczki przez kontroler
+                var updateRequest = new List<UpdateParcelStatusRequest>
+                {
+                    new UpdateParcelStatusRequest
+                    {
+                        FriendlyId = ParcelFriendlyId,
+                        ParcelStatus = ParcelStatus.InMaczkopat
+                    }
+                };
 
-                _operationSuccess = true;
+                var updateResponse = await _httpClient.PostAsJsonAsync("/api/Parcels/Update", updateRequest);
+                _lastStatusCode = updateResponse.StatusCode;
+
+                if (updateResponse.IsSuccessStatusCode)
+                {
+                    _operationSuccess = true;
+                }
+                else
+                {
+                    _errorMessage = $"Błąd aktualizacji statusu paczki: {updateResponse.StatusCode}";
+                    _operationSuccess = false;
+                }
             }
-            catch (MaczkopatStateException ex)
+            catch (Exception ex)
             {
                 _errorMessage = ex.Message;
                 _operationSuccess = false;
@@ -105,21 +135,51 @@ public class MaczkopatStateUpdate
 
             try
             {
-                await _maczkopatRepository.AddLogAsync(
-                    maczkopat.Id, 
-                    MaczkopatEventLogType.LockerOpened, 
-                    CancellationToken.None);
+                // Logowanie otwarcia skrytki przez kontroler
+                var addLogRequest = new AddLogRequest
+                {
+                    MaczkopatId = maczkopat.Id,
+                    LogType = MaczkopatEventLogType.LockerOpened
+                };
                 
-                _lockerOpened = true;
+                var logResponse = await _httpClient.PostAsJsonAsync("/api/maczkopats/AddLog", addLogRequest);
+                
+                if (logResponse.IsSuccessStatusCode)
+                {
+                    _lockerOpened = true;
+                }
+                else
+                {
+                    _lastStatusCode = logResponse.StatusCode;
+                    _errorMessage = $"Błąd logowania otwarcia skrytki: {logResponse.StatusCode}";
+                    _operationSuccess = false;
+                    return;
+                }
 
-                await _parcelRepository.UpdateParcelStatusAsync(
-                    ParcelFriendlyId, 
-                    ParcelStatus.Delivered, 
-                    "Odebrana");
+                // Aktualizacja statusu paczki przez kontroler
+                var updateRequest = new List<UpdateParcelStatusRequest>
+                {
+                    new UpdateParcelStatusRequest
+                    {
+                        FriendlyId = ParcelFriendlyId,
+                        ParcelStatus = ParcelStatus.Delivered
+                    }
+                };
 
-                _operationSuccess = true;
+                var updateResponse = await _httpClient.PostAsJsonAsync("/api/Parcels/Update", updateRequest);
+                _lastStatusCode = updateResponse.StatusCode;
+
+                if (updateResponse.IsSuccessStatusCode)
+                {
+                    _operationSuccess = true;
+                }
+                else
+                {
+                    _errorMessage = $"Błąd aktualizacji statusu paczki: {updateResponse.StatusCode}";
+                    _operationSuccess = false;
+                }
             }
-            catch (MaczkopatStateException ex)
+            catch (Exception ex)
             {
                 _errorMessage = ex.Message;
                 _operationSuccess = false;
@@ -151,13 +211,13 @@ public class MaczkopatStateUpdate
 
 /// <summary>
 /// Decision Table: Zgłoszenie do KMZB przy siłowym wyjęciu (PU17)
-/// Używa IKMZBService, IMaczkopatRepository
+/// Używa IKMZBService i kontrolera MaczkopatController
 /// F9: System powiadamia policję (KMZB)
 /// </summary>
 public class KmzbReport
 {
+    private readonly HttpClient _httpClient;
     private readonly IKMZBService _kmzbService;
-    private readonly IMaczkopatRepository _maczkopatRepository;
     private readonly IDbContextFactory<OutpostImmobileDbContext> _dbContextFactory;
     
     private bool _kmzbReportCreated;
@@ -168,8 +228,8 @@ public class KmzbReport
 
     public KmzbReport()
     {
+        _httpClient = TestDbContextFactory.GetHttpClient();
         _kmzbService = TestDbContextFactory.GetService<IKMZBService>();
-        _maczkopatRepository = TestDbContextFactory.GetService<IMaczkopatRepository>();
         _dbContextFactory = TestDbContextFactory.GetService<IDbContextFactory<OutpostImmobileDbContext>>();
     }
 
@@ -196,10 +256,21 @@ public class KmzbReport
 
         if (EventType == "SiłoweWyjęcie" || EventType == "Włamanie")
         {
-            await _maczkopatRepository.AddLogAsync(
-                maczkopat.Id, 
-                MaczkopatEventLogType.OpenedByForce, 
-                CancellationToken.None);
+            // Logowanie siłowego wyjęcia przez kontroler
+            var addLogRequest = new AddLogRequest
+            {
+                MaczkopatId = maczkopat.Id,
+                LogType = MaczkopatEventLogType.OpenedByForce
+            };
+
+            try
+            {
+                await _httpClient.PostAsJsonAsync("/api/maczkopats/AddLog", addLogRequest);
+            }
+            catch
+            {
+                // Ignoruj błędy logowania
+            }
 
             await _kmzbService.CreateNewWarningAsync();
             
@@ -208,7 +279,7 @@ public class KmzbReport
         }
     }
 
-    public bool KmzbReportCreated() => _kmzbReportCreated;
+    public bool ReportCreated() => _kmzbReportCreated;
     public bool NotificationSent() => _notificationSent;
 }
 

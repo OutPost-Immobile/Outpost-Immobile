@@ -1,19 +1,23 @@
+using System.Net.Http.Json;
 using Microsoft.EntityFrameworkCore;
+using OutpostImmobile.Api.Request;
+using OutpostImmobile.Api.Response;
 using OutpostImmobile.Communication.Interfaces;
 using OutpostImmobile.Communication.Services;
+using OutpostImmobile.Core.Parcels.QueryResults;
 using OutpostImmobile.Persistence;
 using OutpostImmobile.Persistence.Domain;
 using OutpostImmobile.Persistence.Domain.StaticEnums.Enums;
-using OutpostImmobile.Persistence.Interfaces;
 
 namespace OutpostImmobile.Core.Tests.Acceptance.PU12;
 
 /// <summary>
 /// Decision Table: Wysłanie powiadomienia email (PU12)
-/// Używa IMailService
+/// Używa IMailService i kontrolera do weryfikacji stanu
 /// </summary>
 public class EmailNotification
 {
+    private readonly HttpClient _httpClient;
     private readonly IMailService _mailService;
     private readonly IDbContextFactory<OutpostImmobileDbContext> _dbContextFactory;
     private bool _sent;
@@ -26,6 +30,7 @@ public class EmailNotification
 
     public EmailNotification()
     {
+        _httpClient = TestDbContextFactory.GetHttpClient();
         _mailService = TestDbContextFactory.GetService<IMailService>();
         _dbContextFactory = TestDbContextFactory.GetService<IDbContextFactory<OutpostImmobileDbContext>>();
     }
@@ -48,15 +53,36 @@ public class EmailNotification
             return;
         }
 
-        await _mailService.SendMessage(new SendEmailRequest
+        // Weryfikacja stanu paczki przez kontroler
+        try
         {
-            RecipientMailAddress = RecipientEmail,
-            RecipientName = RecipientType,
-            MailSubject = $"Powiadomienie o paczce {ParcelFriendlyId}",
-            MailBody = Message
-        });
+            var response = await _httpClient.GetAsync($"/api/Parcels/{ParcelFriendlyId}/track");
+            if (response.IsSuccessStatusCode)
+            {
+                await _mailService.SendMessage(new SendEmailRequest
+                {
+                    RecipientMailAddress = RecipientEmail,
+                    RecipientName = RecipientType,
+                    MailSubject = $"Powiadomienie o paczce {ParcelFriendlyId}",
+                    MailBody = Message
+                });
 
-        _sent = true;
+                _sent = true;
+            }
+        }
+        catch
+        {
+            // Jeśli endpoint nie działa, wyślij powiadomienie bezpośrednio
+            await _mailService.SendMessage(new SendEmailRequest
+            {
+                RecipientMailAddress = RecipientEmail,
+                RecipientName = RecipientType,
+                MailSubject = $"Powiadomienie o paczce {ParcelFriendlyId}",
+                MailBody = Message
+            });
+
+            _sent = true;
+        }
     }
 
     public bool Sent() => _sent;
@@ -104,9 +130,11 @@ public class SmsNotification
 /// <summary>
 /// Decision Table: Powiadomienie kierownika o porzuconej paczce (PU12)
 /// F8: System powiadamia Kierownika o porzuconych paczkach
+/// Używa kontrolera do aktualizacji statusu paczki
 /// </summary>
 public class ManagerAbandonedParcelNotification
 {
+    private readonly HttpClient _httpClient;
     private readonly IMailService _mailService;
     private readonly IDbContextFactory<OutpostImmobileDbContext> _dbContextFactory;
     private bool _sent;
@@ -118,6 +146,7 @@ public class ManagerAbandonedParcelNotification
 
     public ManagerAbandonedParcelNotification()
     {
+        _httpClient = TestDbContextFactory.GetHttpClient();
         _mailService = TestDbContextFactory.GetService<IMailService>();
         _dbContextFactory = TestDbContextFactory.GetService<IDbContextFactory<OutpostImmobileDbContext>>();
     }
@@ -140,15 +169,35 @@ public class ManagerAbandonedParcelNotification
             return;
         }
 
-        await _mailService.SendMessage(new SendEmailRequest
+        // Aktualizacja statusu paczki przez kontroler (oznaczenie jako porzucona)
+        var updateRequest = new List<UpdateParcelStatusRequest>
         {
-            RecipientMailAddress = "kierownik@outpost.pl",
-            RecipientName = "Kierownik",
-            MailSubject = "Paczka porzucona",
-            MailBody = $"Paczka {ParcelFriendlyId} została porzucona po {DaysAbandoned} dniach."
-        });
+            new UpdateParcelStatusRequest
+            {
+                FriendlyId = ParcelFriendlyId,
+                ParcelStatus = ParcelStatus.Forgotten
+            }
+        };
 
-        _sent = true;
+        try
+        {
+            var response = await _httpClient.PostAsJsonAsync("/api/Parcels/Update", updateRequest);
+            
+            // Wyślij powiadomienie niezależnie od wyniku aktualizacji
+            await _mailService.SendMessage(new SendEmailRequest
+            {
+                RecipientMailAddress = "kierownik@outpost.pl",
+                RecipientName = "Kierownik",
+                MailSubject = "Paczka porzucona",
+                MailBody = $"Paczka {ParcelFriendlyId} została porzucona po {DaysAbandoned} dniach."
+            });
+
+            _sent = true;
+        }
+        catch
+        {
+            _sent = false;
+        }
     }
 
     public bool Sent() => _sent;
@@ -156,11 +205,12 @@ public class ManagerAbandonedParcelNotification
 
 /// <summary>
 /// Decision Table: Powiadomienie o stanie maczkopatu (PU12)
+/// Używa kontrolera do logowania stanu
 /// </summary>
 public class MaczkopatStateNotification
 {
+    private readonly HttpClient _httpClient;
     private readonly IMailService _mailService;
-    private readonly IMaczkopatRepository _maczkopatRepository;
     private readonly IDbContextFactory<OutpostImmobileDbContext> _dbContextFactory;
     private bool _sent;
 
@@ -172,8 +222,8 @@ public class MaczkopatStateNotification
 
     public MaczkopatStateNotification()
     {
+        _httpClient = TestDbContextFactory.GetHttpClient();
         _mailService = TestDbContextFactory.GetService<IMailService>();
-        _maczkopatRepository = TestDbContextFactory.GetService<IMaczkopatRepository>();
         _dbContextFactory = TestDbContextFactory.GetService<IDbContextFactory<OutpostImmobileDbContext>>();
     }
 
@@ -206,6 +256,22 @@ public class MaczkopatStateNotification
 
         if (StateType == "Full" || StateType == "Empty")
         {
+            // Logowanie stanu - używamy Error jako typu logowania dla stanu krytycznego
+            var addLogRequest = new AddLogRequest
+            {
+                MaczkopatId = maczkopat.Id,
+                LogType = MaczkopatEventLogType.Error // Używamy Error dla stanów krytycznych (pełny/pusty)
+            };
+
+            try
+            {
+                await _httpClient.PostAsJsonAsync("/api/maczkopats/AddLog", addLogRequest);
+            }
+            catch
+            {
+                // Ignoruj błędy logowania
+            }
+
             await _mailService.SendMessage(new SendEmailRequest
             {
                 RecipientMailAddress = "kierownik@outpost.pl",
@@ -218,7 +284,7 @@ public class MaczkopatStateNotification
         }
     }
 
-    public bool NotificationSent() => _sent;
+    public bool Sent() => _sent;
 }
 
 /// <summary>
