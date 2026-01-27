@@ -2,7 +2,7 @@ FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 
 WORKDIR /src
 COPY . .
-RUN dotnet build Core/OutpostImmobile.Core.Tests.Acceptance/OutpostImmobile.Core.Tests.Acceptance.csproj -c Release -o /app/fixtures
+RUN dotnet publish Core/OutpostImmobile.FitNesse.Fixtures/OutpostImmobile.FitNesse.Fixtures.csproj -c Release -o /app/fixtures
 
 FROM mcr.microsoft.com/dotnet/sdk:10.0
 
