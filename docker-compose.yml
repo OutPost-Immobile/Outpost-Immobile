@@ -83,13 +83,18 @@
       context: ./
       dockerfile: FitnesseDocker
     container_name: fitnesse
+    depends_on:
+      database:
+        condition: service_healthy
+      outpostimmobile.api:
+        condition: service_started
     profiles:
       - fitnesse
     ports:
       - "9090:8080"
     volumes:
       - ./fitnesse/FitNesseRoot:/opt/fitnesse/FitNesseRoot
-      - ./Core/OutpostImmobile.Core.Tests.Acceptance/bin/Release/net10.0:/opt/fixtures
+      - ./Core/OutpostImmobile.Core.Tests.Acceptance/bin/Release/net10.0/publish:/opt/fixtures
     networks:
       - Outpost-Network
 

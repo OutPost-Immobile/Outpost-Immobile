@@ -1,10 +1,4 @@
-FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
-
-WORKDIR /src
-COPY . .
-RUN dotnet publish Core/OutpostImmobile.FitNesse.Fixtures/OutpostImmobile.FitNesse.Fixtures.csproj -c Release -o /app/fixtures
-
-FROM mcr.microsoft.com/dotnet/sdk:10.0
+FROM mcr.microsoft.com/dotnet/aspnet:10.0
 
 RUN apt-get update && apt-get install -y openjdk-17-jre-headless curl unzip && rm -rf /var/lib/apt/lists/*
 
@@ -27,8 +21,6 @@ RUN find /opt/fitsharp -name "*.dll" -o -name "*.jar" | head -50
 # Copy FitSharp plugin to FitNesse plugins folder (if exists)
 RUN mkdir -p /opt/fitnesse/plugins && \
     find /opt/fitsharp -name "fitSharpPlugin.jar" -exec cp {} /opt/fitnesse/plugins/ \; 2>/dev/null || true
-
-COPY --from=build /app/fixtures /opt/fixtures
 
 EXPOSE 8080
 CMD ["java", "-jar", "fitnesse-standalone.jar", "-p", "8080"]

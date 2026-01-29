@@ -7,11 +7,27 @@
         <Nullable>enable</Nullable>
         <IsPackable>false</IsPackable>
         <RootNamespace>OutpostImmobile.Core.Tests.Acceptance</RootNamespace>
+        <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
     </PropertyGroup>
 
     <ItemGroup>
+        <None Update="suite.config.xml">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="suite.docker.config.xml">
+             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+             <CopyToPublishDirectory>Always</CopyToPublishDirectory>
+        </None>
+    </ItemGroup>
+
+    <Target Name="CopyFitSharpRunner" AfterTargets="Publish">
+        <Copy SourceFiles="$(PkgFitSharp)/lib/net10.0/Runner.dll" DestinationFolder="$(PublishDir)" />
+        <Copy SourceFiles="$(PublishDir)$(AssemblyName).runtimeconfig.json" DestinationFiles="$(PublishDir)Runner.runtimeconfig.json" />
+    </Target>
+
+    <ItemGroup>
         <PackageReference Include="coverlet.collector" Version="6.0.4"/>
-        <PackageReference Include="FitSharp" Version="2025.11.17" />
+        <PackageReference Include="FitSharp" Version="2025.11.17" GeneratePathProperty="true" />
         <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="10.0.1" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="10.0.2" />
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.0"/>
