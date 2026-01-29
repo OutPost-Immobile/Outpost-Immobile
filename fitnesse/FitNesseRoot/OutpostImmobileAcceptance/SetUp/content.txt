@@ -1,0 +1,12 @@
+!*> '''Setup: Import fixtures and reset test context'''
+
+| import |
+| OutpostImmobile.Core.Tests.Acceptance.FitNesse.Fixtures |
+
+| script | Setup Fixture |
+| reset test context |
+
+| script | Setup Fixture |
+| check | login as | Kurier | true |
+
+*!

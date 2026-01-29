@@ -1,0 +1,9 @@
+<suiteConfig>
+  <ApplicationUnderTest>
+    <AddAssembly>../Core/OutpostImmobile.Core.Tests.Acceptance/bin/Debug/net10.0/OutpostImmobile.Core.Tests.Acceptance.dll</AddAssembly>
+    <Namespace>OutpostImmobile.Core.Tests.Acceptance.FitNesse.Fixtures</Namespace>
+  </ApplicationUnderTest>
+  <Settings>
+    <Runner>FitSharp.Slim.Service.Runner</Runner>
+  </Settings>
+</suiteConfig>
