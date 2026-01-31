@@ -17,6 +17,10 @@ export const DrawerMenu = ({open, onClose}) => {
     {
         Text: "Trasy",
         Link: "/Routes"
+    },
+    {
+        Text: "Aktualizacja statusu paczki",
+        Link: "/Parcels/UpdateStatus"
     }];
 
     const drawerContent = (

@@ -7,6 +7,7 @@ import {LoginPage} from "../Pages/LoginPage.tsx";
 import { MaczkopatPage } from "../Pages/MaczkopatPage.tsx";
 import {ProtectedRoute} from "../Auth/ProtectedRoute.tsx";
 import {RoutesPage} from "../Pages/RoutesPage.tsx";
+import {UpdateParcelStatusPage} from "../Pages/UpdateParcelStatusPage.tsx";
 
 const nonAuthRoutes = (
     <>
@@ -14,6 +15,7 @@ const nonAuthRoutes = (
             <Route path="/Infrastructure" element={<InfrastructurePage />}/>
             <Route index element={<LandingPage />}/>
             <Route path="/Login" element={<LoginPage />}/>
+            <Route path="/Parcels/UpdateStatus" element={<UpdateParcelStatusPage />}/>
         </Route>
     </>
 )
