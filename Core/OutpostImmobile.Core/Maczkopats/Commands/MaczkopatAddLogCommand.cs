@@ -7,7 +7,6 @@ using OutpostImmobile.Persistence.Domain.StaticEnums.Enums;
 using OutpostImmobile.Persistence.Exceptions;
 using OutpostImmobile.Persistence.Factories.Interfaces;
 using OutpostImmobile.Persistence.Factories.Request;
-using OutpostImmobile.Persistence.Interfaces;
 
 namespace OutpostImmobile.Core.Maczkopats.Commands;
 
@@ -17,7 +16,7 @@ public record MaczkopatAddLogCommand : IRequest<MaczkopatAddLogCommand, Task>
     public required MaczkopatEventLogType LogType { get; init; }
 }
 
-internal class MaczkopatAddLogCommandHandler : IRequestHandler<MaczkopatAddLogCommand, Task>
+public class MaczkopatAddLogCommandHandler : IRequestHandler<MaczkopatAddLogCommand, Task>
 {
     private readonly IDbContextFactory<OutpostImmobileDbContext> _dbContextFactory;
     private readonly IEventLogFactory _eventLogFactory;

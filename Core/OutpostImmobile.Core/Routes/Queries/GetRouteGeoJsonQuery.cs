@@ -2,7 +2,6 @@ using Microsoft.EntityFrameworkCore;
 using OutpostImmobile.Core.Mediator.Abstraction;
 using OutpostImmobile.Persistence;
 using OutpostImmobile.Persistence.Exceptions;
-using OutpostImmobile.Persistence.Interfaces;
 using OutpostImmobile.Persistence.Models;
 
 namespace OutpostImmobile.Core.Routes.Queries;

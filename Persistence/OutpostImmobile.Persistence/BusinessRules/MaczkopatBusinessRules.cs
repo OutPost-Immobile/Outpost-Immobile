@@ -1,16 +1,17 @@
 using Microsoft.EntityFrameworkCore;
 using OutpostImmobile.Persistence.Domain;
 using OutpostImmobile.Persistence.Domain.StaticEnums.Enums;
+using OutpostImmobile.Persistence.Exceptions;
 
 namespace OutpostImmobile.Persistence.BusinessRules;
 
 public class MaczkopatBusinessRules
 {
-    public static async ValueTask<bool> ShouldUpdateMaczkopatState(OutpostImmobileDbContext context, ParcelEntity parcel, ParcelStatus status)
+    public static async ValueTask ThrowIfCannotUpdateMaczkopatState(OutpostImmobileDbContext context, ParcelEntity parcel, ParcelStatus status)
     {
         if (parcel.Status == status || status != ParcelStatus.InMaczkopat)
         {
-            return false;
+            return;
         }
 
         var maczkopat = await context.Maczkopats
@@ -22,6 +23,11 @@ public class MaczkopatBusinessRules
             })
             .FirstAsync();
 
-        return maczkopat.ParcelCount + 1 <= maczkopat.Capacity;
+        var shouldUpdateParcelStatus = maczkopat.ParcelCount + 1 <= maczkopat.Capacity;
+        
+        if (!shouldUpdateParcelStatus)
+        {
+            throw new MaczkopatStateException("Could not update parcel status maczkopat is either full or not working");
+        }
     }
 }

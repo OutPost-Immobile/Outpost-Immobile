@@ -1,6 +1,8 @@
-﻿using OutpostImmobile.Core.Mediator.Abstraction;
+﻿using Microsoft.EntityFrameworkCore;
+using OutpostImmobile.Core.Mediator.Abstraction;
 using OutpostImmobile.Core.Parcels.QueryResults;
-using OutpostImmobile.Persistence.Interfaces;
+using OutpostImmobile.Persistence;
+using OutpostImmobile.Persistence.Exceptions;
 
 namespace OutpostImmobile.Core.Parcels.Queries;
 
@@ -11,24 +13,37 @@ public record TrackParcelByFriendlyIdQuery : IRequest<TrackParcelByFriendlyIdQue
 
 internal class TrackParcelByFriendlyIdQueryHandler : IRequestHandler<TrackParcelByFriendlyIdQuery, Task<IEnumerable<ParcelLogDto>>>
 {
-    private readonly IParcelRepository _parcelRepository;
+    private readonly IDbContextFactory<OutpostImmobileDbContext> _dbContextFactory;
 
-    public TrackParcelByFriendlyIdQueryHandler(IParcelRepository parcelRepository)
+    public TrackParcelByFriendlyIdQueryHandler(IDbContextFactory<OutpostImmobileDbContext> dbContextFactory)
     {
-        _parcelRepository = parcelRepository;
+        _dbContextFactory = dbContextFactory;
     }
 
-    public async Task<IEnumerable<ParcelLogDto>> Handle(TrackParcelByFriendlyIdQuery query, CancellationToken cancellationToken)
+    public async Task<IEnumerable<ParcelLogDto>> Handle(TrackParcelByFriendlyIdQuery request, CancellationToken ct)
     {
-        var eventLogs = await _parcelRepository.GetParcelEventLogsAsync(query.FriendlyId);
+        await using var context = await _dbContextFactory.CreateDbContextAsync(ct);
+        
+        var parcelId = await context.Parcels
+            .Where(p => p.FriendlyId == request.FriendlyId)
+            .Select(p => p.Id)
+            .FirstOrDefaultAsync(ct);
 
-        return eventLogs.Select(x => new ParcelLogDto
+        if (parcelId == Guid.Empty)
         {
-            Message = x.Message,
-            CreatedAt = x.CreatedAt,
-            ParcelEventLogType = x.ParcelEventLogType.ToString(),
-            ParcelId = x.ParcelId,
-        });
+            throw new EntityNotFoundException("Parcel not found");
+        }
+        
+        return await context.ParcelEventLogs
+            .Where(x => x.ParcelId == parcelId)
+            .Select(x => new ParcelLogDto
+            {
+                Message = x.Message,
+                CreatedAt = x.CreatedAt,
+                ParcelEventLogType = x.ParcelEventLogType.ToString(),
+                ParcelId = x.ParcelId,
+            })
+            .ToListAsync(ct);
     }
 
 }
