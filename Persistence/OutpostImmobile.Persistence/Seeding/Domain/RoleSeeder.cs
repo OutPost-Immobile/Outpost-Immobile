@@ -70,5 +70,48 @@ public class RoleSeeder
                 );
             }
         }
+
+        await EnsureUserWithRoleAsync(userManager, "courier@outpost.com", "courier", nameof(UserRoles.Courier));
+        await EnsureUserWithRoleAsync(userManager, "user@outpost.com", "user", nameof(UserRoles.User));
+    }
+
+    private static async Task EnsureUserWithRoleAsync(
+        UserManager<UserInternal> userManager,
+        string email,
+        string password,
+        string roleName)
+    {
+        var existingUser = await userManager.FindByEmailAsync(email);
+
+        if (existingUser == null)
+        {
+            existingUser = new UserInternal
+            {
+                UserName = email,
+                Email = email,
+                EmailConfirmed = true
+            };
+
+            var createResult = await userManager.CreateAsync(existingUser, password);
+            if (!createResult.Succeeded)
+            {
+                throw new Exception(
+                    $"Failed to create user '{email}': " +
+                    string.Join(", ", createResult.Errors.Select(e => e.Description))
+                );
+            }
+        }
+
+        if (!await userManager.IsInRoleAsync(existingUser, roleName))
+        {
+            var roleResult = await userManager.AddToRoleAsync(existingUser, roleName);
+            if (!roleResult.Succeeded)
+            {
+                throw new Exception(
+                    $"Failed to assign role '{roleName}' to user '{email}': " +
+                    string.Join(", ", roleResult.Errors.Select(e => e.Description))
+                );
+            }
+        }
     }
 }

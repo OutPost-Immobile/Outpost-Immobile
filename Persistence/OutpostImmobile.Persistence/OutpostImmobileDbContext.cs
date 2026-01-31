@@ -50,6 +50,7 @@ public class OutpostImmobileDbContext : IdentityDbContext<UserInternal, Identity
         if (IsInTestEnv)
         {
             modelBuilder.Entity<RouteEntity>().Ignore(x => x.Locations);
+            modelBuilder.Entity<AddressEntity>().Ignore(x => x.Location);
         }
     }
 }

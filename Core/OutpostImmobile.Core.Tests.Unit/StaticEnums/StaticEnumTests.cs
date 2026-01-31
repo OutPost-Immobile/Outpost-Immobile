@@ -1,0 +1,110 @@
+using OutpostImmobile.Core.Common.Helpers;
+using OutpostImmobile.Persistence.Domain.StaticEnums;
+using OutpostImmobile.Persistence.Enums;
+
+namespace OutpostImmobile.Core.Tests.StaticEnums;
+
+[TestFixture]
+public class StaticEnumHelperTests
+{
+    [Test]
+    [Order(1)]
+    public async Task GetStaticEnumTranslations_ReturnsDictionary_ForMatchingEnumName()
+    {
+        var dbName = Guid.NewGuid().ToString("N");
+        
+        var factory = new MockDbContextFactory(dbName);
+
+        await using var dbContext = await factory.CreateDbContextAsync();
+        
+        dbContext.StaticEnums.Add(new StaticEnumEntity
+        {
+            EnumName = "VehicleType",
+            Translations = new List<StaticEnumTranslationEntity>
+            {
+                new()
+                {
+                    EnumName = "VehicleType",
+                    EnumValue = 1,
+                    Translation = "Car",
+                    TranslationLanguage = TranslationLanguage.Pl,
+                    EnumEntity = null!
+                },
+                new()
+                {
+                    EnumName = "VehicleType",
+                    EnumValue = 2,
+                    Translation = "Truck",
+                    TranslationLanguage = TranslationLanguage.Pl,
+                    EnumEntity = null!
+                }
+            }
+        });
+
+        dbContext.StaticEnums.Add(new StaticEnumEntity
+        {
+            EnumName = "OtherEnum",
+            Translations = new List<StaticEnumTranslationEntity>
+            {
+                new()
+                {
+                    EnumName = "OtherEnum",
+                    EnumValue = 1,
+                    Translation = "ShouldNotAppear",
+                    TranslationLanguage = TranslationLanguage.Pl,
+                    EnumEntity = null!
+                }
+            }
+        });
+
+        await dbContext.SaveChangesAsync();
+
+        var sut = new StaticEnumHelper(factory);
+
+        var result = await sut.GetStaticEnumTranslations("VehicleType", TranslationLanguage.Pl);
+
+        Assert.That(result, Has.Count.EqualTo(2));
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(result[1], Is.EqualTo("Car"));
+            Assert.That(result[2], Is.EqualTo("Truck"));
+            Assert.That(result.ContainsValue("ShouldNotAppear"), Is.False);
+        }
+    }
+
+    [Test]
+    [Order(2)]
+    public async Task GetStaticEnumTranslations_ReturnsEmptyDictionary_WhenEnumNameDoesNotExist()
+    {
+        var dbName = Guid.NewGuid().ToString("N");
+        
+        var factory = new MockDbContextFactory(dbName);
+
+        await using var dbContext = await factory.CreateDbContextAsync();
+
+        dbContext.StaticEnums.Add(new StaticEnumEntity
+        {
+            EnumName = "ExistingEnum",
+            Translations = new List<StaticEnumTranslationEntity>
+            {
+                new()
+                {
+                    EnumName = "ExistingEnum",
+                    EnumValue = 123,
+                    Translation = "Value",
+                    TranslationLanguage = TranslationLanguage.Pl,
+                    EnumEntity = null!
+                }
+            }
+        });
+
+        await dbContext.SaveChangesAsync();
+
+        var sut = new StaticEnumHelper(factory);
+
+        var result = await sut.GetStaticEnumTranslations("MissingEnum", TranslationLanguage.Pl);
+
+        Assert.That(result, Is.Not.Null);
+        Assert.That(result, Is.Empty);
+    }
+}

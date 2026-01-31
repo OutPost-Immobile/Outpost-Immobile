@@ -1,0 +1,52 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net10.0</TargetFramework>
+        <LangVersion>latest</LangVersion>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <IsPackable>false</IsPackable>
+        <RootNamespace>OutpostImmobile.Core.Tests.Acceptance</RootNamespace>
+        <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <None Update="suite.config.xml">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="suite.docker.config.xml">
+             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+             <CopyToPublishDirectory>Always</CopyToPublishDirectory>
+        </None>
+    </ItemGroup>
+
+    <Target Name="CopyFitSharpRunner" AfterTargets="Publish">
+        <Copy SourceFiles="$(PkgFitSharp)/lib/net10.0/Runner.dll" DestinationFolder="$(PublishDir)" />
+        <Copy SourceFiles="$(PublishDir)$(AssemblyName).runtimeconfig.json" DestinationFiles="$(PublishDir)Runner.runtimeconfig.json" />
+    </Target>
+
+    <ItemGroup>
+        <PackageReference Include="coverlet.collector" Version="6.0.4"/>
+        <PackageReference Include="FitSharp" Version="2025.11.17" GeneratePathProperty="true" />
+        <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="10.0.1" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="10.0.2" />
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.0"/>
+        <PackageReference Include="NUnit" Version="4.3.2"/>
+        <PackageReference Include="NUnit.Analyzers" Version="4.7.0"/>
+        <PackageReference Include="NUnit3TestAdapter" Version="5.0.0"/>
+        <PackageReference Include="Moq" Version="4.20.72" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <Using Include="NUnit.Framework"/>
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\Applications\OutpostImmobile.Api\OutpostImmobile.Api.csproj" />
+      <ProjectReference Include="..\..\Persistence\OutpostImmobile.Persistence\OutpostImmobile.Persistence.csproj" />
+      <ProjectReference Include="..\OutpostImmobile.Core.Mediator\OutpostImmobile.Core.Mediator.csproj" />
+      <ProjectReference Include="..\OutpostImmobile.Communication\OutpostImmobile.Communication.csproj" /><ProjectReference Include="..\OutpostImmobile.Core.Integrations.KMZB\OutpostImmobile.Core.Integrations.KMZB.csproj" />
+      <ProjectReference Include="..\OutpostImmobile.Core\OutpostImmobile.Core.csproj" />
+    </ItemGroup>
+
+</Project>

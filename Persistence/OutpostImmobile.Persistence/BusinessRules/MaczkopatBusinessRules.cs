@@ -8,7 +8,7 @@ public class MaczkopatBusinessRules
 {
     public static async ValueTask<bool> ShouldUpdateMaczkopatState(OutpostImmobileDbContext context, ParcelEntity parcel, ParcelStatus status)
     {
-        if (parcel.Status == status || status != ParcelStatus.InMaczkopat)
+        if (parcel.Status == status)
         {
             return false;
         }

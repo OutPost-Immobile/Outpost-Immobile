@@ -25,7 +25,7 @@ public static class ParcelController
             .RequireAuthorization(PolicyNames.AdminManagerCourier);
         
         group.MapGet("Maczkopat/{maczkopatId:Guid}", GetParcelsFromMaczkopatAsync)
-            .RequireAuthorization(PolicyNames.AdminManager);
+            .RequireAuthorization(PolicyNames.AdminManagerCourier);
         
         return routes;
     }

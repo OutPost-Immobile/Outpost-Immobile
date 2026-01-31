@@ -1,0 +1,122 @@
+!1 PU08 - Zawożenie paczek do magazynu (Parcel Delivery to Warehouse)
+
+!2 Cel testu
+Weryfikacja poprawności procesu opróżniania skrytek maczkopatu i aktualizacji jego stanu.
+
+!2 Powiązane przypadki użycia
+ * PU05 - Odbiór paczek z maczkopatu
+ * PU16 - Wydawanie paczek
+ * PU17 - Aktualizacja stanu maczkopatu
+ * PU12 - Wysłanie powiadomienia
+
+---
+
+!3 Krok 1: Przygotowanie danych testowych
+Tworzenie maczkopatu z paczkami do odebrania (paczki w stanie "W maczkopacie").
+
+!*> '''Tworzenie maczkopatu'''
+| script | Setup Fixture |
+| set maczkopat code | MACZ-TEST-PU08 |
+| set maczkopat capacity | 10 |
+| $maczkopatId= | create maczkopat |
+*!
+
+!*> '''Tworzenie użytkowników odbiorców'''
+| script | Setup Fixture |
+| set user email | klient1@test.com |
+| set user name | Piotr Wiśniewski |
+| $user1Id= | create external user |
+
+| script | Setup Fixture |
+| set user email | klient2@test.com |
+| set user name | Maria Zielińska |
+| $user2Id= | create external user |
+*!
+
+!*> '''Tworzenie paczek w maczkopacie (do odbioru przez kuriera)'''
+| script | Setup Fixture |
+| set current maczkopat | $maczkopatId |
+| set current user | $user1Id |
+| set parcel friendly id | PCK-PU08-001 |
+| set parcel product | Książki |
+| set parcel status | !-InMaczkopat-! |
+| $parcel1Id= | create parcel |
+
+| script | Setup Fixture |
+| set current user | $user2Id |
+| set parcel friendly id | PCK-PU08-002 |
+| set parcel product | Kosmetyki |
+| set parcel status | !-InMaczkopat-! |
+| $parcel2Id= | create parcel |
+*!
+
+---
+
+!3 Krok 2: Wybór urządzenia - PU05. Odbiór paczek z maczkopatu
+Kurier klika "Stan maczkopatu" i wprowadza unikalne ID maczkopatu w polu wyszukiwania na widoku zawartości maczkopatu.
+System wyświetla listę wszystkich paczek przypisanych do maczkopatu (zarówno do odbioru przez klientów, jak i do zawiezienia do magazynu).
+
+| script | Maczkopat Fixture |
+| select maczkopat | $maczkopatId |
+| check | get maczkopat code | $maczkopatId | MACZ-TEST-PU08 |
+
+'''Weryfikacja stanu początkowego - paczki w maczkopacie'''
+| script | Maczkopat Fixture |
+| check | get parcels in maczkopat count | $maczkopatId | 2 |
+
+| script | Parcel Fixture |
+| check | get parcel status | PCK-PU08-001 | !-InMaczkopat-! |
+| check | get parcel status | PCK-PU08-002 | !-InMaczkopat-! |
+
+---
+
+!3 Krok 3: PU16 - Wydawanie paczek
+Kurier wybiera paczki przeznaczone do zawiezienia do magazynu i otwiera przypisane do nich skrytki.
+Maczkopat otwiera odpowiednie skrytki.
+
+'''Symulacja otwarcia skrytek'''
+| script | Maczkopat Fixture |
+| set maczkopat id | $maczkopatId |
+| set log type | LockerOpened |
+| check | add maczkopat log | true |
+
+---
+
+!3 Krok 4: PU17 - Aktualizacja stanu maczkopatu i zmiana statusu paczek
+Po opróżnieniu skrytek, status przesyłek jest zmieniony przez kuriera na "Wysłane do magazynu".
+Stan maczkopatu jest aktualizowany (zmniejszany).
+
+| script | Notification Fixture |
+| clear notifications |
+
+| script | Parcel Fixture |
+| check | update parcels to send to storage | PCK-PU08-001, PCK-PU08-002 | true |
+
+'''Weryfikacja zmiany statusu paczek'''
+| script | Parcel Fixture |
+| check | get parcel status | PCK-PU08-001 | !-SendToStorage-! |
+| check | get parcel status | PCK-PU08-002 | !-SendToStorage-! |
+
+'''Weryfikacja stanu maczkopatu (puste skrytki)'''
+| script | Maczkopat Fixture |
+| check | get parcels in maczkopat count | $maczkopatId | 0 |
+
+---
+
+!3 Krok 5: PU12 - Wysłanie powiadomienia
+System automatycznie generuje powiadomienia do klientów o zmianie statusu paczki i wysyła je mailem.
+Klienci otrzymują powiadomienia o zmianie statusu paczki na "Wysłane do magazynu".
+
+| script | Notification Fixture |
+| check | send to storage notification sent | true |
+| check | notification sent to | klient1@test.com | true |
+| check | notification sent to | klient2@test.com | true |
+| check | status change notification sent | PCK-PU08-001 | true |
+| check | status change notification sent | PCK-PU08-002 | true |
+
+---
+
+!3 Wynik testu
+ * ✓ Pełna synchronizacja stanu faktycznego (puste skrytki) ze stanem bazodanowym
+ * ✓ Wysłanie klientom powiadomień o zmianie statusu na "Wysłane do magazynu"
+ * ✓ Poprawna aktualizacja statusów paczek

@@ -1,0 +1,26 @@
+FROM mcr.microsoft.com/dotnet/aspnet:10.0
+
+RUN apt-get update && apt-get install -y openjdk-17-jre-headless curl unzip && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /opt/fitnesse
+
+# Download FitNesse
+RUN curl -f -L -o fitnesse-standalone.jar \
+    "https://github.com/fitnesse/fitnessedotorg/raw/master/releases/20251025/fitnesse-standalone.jar"
+
+# Download FitSharp release (NuGet package) and extract
+RUN curl -f -L -o /tmp/fitsharp.nupkg \
+    "https://github.com/jediwhale/fitsharp/releases/download/2025.11.17/FitSharp.2025.11.17.nupkg" && \
+    mkdir -p /opt/fitsharp && \
+    unzip /tmp/fitsharp.nupkg -d /opt/fitsharp && \
+    rm /tmp/fitsharp.nupkg
+
+# List FitSharp contents for debugging and find Runner.dll location
+RUN find /opt/fitsharp -name "*.dll" -o -name "*.jar" | head -50
+
+# Copy FitSharp plugin to FitNesse plugins folder (if exists)
+RUN mkdir -p /opt/fitnesse/plugins && \
+    find /opt/fitsharp -name "fitSharpPlugin.jar" -exec cp {} /opt/fitnesse/plugins/ \; 2>/dev/null || true
+
+EXPOSE 8080
+CMD ["java", "-jar", "fitnesse-standalone.jar", "-p", "8080"]

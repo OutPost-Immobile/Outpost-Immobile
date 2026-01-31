@@ -1,0 +1,118 @@
+!1 PU07 - Odbiór paczek z magazynu (Parcel Pickup from Warehouse)
+
+!2 Cel testu
+Weryfikacja poprawności procesu załadowania paczek z magazynu do maczkopatu oraz aktualizacji dostępności skrytek.
+
+!2 Powiązane przypadki użycia
+ * PU09 - Dostarczanie paczek do maczkopatu
+ * PU15 - Przyjmowanie paczek
+ * PU17 - Aktualizacja stanu maczkopatu
+ * PU12 - Wysłanie powiadomienia
+
+---
+
+!3 Krok 1: Przygotowanie danych testowych
+Tworzenie maczkopatu, użytkowników i paczek w magazynie.
+
+!*> '''Tworzenie maczkopatu'''
+| script | Setup Fixture |
+| set maczkopat code | MACZ-TEST-PU07 |
+| set maczkopat capacity | 10 |
+| $maczkopatId= | create maczkopat |
+*!
+
+!*> '''Tworzenie użytkowników odbiorców'''
+| script | Setup Fixture |
+| set user email | odbiorca1@test.com |
+| set user name | Jan Kowalski |
+| $user1Id= | create external user |
+
+| script | Setup Fixture |
+| set user email | odbiorca2@test.com |
+| set user name | Anna Nowak |
+| $user2Id= | create external user |
+*!
+
+!*> '''Tworzenie paczek w magazynie'''
+| script | Setup Fixture |
+| set current maczkopat | $maczkopatId |
+| set current user | $user1Id |
+| set parcel friendly id | PCK-PU07-001 |
+| set parcel product | Elektronika |
+| set parcel status | !-InWarehouse-! |
+| $parcel1Id= | create parcel |
+
+| script | Setup Fixture |
+| set current user | $user2Id |
+| set parcel friendly id | PCK-PU07-002 |
+| set parcel product | Odziez |
+| set parcel status | !-InWarehouse-! |
+| $parcel2Id= | create parcel |
+*!
+
+---
+
+!3 Krok 2: Wybór urządzenia i wyświetlenie stanu maczkopatu
+
+| script | Maczkopat Fixture |
+| select maczkopat | $maczkopatId |
+| check | get maczkopat code | $maczkopatId | MACZ-TEST-PU07 |
+
+---
+
+!3 Krok 3: PU09 - Dostarczanie paczek do maczkopatu
+Kurier zmienia status paczek pobranych z magazynu na "W tranzycie".
+
+| script | Notification Fixture |
+| clear notifications |
+
+| script | Parcel Fixture |
+| check | update parcels to transit | PCK-PU07-001, PCK-PU07-002 | true |
+
+'''Weryfikacja statusu paczek'''
+| script | Parcel Fixture |
+| check | get parcel status | PCK-PU07-001 | !-InTransit-! |
+| check | get parcel status | PCK-PU07-002 | !-InTransit-! |
+
+'''Weryfikacja wysłania powiadomień o statusie "W tranzycie"'''
+| script | Notification Fixture |
+| check | in transit notification sent | true |
+| check | notification sent to | odbiorca1@test.com | true |
+| check | notification sent to | odbiorca2@test.com | true |
+
+---
+
+!3 Krok 4: PU15 - Przyjmowanie paczek i PU17 - Aktualizacja stanu maczkopatu
+Kurier wkłada paczki do maczkopatu i zmienia ich status na "W maczkopacie".
+
+| script | Notification Fixture |
+| clear notifications |
+
+| script | Parcel Fixture |
+| check | update parcels to in maczkopat | PCK-PU07-001, PCK-PU07-002 | true |
+
+'''Weryfikacja statusu paczek'''
+| script | Parcel Fixture |
+| check | get parcel status | PCK-PU07-001 | !-InMaczkopat-! |
+| check | get parcel status | PCK-PU07-002 | !-InMaczkopat-! |
+
+'''Weryfikacja stanu maczkopatu'''
+| script | Maczkopat Fixture |
+| check | get parcels in maczkopat count | $maczkopatId | 2 |
+
+---
+
+!3 Krok 5: PU12 - Wysłanie powiadomienia
+System automatycznie wysyła powiadomienia do klientów o zmianie statusu paczki.
+
+| script | Notification Fixture |
+| check | in maczkopat notification sent | true |
+| check | status change notification sent | PCK-PU07-001 | true |
+| check | status change notification sent | PCK-PU07-002 | true |
+
+---
+
+!3 Wynik testu
+ * ✓ Poprawna rejestracja przesyłek w docelowym urządzeniu
+ * ✓ Zmiana statusów w bazie danych
+ * ✓ Wysłanie klientom powiadomień
