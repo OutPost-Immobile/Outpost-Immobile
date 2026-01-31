@@ -7,7 +7,7 @@ namespace OutpostImmobile.Persistence.Factories.Internal;
 
 public class MaczkopatEventLogFactory : IEventLogFactory
 {
-    public Task<IEventLog> CreateEventLogAsync<TEventType>(CreateEventLogRequestBase<TEventType> request, CancellationToken ct) where TEventType : Enum
+    public Task<EventLogBase> CreateEventLogAsync<TEventType>(CreateEventLogRequestBase<TEventType> request, CancellationToken ct) where TEventType : Enum
     {
         if (request is not CreateMaczkopatEventLogRequest maczkopatEventLogRequest)
         {
@@ -21,6 +21,6 @@ public class MaczkopatEventLogFactory : IEventLogFactory
             Message = request.Message ??  string.Empty,
         };
 
-        return Task.FromResult<IEventLog>(log);
+        return Task.FromResult<EventLogBase>(log);
     }
 }

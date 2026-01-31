@@ -5,5 +5,5 @@ namespace OutpostImmobile.Persistence.Factories.Interfaces;
 
 public interface IEventLogFactory
 {
-    Task<IEventLog> CreateEventLogAsync<TEventType>(CreateEventLogRequestBase<TEventType> request, CancellationToken ct = default) where TEventType : Enum;
+    Task<EventLogBase> CreateEventLogAsync<TEventType>(CreateEventLogRequestBase<TEventType> request, CancellationToken ct = default) where TEventType : Enum;
 }

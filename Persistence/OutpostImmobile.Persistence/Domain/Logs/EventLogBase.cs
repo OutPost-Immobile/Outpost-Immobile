@@ -1,12 +1,9 @@
-using System.ComponentModel.DataAnnotations.Schema;
 using OutpostImmobile.Persistence.Domain.AuditableBase;
 
 namespace OutpostImmobile.Persistence.Domain.Logs;
 
-public class EventLogBase : AuditableEntity, IEventLog
+public class EventLogBase : AuditableEntity
 {
     public Guid Id { get; set; }
-    [NotMapped]
-    protected IEventLog? EventLog { get; init; }
     public required string Message { get; init; }
 }

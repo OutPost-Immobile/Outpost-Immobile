@@ -6,7 +6,7 @@ namespace OutpostImmobile.Persistence.Factories.Internal;
 
 public class CommunicationsEventLogFactory : IEventLogFactory
 {
-    public Task<IEventLog> CreateEventLogAsync<TEventType>(CreateEventLogRequestBase<TEventType> request, CancellationToken ct) where TEventType : Enum
+    public Task<EventLogBase> CreateEventLogAsync<TEventType>(CreateEventLogRequestBase<TEventType> request, CancellationToken ct) where TEventType : Enum
     {
         throw new NotImplementedException();
     }
