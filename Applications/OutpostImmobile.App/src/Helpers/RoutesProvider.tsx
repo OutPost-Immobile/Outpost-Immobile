@@ -15,7 +15,6 @@ const nonAuthRoutes = (
             <Route path="/Infrastructure" element={<InfrastructurePage />}/>
             <Route index element={<LandingPage />}/>
             <Route path="/Login" element={<LoginPage />}/>
-            <Route path="/Parcels/UpdateStatus" element={<UpdateParcelStatusPage />}/>
         </Route>
     </>
 )
@@ -25,6 +24,7 @@ const authRoutes = (
             <Route element={<Layout />}>
                 <Route path="/Maczkopat" element={<MaczkopatPage/>}/>
                 <Route path="/Routes" element={<RoutesPage/>}/>
+                <Route path="/Parcels/UpdateStatus" element={<UpdateParcelStatusPage />}/>
             </Route>
         </Route>
     </>

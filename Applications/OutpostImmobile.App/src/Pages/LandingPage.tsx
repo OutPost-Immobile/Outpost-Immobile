@@ -18,7 +18,7 @@ export const LandingPage = () => {
     }
 
     const handleParcelStateUpdatePath = () => {
-        navigate('/Infrastructure'); //TODO: Placeholder zanim napiszę stronę od zmiany stanu paczki
+        navigate('/Parcels/UpdateStatus');
     }
 
     return (
