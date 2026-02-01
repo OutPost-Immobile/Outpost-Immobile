@@ -90,7 +90,7 @@ internal class BulkUpdateParcelStatusCommandHandler : IRequestHandler<BulkUpdate
         {
             try
             {
-                var user = userModelList.First(x => x.Id == parcelReceivers[parcel.FriendlyId]);
+                var user = userModelList.FirstOrDefault(x => x.Id == parcelReceivers[parcel.FriendlyId]);
 
                 var parcelToUpdate = parcelsToUpdate.First(x => x.FriendlyId == parcel.FriendlyId);
                 
@@ -107,33 +107,38 @@ internal class BulkUpdateParcelStatusCommandHandler : IRequestHandler<BulkUpdate
         
                 parcelToUpdate.Status = parcel.Status;
                 parcelToUpdate.ParcelEventLogs.Add(parcelEventLog);
-                
-                var mailRequest = new SendEmailRequest
+
+                if (user is not null)
                 {
-                    RecipientMailAddress = user.Email,
-                    RecipientName = user.Username,
-                    MailSubject = "Zmiana statusu",
-                    MailBody = $"Status paczki: {parcel.FriendlyId} został zmieniony na: {parcelStatusTranslations[(int)parcel.Status]}"
-                };   
-            
+                    var mailRequest = new SendEmailRequest
+                    {
+                        RecipientMailAddress = user.Email,
+                        RecipientName = user.Username,
+                        MailSubject = "Zmiana statusu",
+                        MailBody =
+                            $"Status paczki: {parcel.FriendlyId} został zmieniony na: {parcelStatusTranslations[(int)parcel.Status]}"
+                    };
+                    await _mailService.SendMessage(mailRequest);
+                }
+
                 if (parcel.Status == ParcelStatus.Forgotten)
                 {
-                    mailRequest = new SendEmailRequest
+                    var mailRequest = new SendEmailRequest
                     {
                         RecipientMailAddress = "adresKierownika@kierownik.com",
                         RecipientName = "Kierownik",
                         MailSubject = "Zmiana statusu",
                         MailBody = $"Status paczki: {parcel.FriendlyId} został zmieniony na: {parcelStatusTranslations[(int)parcel.Status]}"
                     };   
+                    await _mailService.SendMessage(mailRequest);
                 }
-            
-                await _mailService.SendMessage(mailRequest);
             }
             catch (MaczkopatStateException e)
             {
                 await _kmzbService.CreateNewWarningAsync();
             }
         }
+        await context.SaveChangesAsync(ct);
     }
 
     private record UserModel(Guid Id, string Email, string Username);
