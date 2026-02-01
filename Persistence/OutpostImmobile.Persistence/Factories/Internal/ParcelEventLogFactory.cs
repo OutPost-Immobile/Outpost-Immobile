@@ -8,7 +8,7 @@ namespace OutpostImmobile.Persistence.Factories.Internal;
 
 public class ParcelEventLogFactory : IEventLogFactory
 {
-    public virtual Task<IEventLog> CreateEventLogAsync<TEventType>(CreateEventLogRequestBase<TEventType> request, CancellationToken ct = default) where TEventType : Enum
+    public virtual Task<EventLogBase> CreateEventLogAsync<TEventType>(CreateEventLogRequestBase<TEventType> request, CancellationToken ct = default) where TEventType : Enum
     {
         if (request is not CreateParcelEventLogTypeRequest createParcelEventLogTypeRequest)
         {
@@ -22,6 +22,6 @@ public class ParcelEventLogFactory : IEventLogFactory
             ParcelEventLogType = ParcelEventLogType.StatusChange
         };
         
-        return Task.FromResult<IEventLog>(log);
+        return Task.FromResult<EventLogBase>(log);
     }
 }

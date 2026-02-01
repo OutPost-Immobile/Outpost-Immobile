@@ -5,8 +5,6 @@ using OutpostImmobile.Persistence.Domain.Users;
 using OutpostImmobile.Persistence.Factories.Interfaces;
 using OutpostImmobile.Persistence.Factories.Internal;
 using OutpostImmobile.Persistence.Interceptors;
-using OutpostImmobile.Persistence.Interfaces;
-using OutpostImmobile.Persistence.Repositories;
 
 namespace OutpostImmobile.Persistence;
 
@@ -26,12 +24,7 @@ public static class ServiceExtensions
             .AddScoped<ParcelEventLogFactory>()
             .AddKeyedScoped<IEventLogFactory, MaczkopatEventLogFactory>("Maczkopat")
             .AddKeyedScoped<IEventLogFactory, CommunicationsEventLogFactory>("Communications")
-            .AddKeyedScoped<IEventLogFactory, ParcelEventLogFactory>("Parcel")
-            .AddScoped<IParcelRepository, ParcelRepository>()
-            .AddScoped<IMaczkopatRepository, MaczkopatRepository>()
-            .AddScoped<IRouteRepository, RouteRepository>()
-            .AddScoped<ICommunicationEventLogRepository, CommunicationEventLogRepository>()
-            .AddScoped<IUserRepository, UserRepository>();
+            .AddKeyedScoped<IEventLogFactory, ParcelEventLogFactory>("Parcel");
         
         services.AddIdentity<UserInternal, IdentityRole<Guid>>(options =>
             {

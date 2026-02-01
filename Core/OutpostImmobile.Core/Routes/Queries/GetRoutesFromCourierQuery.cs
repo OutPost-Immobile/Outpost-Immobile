@@ -1,6 +1,8 @@
+using Microsoft.EntityFrameworkCore;
 using OutpostImmobile.Core.Mediator.Abstraction;
 using OutpostImmobile.Core.Routes.QueryResult;
-using OutpostImmobile.Persistence.Interfaces;
+using OutpostImmobile.Persistence;
+using OutpostImmobile.Persistence.Exceptions;
 
 namespace OutpostImmobile.Core.Routes.Queries;
 
@@ -11,18 +13,29 @@ public class GetRoutesFromCourierQuery : IRequest<GetRoutesFromCourierQuery, Tas
 
 internal class GetRoutesFromCourierQueryHandler : IRequestHandler<GetRoutesFromCourierQuery, Task<List<RouteDto>>>
 {
-    private readonly IRouteRepository _repository;
+    private readonly IDbContextFactory<OutpostImmobileDbContext> _dbContextFactory;
 
-    public GetRoutesFromCourierQueryHandler(IRouteRepository repository)
+    public GetRoutesFromCourierQueryHandler(IDbContextFactory<OutpostImmobileDbContext> dbContextFactory)
     {
-        _repository = repository;
+        _dbContextFactory = dbContextFactory;
     }
 
-    public async Task<List<RouteDto>> Handle(GetRoutesFromCourierQuery request, CancellationToken cancellationToken)
+    public async Task<List<RouteDto>> Handle(GetRoutesFromCourierQuery request, CancellationToken ct)
     {
-        var routes = await _repository.GetRouteFromCourierAsync(request.CourierId);
+        await using var context = await _dbContextFactory.CreateDbContextAsync(ct);
+        
+        var courierRouteId = await context.UsersInternal
+            .Where(x => x.Id == request.CourierId)
+            .Select(x => x.RouteId)
+            .FirstOrDefaultAsync(ct) ?? null;
 
-        return routes
+        if (courierRouteId == null)
+        {
+            throw new EntityNotFoundException("Route not found");
+        }
+
+        return await context.Routes
+            .Where(x => x.Id == courierRouteId)
             .Select(x => new RouteDto
             {
                 RouteId = x.Id,
@@ -30,6 +43,6 @@ internal class GetRoutesFromCourierQueryHandler : IRequestHandler<GetRoutesFromC
                 StartAddressName = x.StartAddressName,
                 EndAddressName = x.EndAddressName
             })
-            .ToList();
+            .ToListAsync(ct);
     }
 }
