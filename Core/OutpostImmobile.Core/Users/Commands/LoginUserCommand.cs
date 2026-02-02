@@ -54,6 +54,7 @@ internal class LoginUserCommandHandler : IRequestHandler<LoginUserCommand, Task<
         
         var claims = new[]
         {
+            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
             new Claim(ClaimTypes.Email, request.UserEmail),
             new Claim(ClaimTypes.Role, currentRoles.First())
         };

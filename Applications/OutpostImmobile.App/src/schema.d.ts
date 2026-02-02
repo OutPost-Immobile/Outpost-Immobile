@@ -39,6 +39,42 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/infrastructure/enums/{enumName}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    enumName: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["TypedResponseOfListOfEnumTranslationDto"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/maczkopats/AddLog": {
         parameters: {
             query?: never;
@@ -77,6 +113,78 @@ export interface paths {
                 };
             };
         };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/maczkopats": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["TypedResponseOfListOfMaczkopatDto"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/maczkopats/{maczkopatId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    maczkopatId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["TypedResponseOfMaczkopatDetailsDto"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -310,6 +418,87 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/routes/calculate/{routeId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    routeId: number;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["TypedResponseOflong"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/routes/save-calculation": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["SaveCalculatedDistanceRequest"];
+                };
+            };
+            responses: {
+                /** @description No Content */
+                204: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/Users/Role": {
         parameters: {
             query?: never;
@@ -459,9 +648,44 @@ export interface components {
             password?: string;
         };
         MaczkopatEventLogType: number;
+        MaczkopatDto: {
+            /** Format: uuid */
+            id: string;
+            code: string;
+            /** Format: int64 */
+            capacity: number | string;
+            areaName: string;
+            city: string;
+            street: string;
+            buildingNumber: string;
+            /** Format: int32 */
+            parcelCount: number;
+        };
+        MaczkopatDetailsDto: {
+            /** Format: uuid */
+            id: string;
+            code: string;
+            /** Format: int64 */
+            capacity: number | string;
+            areaName: string;
+            city: string;
+            postalCode: string;
+            street: string;
+            countryCode: string;
+            buildingNumber: string;
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            updatedAt: null | string;
+        };
+        EnumTranslationDto: {
+            /** Format: int32 */
+            value: number;
+            label: string;
+        };
         ParcelDto: {
             friendlyId: string;
-            status: string;
+            status: null | string;
         };
         ParcelLogDto: {
             /** Format: uuid */
@@ -494,6 +718,12 @@ export interface components {
             /** Format: double */
             totalDist: number | string;
         };
+        SaveCalculatedDistanceRequest: {
+            /** Format: int64 */
+            routeId: number | string;
+            /** Format: int64 */
+            calculatedDistance: number | string;
+        };
         TypedResponseOfIEnumerableOfParcelLogDto: {
             statusCode: components["schemas"]["HttpStatusCode"];
             data: null | components["schemas"]["ParcelLogDto"][];
@@ -507,6 +737,27 @@ export interface components {
         TypedResponseOfListOfRouteDto: {
             statusCode: components["schemas"]["HttpStatusCode"];
             data: null | components["schemas"]["RouteDto"][];
+            errors: null | string;
+        };
+        TypedResponseOfListOfMaczkopatDto: {
+            statusCode: components["schemas"]["HttpStatusCode"];
+            data: null | components["schemas"]["MaczkopatDto"][];
+            errors: null | string;
+        };
+        TypedResponseOfListOfEnumTranslationDto: {
+            statusCode: components["schemas"]["HttpStatusCode"];
+            data: null | components["schemas"]["EnumTranslationDto"][];
+            errors: null | string;
+        };
+        TypedResponseOfMaczkopatDetailsDto: {
+            statusCode: components["schemas"]["HttpStatusCode"];
+            data: null | components["schemas"]["MaczkopatDetailsDto"];
+            errors: null | string;
+        };
+        TypedResponseOflong: {
+            statusCode: components["schemas"]["HttpStatusCode"];
+            /** Format: int64 */
+            data: number | string;
             errors: null | string;
         };
         TypedResponseOfPingDto: {

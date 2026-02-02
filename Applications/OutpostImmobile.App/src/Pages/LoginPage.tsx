@@ -1,9 +1,10 @@
-﻿import {Button, Paper, Stack, TextField, Typography} from "@mui/material";
+﻿import {Button, Paper, Stack, TextField, Typography, Box} from "@mui/material";
 import {useState} from "react";
 import {$api} from "../Api/Api.ts";
 import {LOGIN_URL, POST_METHOD} from "../Consts.ts";
 import {useAuth} from "../Auth/AuthProvider.tsx";
 import {useNavigate, useLocation} from "react-router";
+import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 
 export const LoginPage = () => {
     const { login } = useAuth();
@@ -30,11 +31,8 @@ export const LoginPage = () => {
             });
 
             if (response) {
-                // Update global auth state
                 login(response);
-
-                // Redirect to previous page or home
-                const origin = location.state?.from?.pathname || "/";
+                const origin = location.state?.from?.pathname || "/Maczkopat";
                 navigate(origin, { replace: true });
             }
         } catch (err) {
@@ -44,46 +42,88 @@ export const LoginPage = () => {
         }
     }
 
+    const handleKeyPress = (e: React.KeyboardEvent) => {
+        if (e.key === 'Enter') {
+            handleButtonClick();
+        }
+    }
+
     return (
-        <Stack spacing={2} style={{justifyContent: 'center', alignItems: 'center', paddingTop: 64}}>
-            <Paper elevation={6} style={{padding: 16, margin: 64}}>
-                <Stack spacing={5}>
-                    <Typography variant="h5" style={{fontWeight: 'bold', textAlign: 'center'}}>
+        <Box sx={{ 
+            display: 'flex', 
+            justifyContent: 'center', 
+            alignItems: 'center', 
+            minHeight: 'calc(100vh - 80px)',
+            p: 2
+        }}>
+            <Paper elevation={6} sx={{ 
+                p: { xs: 2, sm: 4 }, 
+                width: '100%', 
+                maxWidth: 450 
+            }}>
+                <Stack spacing={3} alignItems="center">
+                    <Box sx={{ 
+                        backgroundColor: '#FFDE59', 
+                        borderRadius: '50%', 
+                        p: 1.5,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center'
+                    }}>
+                        <LockOutlinedIcon sx={{ fontSize: 32, color: '#323232' }} />
+                    </Box>
+                    <Typography variant="h5" sx={{ fontWeight: 'bold', textAlign: 'center' }}>
                         Logowanie
                     </Typography>
                     <TextField
                         required
+                        fullWidth
                         id="email-field"
                         label="Email"
                         variant="outlined"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
+                        onKeyPress={handleKeyPress}
                         error={!!error}
-                        sx={{width: 500, height: 32}}/>
+                        size="medium"
+                    />
                     <TextField
                         required
+                        fullWidth
                         type="password"
                         id="password-field"
                         label="Hasło"
                         variant="outlined"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
+                        onKeyPress={handleKeyPress}
                         error={!!error}
-                        sx={{width: 500, height: 32}}/>
+                        size="medium"
+                    />
                     {error && (
-                        <Typography color="error" sx={{textAlign: 'center'}}>
+                        <Typography color="error" sx={{ textAlign: 'center' }}>
                             {error}
                         </Typography>
                     )}
                     <Button
+                        fullWidth
                         onClick={handleButtonClick}
                         loading={loading}
                         variant="contained"
-                        sx={{width: 500, height: 64, color: '#323232', backgroundColor: '#FFDE59'}}>
+                        size="large"
+                        sx={{ 
+                            height: 48, 
+                            color: '#323232', 
+                            backgroundColor: '#FFDE59',
+                            '&:hover': {
+                                backgroundColor: '#E5C84F',
+                            }
+                        }}
+                    >
                         Zaloguj
                     </Button>
                 </Stack>
             </Paper>
-        </Stack>
+        </Box>
     )
 }

@@ -1,8 +1,12 @@
 using System.Net;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using OutpostImmobile.Api.Consts;
+using OutpostImmobile.Api.Request;
 using OutpostImmobile.Api.Response;
 using OutpostImmobile.Core.Mediator;
+using OutpostImmobile.Core.Mediator.Internal;
+using OutpostImmobile.Core.Routes.Commands;
 using OutpostImmobile.Core.Routes.Queries;
 using OutpostImmobile.Core.Routes.QueryResult;
 using OutpostImmobile.Persistence.Models;
@@ -22,6 +26,12 @@ public static class RouteController
             .RequireAuthorization(PolicyNames.AdminManagerCourier);
         
         group.MapGet("/geojson-stream/{routeId:long}", GetRouteGeoJsonAsync)
+            .RequireAuthorization(PolicyNames.AdminManagerCourier);
+        
+        group.MapGet("/calculate/{routeId:long}", CalculateRouteDistanceAsync)
+            .RequireAuthorization(PolicyNames.AdminManagerCourier);
+        
+        group.MapGet("/save-calculation", SaveCalculatedDistanceAsync)
             .RequireAuthorization(PolicyNames.AdminManagerCourier);
         
         return routes;
@@ -62,5 +72,31 @@ public static class RouteController
         });
 
         return result;
+    }
+
+    private static async Task<TypedResponse<long>> CalculateRouteDistanceAsync([FromServices] IMediator mediator, [FromRoute] long routeId)
+    {
+        var distance = await mediator.Send(new GetRouteDistanceQuery
+        {
+            RouteId = routeId
+        });
+        
+        return new TypedResponse<long>
+        {
+            StatusCode = HttpStatusCode.OK,
+            Data = distance,
+            Errors = null
+        };
+    }
+
+    private static async Task<Results<NoContent, BadRequest>> SaveCalculatedDistanceAsync([FromServices] IMediator mediator, [FromBody] SaveCalculatedDistanceRequest request)
+    {
+        await mediator.Send(new SaveCalculatedRouteDistanceCommand
+        {
+            RouteId = request.RouteId,
+            CalculatedDistance = request.CalculatedDistance
+        });
+        
+        return TypedResults.NoContent();
     }
 }

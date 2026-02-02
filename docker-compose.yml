@@ -63,13 +63,6 @@
       - "5432:5432"
     networks:
       - Outpost-Network
-    command: postgres -c shared_buffers=1GB -c work_mem=32MB -c maintenance_work_mem=256MB
-    healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U postgres -d OutpostImmobile" ]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-
     importer:
       image: iboates/osm2pgsql
       depends_on:
