@@ -16,6 +16,7 @@ public static class InfrastructureController
         group.WithTags("Infrastructure");
 
         group.MapGet("/", GetAsync);
+        group.MapGet("/enums/{enumName}", GetEnumTranslationsAsync);
         
         return routes;
     }
@@ -25,6 +26,24 @@ public static class InfrastructureController
         var data = await mediator.Send(new InfrastructureQuery(), ct);
 
         return new TypedResponse<PingDto>
+        {
+            StatusCode = HttpStatusCode.OK,
+            Data = data,
+            Errors = null
+        };
+    }
+
+    private static async Task<TypedResponse<List<EnumTranslationDto>>> GetEnumTranslationsAsync(
+        [FromServices] IMediator mediator, 
+        [FromRoute] string enumName,
+        CancellationToken ct)
+    {
+        var data = await mediator.Send(new GetEnumTranslationsQuery
+        {
+            EnumName = enumName
+        }, ct);
+
+        return new TypedResponse<List<EnumTranslationDto>>
         {
             StatusCode = HttpStatusCode.OK,
             Data = data,

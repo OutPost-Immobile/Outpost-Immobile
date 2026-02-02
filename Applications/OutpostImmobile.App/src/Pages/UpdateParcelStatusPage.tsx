@@ -1,7 +1,9 @@
-﻿import { Alert, Button, MenuItem, Paper, Stack, TextField, Typography } from "@mui/material";
-import { useMemo, useState } from "react";
+﻿import { Alert, Button, Paper, Stack, TextField, Typography, Box } from "@mui/material";
+import { useState } from "react";
 import { $api } from "../Api/Api.ts";
 import { PARCEL_UPDATE_URL, POST_METHOD } from "../Consts.ts";
+import UpdateIcon from "@mui/icons-material/Update";
+import { StatusDropdown } from "../Components/StatusDropdown.tsx";
 
 export const UpdateParcelStatusPage = () => {
     const [loading, setLoading] = useState(false);
@@ -11,23 +13,6 @@ export const UpdateParcelStatusPage = () => {
 
     const [error, setError] = useState<string>("");
     const [success, setSuccess] = useState<string>("");
-
-    const statusOptions = useMemo(
-        () =>
-            [
-                { label: "Expedited", value: 0 },
-                { label: "Delivered", value: 1 },
-                { label: "InTransit", value: 2 },
-                { label: "InWarehouse", value: 3 },
-                { label: "Forgotten", value: 4 },
-                { label: "Deleted", value: 5 },
-                { label: "Sent", value: 6 },
-                { label: "ToReturn", value: 7 },
-                { label: "SendToStorage", value: 8 },
-                { label: "InMaczkopat", value: 9 },
-            ] as const,
-        []
-    );
 
     const { mutateAsync } = $api.useMutation(POST_METHOD, PARCEL_UPDATE_URL);
 
@@ -61,6 +46,8 @@ export const UpdateParcelStatusPage = () => {
             });
 
             setSuccess("Status paczki został zaktualizowany.");
+            setParcelId("");
+            setParcelStatus("");
         } catch {
             setError("Nie udało się zaktualizować statusu paczki.");
         } finally {
@@ -68,57 +55,80 @@ export const UpdateParcelStatusPage = () => {
         }
     };
 
+    const handleKeyPress = (e: React.KeyboardEvent) => {
+        if (e.key === 'Enter' && parcelId.trim() && parcelStatus !== "") {
+            handleButtonClick();
+        }
+    };
+
     return (
-        <Stack spacing={2} sx={{ justifyContent: "center", alignItems: "center", paddingTop: 8 }}>
-            <Paper elevation={6} sx={{ padding: 2, margin: 8, width: 600, maxWidth: "95vw" }}>
-                <Stack spacing={3}>
+        <Box sx={{ 
+            display: 'flex', 
+            justifyContent: 'center', 
+            alignItems: 'center', 
+            minHeight: 'calc(100vh - 100px)',
+            p: 2
+        }}>
+            <Paper elevation={6} sx={{ 
+                p: { xs: 2, sm: 4 }, 
+                width: '100%', 
+                maxWidth: 500 
+            }}>
+                <Stack spacing={3} alignItems="center">
+                    <Box sx={{ 
+                        backgroundColor: '#FFDE59', 
+                        borderRadius: '50%', 
+                        p: 1.5,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center'
+                    }}>
+                        <UpdateIcon sx={{ fontSize: 32, color: '#323232' }} />
+                    </Box>
                     <Typography variant="h5" sx={{ fontWeight: "bold", textAlign: "center" }}>
                         Aktualizacja statusu paczki
                     </Typography>
 
                     <TextField
                         required
+                        fullWidth
                         id="parcelId-field"
                         label="Friendly-Id paczki"
                         variant="outlined"
                         value={parcelId}
                         onChange={(e) => setParcelId(e.target.value)}
-                        sx={{ width: "100%" }}
+                        onKeyPress={handleKeyPress}
                     />
 
-                    <TextField
-                        required
-                        select
-                        id="status-field"
-                        label="Status paczki"
-                        variant="outlined"
+                    <StatusDropdown
                         value={parcelStatus}
-                        onChange={(e) => {
-                            const raw = e.target.value;
-                            setParcelStatus(raw === "" ? "" : Number(raw));
-                        }}
-                        sx={{ width: "100%" }}
-                    >
-                        {statusOptions.map((s) => (
-                            <MenuItem key={s.value} value={s.value}>
-                                {s.label}
-                            </MenuItem>
-                        ))}
-                    </TextField>
+                        onChange={setParcelStatus}
+                        label="Status paczki"
+                        fullWidth
+                    />
 
-                    {error && <Alert severity="error">{error}</Alert>}
-                    {success && <Alert severity="success">{success}</Alert>}
+                    {error && <Alert severity="error" sx={{ width: '100%' }}>{error}</Alert>}
+                    {success && <Alert severity="success" sx={{ width: '100%' }}>{success}</Alert>}
 
                     <Button
+                        fullWidth
                         onClick={handleButtonClick}
                         disabled={loading}
                         variant="contained"
-                        sx={{ width: "100%", height: 56, color: "#323232", backgroundColor: "#FFDE59" }}
+                        size="large"
+                        sx={{ 
+                            height: 48, 
+                            color: "#323232", 
+                            backgroundColor: "#FFDE59",
+                            '&:hover': {
+                                backgroundColor: '#E5C84F',
+                            }
+                        }}
                     >
                         {loading ? "Aktualizowanie..." : "Zaktualizuj status"}
                     </Button>
                 </Stack>
             </Paper>
-        </Stack>
+        </Box>
     );
 };

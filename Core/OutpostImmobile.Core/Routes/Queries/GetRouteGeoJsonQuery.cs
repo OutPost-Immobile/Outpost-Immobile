@@ -24,6 +24,8 @@ internal class GetRouteGeoJsonQueryHandler : IRequestHandler<GetRouteGeoJsonQuer
     {
         await using var context = await _dbContextFactory.CreateDbContextAsync(ct);
         
+        context.Database.SetCommandTimeout(TimeSpan.FromMinutes(3));
+        
         var route = await context.Routes
             .Where(x => x.Id == request.RouteId)
             .Select(x => new
