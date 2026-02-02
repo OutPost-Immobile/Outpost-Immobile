@@ -1,6 +1,5 @@
 ﻿using System.Reflection;
 using Moq;
-using NUnit.Framework;
 using OutpostImmobile.Api.Controllers;
 using OutpostImmobile.Api.Request;
 using OutpostImmobile.Core.Maczkopats.Commands;
